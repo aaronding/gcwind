@@ -1,0 +1,657 @@
+[
+  {
+    "name": "Beginner Long Iron",
+    "category": "LongIrons",
+    "tour": 0,
+    "type": "Beginner",
+    "image": "BeginnerLongIron",
+    "power": [
+      115
+    ],
+    "accuracy": [
+      10
+    ],
+    "topspin": [
+      0
+    ],
+    "backspin": [
+      0
+    ],
+    "curl": [
+      5
+    ],
+    "ballguide": [
+      2
+    ]
+  },
+  {
+    "name": "The Grim Reaper",
+    "category": "LongIrons",
+    "tour": 1,
+    "type": "Epic",
+    "image": "GrimReaper",
+    "power": [
+      125,
+      125,
+      125,
+      125,
+      125,
+      126,
+      126,
+      128
+    ],
+    "accuracy": [
+      30,
+      30,
+      42,
+      60,
+      60,
+      60,
+      81,
+      90
+    ],
+    "topspin": [
+      0,
+      12,
+      12,
+      12,
+      12,
+      12,
+      28,
+      40
+    ],
+    "backspin": [
+      40,
+      40,
+      58,
+      70,
+      83,
+      100,
+      100,
+      100
+    ],
+    "curl": [
+      60,
+      66,
+      66,
+      72,
+      91,
+      91,
+      98,
+      100
+    ],
+    "ballguide": [
+      2.4,
+      3,
+      3.2,
+      3.2,
+      3.4,
+      3.8,
+      3.8,
+      4
+    ]
+  },
+  {
+    "name": "The Backbone",
+    "category": "LongIrons",
+    "tour": 2,
+    "type": "Common",
+    "image": "Backbone",
+    "power": [
+      118,
+      118,
+      119,
+      119,
+      119,
+      120,
+      120,
+      123,
+      127,
+      127
+    ],
+    "accuracy": [
+      30,
+      40,
+      40,
+      50,
+      66,
+      66,
+      76,
+      76,
+      82,
+      92
+    ],
+    "topspin": [
+      10,
+      10,
+      10,
+      10,
+      21,
+      21,
+      39,
+      39,
+      39,
+      39
+    ],
+    "backspin": [
+      15,
+      30,
+      30,
+      35,
+      35,
+      51,
+      51,
+      56,
+      67,
+      67
+    ],
+    "curl": [
+      15,
+      15,
+      30,
+      30,
+      35,
+      35,
+      41,
+      41,
+      41,
+      57
+    ],
+    "ballguide": [
+      1.5,
+      1.7,
+      2,
+      2.5,
+      2.5,
+      2.9,
+      2.9,
+      3.4,
+      3.4,
+      3.6
+    ]
+  },
+  {
+    "name": "The Goliath",
+    "category": "LongIrons",
+    "tour": 3,
+    "type": "Rare",
+    "image": "Goliath",
+    "power": [
+      130,
+      132,
+      132,
+      132,
+      135,
+      135,
+      135,
+      135,
+      135
+    ],
+    "accuracy": [
+      0,
+      0,
+      16,
+      28,
+      28,
+      34,
+      52,
+      52,
+      55
+    ],
+    "topspin": [
+      66,
+      84,
+      90,
+      90,
+      90,
+      100,
+      100,
+      100,
+      100
+    ],
+    "backspin": [
+      30,
+      30,
+      30,
+      30,
+      47,
+      47,
+      60,
+      66,
+      70
+    ],
+    "curl": [
+      37,
+      42,
+      42,
+      59,
+      65,
+      65,
+      71,
+      90,
+      100
+    ],
+    "ballguide": [
+      2.3,
+      2.3,
+      2.7,
+      2.9,
+      2.9,
+      3.5,
+      3.5,
+      3.9,
+      3.9
+    ]
+  },
+  {
+    "name": "The Saturn",
+    "category": "LongIrons",
+    "tour": 4,
+    "type": "Common",
+    "image": "Saturn",
+    "power": [
+      115,
+      115,
+      115,
+      119,
+      119,
+      119,
+      120,
+      120,
+      124,
+      124
+    ],
+    "accuracy": [
+      20,
+      20,
+      35,
+      35,
+      35,
+      51,
+      51,
+      51,
+      56,
+      56
+    ],
+    "topspin": [
+      20,
+      20,
+      26,
+      26,
+      37,
+      37,
+      48,
+      66,
+      66,
+      66
+    ],
+    "backspin": [
+      30,
+      35,
+      35,
+      45,
+      61,
+      71,
+      71,
+      82,
+      82,
+      92
+    ],
+    "curl": [
+      50,
+      60,
+      60,
+      60,
+      65,
+      65,
+      65,
+      65,
+      65,
+      81
+    ],
+    "ballguide": [
+      1.7,
+      2.2,
+      2.5,
+      2.7,
+      2.7,
+      2.9,
+      3.4,
+      3.4,
+      3.7,
+      3.9
+    ]
+  },
+  {
+    "name": "The B52",
+    "category": "LongIrons",
+    "tour": 5,
+    "type": "Epic",
+    "image": "B52",
+    "power": [
+      127,
+      127,
+      132,
+      135,
+      135,
+      135,
+      135,
+      135
+    ],
+    "accuracy": [
+      62,
+      73,
+      79,
+      79,
+      98,
+      98,
+      100,
+      100
+    ],
+    "topspin": [
+      0,
+      0,
+      13,
+      33,
+      33,
+      55,
+      55,
+      65
+    ],
+    "backspin": [
+      25,
+      25,
+      25,
+      25,
+      38,
+      45,
+      58,
+      65
+    ],
+    "curl": [
+      20,
+      37,
+      37,
+      37,
+      43,
+      56,
+      56,
+      65
+    ],
+    "ballguide": [
+      3.4,
+      3.6,
+      3.6,
+      3.8,
+      3.8,
+      3.8,
+      4.5,
+      4.5
+    ]
+  },
+  {
+    "name": "The Grizzly",
+    "category": "LongIrons",
+    "tour": 6,
+    "type": "Rare",
+    "image": "Grizzly",
+    "power": [
+      122,
+      122,
+      122,
+      122,
+      122,
+      126,
+      126,
+      126,
+      129
+    ],
+    "accuracy": [
+      73,
+      73,
+      79,
+      79,
+      96,
+      96,
+      100,
+      100,
+      100
+    ],
+    "topspin": [
+      0,
+      18,
+      18,
+      30,
+      30,
+      38,
+      38,
+      46,
+      50
+    ],
+    "backspin": [
+      20,
+      20,
+      36,
+      40,
+      40,
+      45,
+      45,
+      64,
+      70
+    ],
+    "curl": [
+      45,
+      60,
+      60,
+      77,
+      82,
+      82,
+      90,
+      100,
+      100
+    ],
+    "ballguide": [
+      3,
+      3,
+      3.4,
+      3.4,
+      3.8,
+      3.8,
+      4.4,
+      4.4,
+      4.4
+    ]
+  },
+  {
+    "name": "The Tsunami",
+    "category": "LongIrons",
+    "tour": 7,
+    "type": "Epic",
+    "image": "Tsunami",
+    "power": [
+      127,
+      129,
+      133,
+      133,
+      134,
+      134,
+      135,
+      135
+    ],
+    "accuracy": [
+      23,
+      23,
+      29,
+      41,
+      60,
+      60,
+      81,
+      92
+    ],
+    "topspin": [
+      100,
+      100,
+      100,
+      100,
+      100,
+      100,
+      100,
+      100
+    ],
+    "backspin": [
+      70,
+      87,
+      87,
+      87,
+      100,
+      100,
+      100,
+      100
+    ],
+    "curl": [
+      64,
+      64,
+      64,
+      82,
+      82,
+      100,
+      100,
+      100
+    ],
+    "ballguide": [
+      1.2,
+      1.4,
+      2,
+      2.2,
+      2.2,
+      2.7,
+      3.1,
+      3.5
+    ]
+  },
+  {
+    "name": "Golden Long Iron",
+    "category": "LongIrons",
+    "tour": 0,
+    "type": "Golden",
+    "image": "GoldenLongIron",
+    "power": [
+      120
+    ],
+    "accuracy": [
+      66
+    ],
+    "topspin": [
+      50
+    ],
+    "backspin": [
+      50
+    ],
+    "curl": [
+      40
+    ],
+    "ballguide": [
+      2.1
+    ]
+  },
+  {
+    "name": "Rookie Long Iron",
+    "category": "LongIrons",
+    "tour": 0,
+    "type": "Fixed",
+    "image": "FixedLongIron",
+    "power": [
+      131
+    ],
+    "accuracy": [
+      70
+    ],
+    "topspin": [
+      50
+    ],
+    "backspin": [
+      50
+    ],
+    "curl": [
+      80
+    ],
+    "ballguide": [
+      2.7
+    ]
+  },
+  {
+    "name": "Pro Long Iron",
+    "category": "LongIrons",
+    "tour": 0,
+    "type": "Fixed",
+    "image": "FixedLongIron",
+    "power": [
+      131
+    ],
+    "accuracy": [
+      60
+    ],
+    "topspin": [
+      50
+    ],
+    "backspin": [
+      50
+    ],
+    "curl": [
+      80
+    ],
+    "ballguide": [
+      2.6
+    ]
+  },
+  {
+    "name": "Expert Long Iron",
+    "category": "LongIrons",
+    "tour": 0,
+    "type": "Fixed",
+    "image": "FixedLongIron",
+    "power": [
+      131
+    ],
+    "accuracy": [
+      50
+    ],
+    "topspin": [
+      50
+    ],
+    "backspin": [
+      50
+    ],
+    "curl": [
+      80
+    ],
+    "ballguide": [
+      2.5
+    ]
+  },
+  {
+    "name": "Master Long Iron",
+    "category": "LongIrons",
+    "tour": 0,
+    "type": "Fixed",
+    "image": "FixedLongIron",
+    "power": [
+      131
+    ],
+    "accuracy": [
+      40
+    ],
+    "topspin": [
+      50
+    ],
+    "backspin": [
+      50
+    ],
+    "curl": [
+      80
+    ],
+    "ballguide": [
+      2.4
+    ]
+  }
+]
