@@ -1,0 +1,656 @@
+[{
+  "name": "Beginner Driver",
+  "category": "Drivers",
+  "tour": 0,
+  "type": "Beginner",
+  "image": "BeginnerDriver",
+  "power": [
+    190
+  ],
+  "accuracy": [
+    10
+  ],
+  "topspin": [
+    0
+  ],
+  "backspin": [
+    0
+  ],
+  "curl": [
+    5
+  ],
+  "ballguide": [
+    2
+  ]
+},
+  {
+    "name": "The Rocket",
+    "category": "Drivers",
+    "tour": 1,
+    "type": "Common",
+    "image": "Rocket",
+    "power": [
+      190,
+      190,
+      192,
+      198,
+      198,
+      202,
+      204,
+      204,
+      206,
+      211
+    ],
+    "accuracy": [
+      50,
+      70,
+      70,
+      76,
+      76,
+      83,
+      83,
+      83,
+      83,
+      90
+    ],
+    "topspin": [
+      0,
+      9,
+      9,
+      9,
+      18,
+      18,
+      18,
+      23,
+      37,
+      37
+    ],
+    "backspin": [
+      0,
+      9,
+      9,
+      26,
+      26,
+      52,
+      52,
+      52,
+      70,
+      98
+    ],
+    "curl": [
+      12,
+      12,
+      26,
+      26,
+      30,
+      30,
+      44,
+      54,
+      54,
+      54
+    ],
+    "ballguide": [
+      2,
+      2,
+      2.4,
+      2.4,
+      3.1,
+      3.1,
+      3.6,
+      4.2,
+      4.2,
+      4.2
+    ]
+  },
+  {
+    "name": "The Extra Mile",
+    "category": "Drivers",
+    "tour": 2,
+    "type": "Rare",
+    "image": "ExtraMile",
+    "power": [
+      220,
+      220,
+      224,
+      226,
+      226,
+      234,
+      234,
+      236,
+      237
+    ],
+    "accuracy": [
+      0,
+      7,
+      7,
+      7,
+      29,
+      29,
+      45,
+      45,
+      45
+    ],
+    "topspin": [
+      20,
+      30,
+      30,
+      45,
+      50,
+      50,
+      50,
+      67,
+      85
+    ],
+    "backspin": [
+      0,
+      0,
+      28,
+      28,
+      28,
+      48,
+      48,
+      48,
+      50
+    ],
+    "curl": [
+      15,
+      15,
+      15,
+      25,
+      25,
+      30,
+      47,
+      47,
+      50
+    ],
+    "ballguide": [
+      1.3,
+      2,
+      2.3,
+      2.3,
+      2.8,
+      2.8,
+      3,
+      3.6,
+      3.6
+    ]
+  },
+  {
+    "name": "Big Topper",
+    "category": "Drivers",
+    "tour": 3,
+    "type": "Epic",
+    "image": "BigTopper",
+    "power": [
+      205,
+      209,
+      209,
+      217,
+      217,
+      219,
+      225,
+      230
+    ],
+    "accuracy": [
+      10,
+      10,
+      25,
+      25,
+      34,
+      51,
+      51,
+      60
+    ],
+    "topspin": [
+      100,
+      100,
+      100,
+      100,
+      100,
+      100,
+      100,
+      100
+    ],
+    "backspin": [
+      0,
+      0,
+      10,
+      10,
+      43,
+      43,
+      54,
+      60
+    ],
+    "curl": [
+      33,
+      38,
+      54,
+      65,
+      65,
+      83,
+      83,
+      100
+    ],
+    "ballguide": [
+      1.6,
+      2.3,
+      2.3,
+      2.6,
+      3.1,
+      3.1,
+      4,
+      4.1
+    ]
+  },
+  {
+    "name": "The Quarterback",
+    "category": "Drivers",
+    "tour": 4,
+    "type": "Common",
+    "image": "Quarterback",
+    "power": [
+      197,
+      197,
+      203,
+      203,
+      207,
+      207,
+      214,
+      214,
+      218,
+      218
+    ],
+    "accuracy": [
+      73,
+      80,
+      80,
+      80,
+      100,
+      100,
+      100,
+      100,
+      100,
+      100
+    ],
+    "topspin": [
+      8,
+      17,
+      17,
+      22,
+      22,
+      31,
+      31,
+      41,
+      41,
+      55
+    ],
+    "backspin": [
+      10,
+      10,
+      27,
+      27,
+      27,
+      36,
+      45,
+      45,
+      72,
+      72
+    ],
+    "curl": [
+      35,
+      35,
+      40,
+      53,
+      58,
+      58,
+      67,
+      82,
+      86,
+      86
+    ],
+    "ballguide": [
+      2,
+      2.7,
+      2.7,
+      3.1,
+      3.1,
+      3.8,
+      3.8,
+      4,
+      4,
+      4.5
+    ]
+  },
+  {
+    "name": "The Rock",
+    "category": "Drivers",
+    "tour": 5,
+    "type": "Rare",
+    "image": "Rock",
+    "power": [
+      215,
+      215,
+      215,
+      222,
+      222,
+      226,
+      226,
+      231,
+      232
+    ],
+    "accuracy": [
+      65,
+      65,
+      86,
+      86,
+      94,
+      94,
+      100,
+      100,
+      100
+    ],
+    "topspin": [
+      0,
+      10,
+      10,
+      10,
+      20,
+      25,
+      42,
+      47,
+      55
+    ],
+    "backspin": [
+      0,
+      0,
+      9,
+      28,
+      28,
+      59,
+      59,
+      59,
+      60
+    ],
+    "curl": [
+      38,
+      43,
+      53,
+      53,
+      68,
+      68,
+      79,
+      96,
+      98
+    ],
+    "ballguide": [
+      3.4,
+      4.1,
+      4.1,
+      4.4,
+      4.4,
+      4.4,
+      4.4,
+      4.4,
+      4.4
+    ]
+  },
+  {
+    "name": "Thor's Hammer",
+    "category": "Drivers",
+    "tour": 6,
+    "type": "Epic",
+    "image": "ThorsHammer",
+    "power": [
+      220,
+      220,
+      222,
+      229,
+      232,
+      232,
+      232,
+      235
+    ],
+    "accuracy": [
+      50,
+      64,
+      64,
+      64,
+      64,
+      64,
+      92,
+      100
+    ],
+    "topspin": [
+      45,
+      45,
+      56,
+      56,
+      67,
+      85,
+      98,
+      98
+    ],
+    "backspin": [
+      44,
+      44,
+      74,
+      74,
+      74,
+      97,
+      97,
+      100
+    ],
+    "curl": [
+      15,
+      30,
+      30,
+      41,
+      41,
+      41,
+      41,
+      50
+    ],
+    "ballguide": [
+      2.5,
+      2.7,
+      2.7,
+      3,
+      3.8,
+      4.1,
+      4.4,
+      4.5
+    ]
+  },
+  {
+    "name": "The Apocalypse",
+    "category": "Drivers",
+    "tour": 7,
+    "type": "Epic",
+    "image": "Apocalypse",
+    "power": [
+      229,
+      231,
+      231,
+      234,
+      240,
+      240,
+      240,
+      240
+    ],
+    "accuracy": [
+      35,
+      35,
+      43,
+      66,
+      75,
+      75,
+      84,
+      90
+    ],
+    "topspin": [
+      38,
+      53,
+      64,
+      64,
+      64,
+      76,
+      88,
+      90
+    ],
+    "backspin": [
+      20,
+      20,
+      20,
+      20,
+      42,
+      76,
+      76,
+      80
+    ],
+    "curl": [
+      76,
+      76,
+      92,
+      92,
+      92,
+      98,
+      98,
+      100
+    ],
+    "ballguide": [
+      2,
+      2.5,
+      2.5,
+      3,
+      3,
+      3,
+      3.9,
+      4
+    ]
+  },
+  {
+    "name": "Golden Driver",
+    "category": "Drivers",
+    "tour": 0,
+    "type": "Golden",
+    "image": "GoldenDriver",
+    "power": [
+      202
+    ],
+    "accuracy": [
+      83
+    ],
+    "topspin": [
+      50
+    ],
+    "backspin": [
+      50
+    ],
+    "curl": [
+      60
+    ],
+    "ballguide": [
+      2.1
+    ]
+  },
+  {
+    "name": "Rookie Driver",
+    "category": "Drivers",
+    "tour": 0,
+    "type": "Fixed",
+    "image": "FixedDriver",
+    "power": [
+      200
+    ],
+    "accuracy": [
+      70
+    ],
+    "topspin": [
+      50
+    ],
+    "backspin": [
+      50
+    ],
+    "curl": [
+      80
+    ],
+    "ballguide": [
+      2.7
+    ]
+  },
+  {
+    "name": "Pro Driver",
+    "category": "Drivers",
+    "tour": 0,
+    "type": "Fixed",
+    "image": "FixedDriver",
+    "power": [
+      220
+    ],
+    "accuracy": [
+      60
+    ],
+    "topspin": [
+      50
+    ],
+    "backspin": [
+      50
+    ],
+    "curl": [
+      80
+    ],
+    "ballguide": [
+      2.6
+    ]
+  },
+  {
+    "name": "Expert Driver",
+    "category": "Drivers",
+    "tour": 0,
+    "type": "Fixed",
+    "image": "FixedDriver",
+    "power": [
+      220
+    ],
+    "accuracy": [
+      50
+    ],
+    "topspin": [
+      50
+    ],
+    "backspin": [
+      50
+    ],
+    "curl": [
+      80
+    ],
+    "ballguide": [
+      2.5
+    ]
+  },
+  {
+    "name": "Master Driver",
+    "category": "Drivers",
+    "tour": 0,
+    "type": "Fixed",
+    "image": "FixedDriver",
+    "power": [
+      235
+    ],
+    "accuracy": [
+      40
+    ],
+    "topspin": [
+      50
+    ],
+    "backspin": [
+      50
+    ],
+    "curl": [
+      80
+    ],
+    "ballguide": [
+      2.4
+    ]
+  }
+]
