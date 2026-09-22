@@ -1,0 +1,613 @@
+// Wind Calculator Utility for Golf Game
+// Calculates wind ring adjustments based on club type, wind speed, elevation, and other parameters
+
+class WindCalculator {
+  constructor() {
+    this.clubData = {
+      drivers: [
+        {
+          "name": "The Rocket",
+          "category": "Drivers",
+          "tour": 1,
+          "type": "Common",
+          "power": [190, 190, 192, 198, 198, 202, 204, 204, 206, 211],
+          "accuracy": [50, 70, 70, 76, 76, 83, 83, 83, 83, 90],
+          "image": "clubs/Rocket.png"
+        },
+        {
+          "name": "The Extra Mile",
+          "category": "Drivers",
+          "tour": 2,
+          "type": "Rare",
+          "power": [220, 220, 224, 226, 226, 234, 234, 236, 237],
+          "accuracy": [0, 7, 7, 7, 29, 29, 45, 45, 45],
+          "image": "clubs/ExtraMile.png"
+        },
+        {
+          "name": "Big Topper",
+          "category": "Drivers",
+          "tour": 3,
+          "type": "Epic",
+          "power": [205, 209, 209, 217, 217, 219, 225, 230],
+          "accuracy": [10, 10, 25, 25, 34, 51, 51, 60],
+          "image": "clubs/BigTopper.png"
+        },
+        {
+          "name": "The Quarterback",
+          "category": "Drivers",
+          "tour": 4,
+          "type": "Common",
+          "power": [197, 197, 203, 203, 207, 207, 214, 214, 218, 218],
+          "accuracy": [73, 80, 80, 80, 100, 100, 100, 100, 100, 100],
+          "image": "clubs/Quarterback.png"
+        },
+        {
+          "name": "The Rock",
+          "category": "Drivers",
+          "tour": 5,
+          "type": "Rare",
+          "power": [215, 215, 215, 222, 222, 226, 226, 231, 232],
+          "accuracy": [65, 65, 86, 86, 94, 94, 100, 100, 100],
+          "image": "clubs/Rock.png"
+        },
+        {
+          "name": "Thor's Hammer",
+          "category": "Drivers",
+          "tour": 6,
+          "type": "Epic",
+          "power": [220, 220, 222, 229, 232, 232, 232, 235],
+          "accuracy": [50, 64, 64, 64, 64, 64, 92, 100],
+          "image": "clubs/ThorsHammer.png"
+        },
+        {
+          "name": "The Apocalypse",
+          "category": "Drivers",
+          "tour": 7,
+          "type": "Epic",
+          "power": [229, 231, 231, 234, 240, 240, 240, 240],
+          "accuracy": [35, 35, 43, 66, 75, 75, 84, 90],
+          "image": "clubs/Apocalypse.png"
+        }
+      ],
+      woods: [
+        {
+          "name": "The Horizon",
+          "category": "Woods",
+          "tour": 1,
+          "type": "Epic",
+          "power": [170, 171, 173, 173, 173, 178, 178, 179],
+          "accuracy": [0, 0, 12, 12, 31, 31, 45, 65],
+          "image": "clubs/Horizon.png"
+        },
+        {
+          "name": "The Viper",
+          "category": "Woods",
+          "tour": 2,
+          "type": "Common",
+          "power": [160, 164, 165, 165, 166, 166, 170, 170, 170, 170],
+          "accuracy": [20, 20, 35, 40, 51, 51, 56, 56, 67, 72],
+          "image": "clubs/Viper.png"
+        },
+        {
+          "name": "The Big Dawg",
+          "category": "Woods",
+          "tour": 3,
+          "type": "Rare",
+          "power": [174, 174, 177, 177, 177, 180, 180, 180, 180],
+          "accuracy": [20, 20, 25, 25, 25, 25, 44, 56, 60],
+          "image": "clubs/BigDawg.png"
+        },
+        {
+          "name": "The Hammerhead",
+          "category": "Woods",
+          "tour": 4,
+          "type": "Epic",
+          "power": [169, 170, 170, 170, 170, 175, 175, 176],
+          "accuracy": [65, 65, 83, 95, 95, 95, 100, 100],
+          "image": "clubs/Hammerhead.png"
+        },
+        {
+          "name": "The Guardian",
+          "category": "Woods",
+          "tour": 5,
+          "type": "Rare",
+          "power": [166, 166, 166, 171, 171, 174, 175, 179, 179],
+          "accuracy": [50, 50, 66, 66, 78, 78, 90, 90, 95],
+          "image": "clubs/Guardian.png"
+        },
+        {
+          "name": "The Sniper",
+          "category": "Woods",
+          "tour": 6,
+          "type": "Common",
+          "power": [160, 160, 160, 160, 164, 164, 166, 166, 170, 172],
+          "accuracy": [100, 100, 100, 100, 100, 100, 100, 100, 100, 100],
+          "image": "clubs/Sniper.png"
+        },
+        {
+          "name": "The Cataclysm",
+          "category": "Woods",
+          "tour": 7,
+          "type": "Epic",
+          "power": [175, 176, 180, 180, 180, 180, 180, 180],
+          "accuracy": [30, 47, 47, 47, 60, 60, 80, 90],
+          "image": "clubs/Cataclysm.png"
+        }
+      ],
+      longirons: [
+        {
+          "name": "The Grim Reaper",
+          "category": "LongIrons",
+          "tour": 1,
+          "type": "Epic",
+          "power": [125, 125, 125, 125, 125, 126, 126, 128],
+          "accuracy": [30, 30, 42, 60, 60, 60, 81, 90],
+          "image": "clubs/GrimReaper.png"
+        },
+        {
+          "name": "The Backbone",
+          "category": "LongIrons",
+          "tour": 2,
+          "type": "Common",
+          "power": [118, 118, 119, 119, 119, 120, 120, 123, 127, 127],
+          "accuracy": [30, 40, 40, 50, 66, 66, 76, 76, 82, 92],
+          "image": "clubs/Backbone.png"
+        },
+        {
+          "name": "The Goliath",
+          "category": "LongIrons",
+          "tour": 3,
+          "type": "Rare",
+          "power": [130, 132, 132, 132, 135, 135, 135, 135, 135],
+          "accuracy": [0, 0, 16, 28, 28, 34, 52, 52, 55],
+          "image": "clubs/Goliath.png"
+        },
+        {
+          "name": "The Saturn",
+          "category": "LongIrons",
+          "tour": 4,
+          "type": "Common",
+          "power": [115, 115, 115, 119, 119, 119, 120, 120, 124, 124],
+          "accuracy": [20, 20, 35, 35, 35, 51, 51, 51, 56, 56],
+          "image": "clubs/Saturn.png"
+        },
+        {
+          "name": "The B52",
+          "category": "LongIrons",
+          "tour": 5,
+          "type": "Epic",
+          "power": [127, 127, 132, 135, 135, 135, 135, 135],
+          "accuracy": [62, 73, 79, 79, 98, 98, 100, 100],
+          "image": "clubs/B52.png"
+        },
+        {
+          "name": "The Grizzly",
+          "category": "LongIrons",
+          "tour": 6,
+          "type": "Rare",
+          "power": [122, 122, 122, 122, 122, 126, 126, 126, 129],
+          "accuracy": [73, 73, 79, 79, 96, 96, 100, 100, 100],
+          "image": "clubs/Grizzly.png"
+        },
+        {
+          "name": "The Tsunami",
+          "category": "LongIrons",
+          "tour": 7,
+          "type": "Epic",
+          "power": [127, 129, 133, 133, 134, 134, 135, 135],
+          "accuracy": [23, 23, 29, 41, 60, 60, 81, 92],
+          "image": "clubs/Tsunami.png"
+        }
+      ],
+      shortirons: [
+        {
+          "name": "The Apache",
+          "category": "ShortIrons",
+          "tour": 1,
+          "type": "Rare",
+          "power": [84, 84, 86, 89, 89, 90, 90, 90, 90],
+          "accuracy": [0, 4, 17, 17, 27, 27, 32, 32, 55],
+          "image": "clubs/Apache.png"
+        },
+        {
+          "name": "The Kingfisher",
+          "category": "ShortIrons",
+          "tour": 2,
+          "type": "Epic",
+          "power": [79, 79, 79, 79, 79, 79, 83, 84],
+          "accuracy": [65, 69, 83, 88, 88, 88, 94, 100],
+          "image": "clubs/Kingfisher.png"
+        },
+        {
+          "name": "The Runner",
+          "category": "ShortIrons",
+          "tour": 3,
+          "type": "Common",
+          "power": [75, 75, 75, 78, 80, 80, 81, 82, 82, 82],
+          "accuracy": [20, 24, 24, 24, 36, 45, 53, 53, 66, 66],
+          "image": "clubs/Runner.png"
+        },
+        {
+          "name": "The Thorn",
+          "category": "ShortIrons",
+          "tour": 4,
+          "type": "Rare",
+          "power": [81, 81, 83, 86, 86, 89, 89, 90, 90],
+          "accuracy": [30, 43, 43, 43, 52, 52, 57, 57, 57],
+          "image": "clubs/Thorn.png"
+        },
+        {
+          "name": "The Hornet",
+          "category": "ShortIrons",
+          "tour": 5,
+          "type": "Rare",
+          "power": [79, 82, 84, 84, 86, 86, 88, 88, 88],
+          "accuracy": [78, 78, 91, 91, 91, 96, 96, 96, 100],
+          "image": "clubs/Hornet.png"
+        },
+        {
+          "name": "The Claw",
+          "category": "ShortIrons",
+          "tour": 6,
+          "type": "Common",
+          "power": [76, 76, 77, 77, 80, 82, 82, 86, 86, 87],
+          "accuracy": [25, 29, 41, 41, 50, 50, 54, 54, 66, 75],
+          "image": "clubs/Claw.png"
+        },
+        {
+          "name": "The Falcon",
+          "category": "ShortIrons",
+          "tour": 7,
+          "type": "Epic",
+          "power": [81, 82, 82, 85, 85, 88, 88, 90],
+          "accuracy": [50, 50, 59, 64, 64, 80, 80, 95],
+          "image": "clubs/Falcon.png"
+        }
+      ],
+      wedges: [
+        {
+          "name": "The Dart",
+          "category": "Wedges",
+          "tour": 1,
+          "type": "Common",
+          "power": [35, 35, 37, 37, 39, 39, 39, 41, 41, 41],
+          "accuracy": [10, 22, 22, 30, 30, 43, 43, 47, 60, 64],
+          "image": "clubs/Dart.png"
+        },
+        {
+          "name": "The Firefly",
+          "category": "Wedges",
+          "tour": 2,
+          "type": "Epic",
+          "power": [35, 35, 37, 37, 37, 38, 38, 39],
+          "accuracy": [39, 39, 48, 48, 53, 53, 70, 90],
+          "image": "clubs/Firefly.png"
+        },
+        {
+          "name": "The Boomerang",
+          "category": "Wedges",
+          "tour": 3,
+          "type": "Epic",
+          "power": [39, 41, 41, 42, 42, 44, 45, 45],
+          "accuracy": [45, 45, 54, 54, 70, 70, 86, 98],
+          "image": "clubs/Boomerang.png"
+        },
+        {
+          "name": "The Down-In-One",
+          "category": "Wedges",
+          "tour": 4,
+          "type": "Rare",
+          "power": [41, 43, 44, 44, 44, 44, 44, 44, 45],
+          "accuracy": [80, 80, 89, 89, 100, 100, 100, 100, 100],
+          "image": "clubs/DownInOne.png"
+        },
+        {
+          "name": "The Skewer",
+          "category": "Wedges",
+          "tour": 5,
+          "type": "Common",
+          "power": [36, 36, 38, 39, 39, 39, 40, 42, 42, 42],
+          "accuracy": [25, 29, 29, 41, 41, 50, 50, 58, 58, 71],
+          "image": "clubs/Skewer.png"
+        },
+        {
+          "name": "The Endbringer",
+          "category": "Wedges",
+          "tour": 6,
+          "type": "Epic",
+          "power": [39, 41, 41, 43, 43, 44, 44, 44],
+          "accuracy": [70, 70, 79, 79, 95, 95, 100, 100],
+          "image": "clubs/Endbringer.png"
+        },
+        {
+          "name": "The Rapier",
+          "category": "Wedges",
+          "tour": 7,
+          "type": "Rare",
+          "power": [38, 38, 38, 38, 40, 40, 42, 42, 42],
+          "accuracy": [45, 54, 58, 58, 63, 72, 87, 87, 95],
+          "image": "clubs/Rapier.png"
+        }
+      ],
+      roughirons: [
+        {
+          "name": "The Roughcutter",
+          "category": "RoughIrons",
+          "tour": 1,
+          "type": "Rare",
+          "power": [75, 78, 78, 88, 88, 92, 92, 103, 112],
+          "accuracy": [70, 70, 84, 84, 100, 100, 100, 100, 100],
+          "image": "clubs/Roughcutter.png"
+        },
+        {
+          "name": "The Junglist",
+          "category": "RoughIrons",
+          "tour": 2,
+          "type": "Epic",
+          "power": [97, 107, 107, 111, 111, 123, 123, 124],
+          "accuracy": [20, 20, 35, 35, 35, 44, 71, 80],
+          "image": "clubs/Junglist.png"
+        },
+        {
+          "name": "The Machete",
+          "category": "RoughIrons",
+          "tour": 3,
+          "type": "Common",
+          "power": [82, 82, 85, 85, 91, 91, 98, 98, 101, 101],
+          "accuracy": [20, 20, 40, 53, 60, 60, 80, 80, 94, 94],
+          "image": "clubs/Machete.png"
+        },
+        {
+          "name": "The Off Roader",
+          "category": "RoughIrons",
+          "tour": 4,
+          "type": "Epic",
+          "power": [108, 111, 111, 115, 127, 131, 131, 133],
+          "accuracy": [40, 40, 63, 79, 79, 96, 96, 98],
+          "image": "clubs/OffRoader.png"
+        },
+        {
+          "name": "Razor",
+          "category": "RoughIrons",
+          "tour": 5,
+          "type": "Rare",
+          "power": [97, 104, 104, 107, 107, 111, 121, 129, 131],
+          "accuracy": [100, 100, 100, 100, 100, 100, 100, 100, 100],
+          "image": "clubs/Razor.png"
+        },
+        {
+          "name": "The Amazon",
+          "category": "RoughIrons",
+          "tour": 6,
+          "type": "Epic",
+          "power": [121, 131, 135, 135, 135, 135, 135, 135],
+          "accuracy": [25, 25, 40, 40, 65, 74, 92, 100],
+          "image": "clubs/Amazon.png"
+        },
+        {
+          "name": "Nirvana",
+          "category": "RoughIrons",
+          "tour": 7,
+          "type": "Rare",
+          "power": [112, 112, 112, 123, 123, 129, 129, 135, 135],
+          "accuracy": [60, 60, 74, 74, 97, 97, 100, 100, 100],
+          "image": "clubs/Nirvana.png"
+        }
+      ],
+      sandwedges: [
+        {
+          "name": "The Castaway",
+          "category": "SandWedges",
+          "tour": 1,
+          "type": "Epic",
+          "power": [84, 84, 95, 95, 103, 103, 108, 116],
+          "accuracy": [25, 39, 39, 47, 47, 47, 66, 68],
+          "image": "clubs/Castaway.png"
+        },
+        {
+          "name": "The Desert Storm",
+          "category": "SandWedges",
+          "tour": 2,
+          "type": "Common",
+          "power": [64, 73, 73, 80, 80, 80, 80, 90, 90, 96],
+          "accuracy": [0, 0, 20, 20, 33, 33, 40, 40, 54, 54],
+          "image": "clubs/DesertStorm.png"
+        },
+        {
+          "name": "The Malibu",
+          "category": "SandWedges",
+          "tour": 3,
+          "type": "Rare",
+          "power": [84, 84, 94, 94, 101, 101, 109, 109, 109],
+          "accuracy": [60, 81, 81, 88, 88, 96, 96, 100, 100],
+          "image": "clubs/Malibu.png"
+        },
+        {
+          "name": "The Sahara",
+          "category": "SandWedges",
+          "tour": 4,
+          "type": "Epic",
+          "power": [96, 96, 107, 107, 115, 115, 120, 120],
+          "accuracy": [15, 15, 15, 31, 31, 57, 57, 75],
+          "image": "clubs/Sahara.png"
+        },
+        {
+          "name": "The Sand Lizard",
+          "category": "SandWedges",
+          "tour": 5,
+          "type": "Common",
+          "power": [68, 68, 74, 74, 80, 91, 91, 100, 100, 100],
+          "accuracy": [70, 70, 90, 90, 97, 97, 97, 97, 97, 97],
+          "image": "clubs/SandLizard.png"
+        },
+        {
+          "name": "Houdini",
+          "category": "SandWedges",
+          "tour": 6,
+          "type": "Rare",
+          "power": [80, 80, 80, 91, 91, 91, 98, 98, 112],
+          "accuracy": [10, 10, 17, 24, 47, 62, 62, 79, 90],
+          "image": "clubs/Houdini.png"
+        },
+        {
+          "name": "Spitfire",
+          "category": "SandWedges",
+          "tour": 7,
+          "type": "Epic",
+          "power": [120, 120, 120, 120, 120, 120, 120, 120],
+          "accuracy": [50, 50, 65, 65, 90, 100, 100, 100],
+          "image": "clubs/Spitfire.png"
+        }
+      ]
+    };
+  }
+
+  getClubTypeMaxDistance(clubType) {
+    const distances = {
+      'drivers': 240,
+      'woods': 180,
+      'longirons': 135,
+      'shortirons': 90,
+      'wedges': 45,
+      'roughirons': 135,
+      'sandwedges': 120
+    };
+    return distances[clubType];
+  }
+
+  getPowerBallMultiplier(powerBallLevel) {
+    const multipliers = [1.0, 1.01, 1.03, 1.04, 1.05, 1.06, 1.07, 1.085, 1.1, 1.115, 1.13];
+    return multipliers[powerBallLevel] || 1.0;
+  }
+
+  getWindBallMultiplier(windBallLevel) {
+    const multipliers = [1.0, 0.9, 0.85, 0.8, 0.75, 0.7, 0.65, 0.6, 0.55, 0.5, 0.45];
+    return multipliers[windBallLevel] || 1.0;
+  }
+
+  getCategoryMultiplier(clubType) {
+    switch (clubType) {
+      case 'roughirons':
+        return 1.45;
+      case 'sandwedges':
+        return 1.15;
+      default:
+        return 1;
+    }
+  }
+
+  maxPower(power, clubTypeMaxDistance) {
+    return power / clubTypeMaxDistance;
+  }
+
+  minPower(power, clubType) {
+    switch (clubType) {
+      case 'drivers':
+      case 'woods':
+        return 0.75;
+      case 'longirons':
+        return 0.66;
+      case 'shortirons':
+        return 0.5;
+      case 'wedges':
+      case 'roughirons':
+      case 'sandwedges':
+        return 0;
+      default:
+        return 0.5;
+    }
+  }
+
+  proratedPower(power, clubType, clubTypeMaxDistance, ratio) {
+    // ratio: 0-1 parameter where 0 = minPower, 1 = maxPower
+    const minPower = this.minPower(power, clubType);
+    const maxPower = this.maxPower(power, clubTypeMaxDistance);
+    const range = maxPower - minPower;
+
+    return {
+      current: minPower + range * ratio,
+      max: maxPower,
+      mid: minPower + range * 0.5,
+      min: minPower
+    };
+  }
+
+  windPerRing(clubName, level, accuracy, power, clubType) {
+    const windCategoryMultiplier = this.getCategoryMultiplier(clubType);
+    let windPerRing = ((3 - (accuracy * 0.02)) * windCategoryMultiplier) / power;
+
+    if ((clubName === 'The B52' || clubName === 'The Grizzly') && level >= 5) {
+      windPerRing = windPerRing * 0.9;
+    }
+
+    return windPerRing;
+  }
+
+  findClub(clubName, level) {
+    for (let clubType in this.clubData) {
+      const clubs = this.clubData[clubType];
+      for (let club of clubs) {
+        if (club.name === clubName) {
+          return {
+            ...club,
+            clubType,
+            power: club.power[level - 1],
+            accuracy: club.accuracy[level - 1]
+          };
+        }
+      }
+    }
+    return null;
+  }
+
+  calculateWindRings(clubName, level, windSpeed, elevation = 0, powerBall = 0, windBall = 0, powerRatio = 1) {
+    // Validate level
+    if (level < 1 || level > 10 || !Number.isInteger(level)) {
+      throw new Error(`Invalid level: ${level}. Level must be an integer between 1 and 10.`);
+    }
+
+    const club = this.findClub(clubName, level);
+    if (!club) {
+      throw new Error(`Club not found: ${clubName}`);
+    }
+
+    const clubTypeMaxDistance = this.getClubTypeMaxDistance(club.clubType);
+    const powerBallMultiplier = this.getPowerBallMultiplier(powerBall);
+    const windBallMultiplier = this.getWindBallMultiplier(windBall);
+    const elevationAdjustment = 1 + (elevation / 100);
+    const adjustedWindSpeed = windSpeed * windBallMultiplier * elevationAdjustment;
+
+    // Get all power values in a single call
+    const powers = this.proratedPower(club.power, club.clubType, clubTypeMaxDistance, powerRatio);
+
+    // Apply power ball multiplier to all power values
+    const powerCurrent = powers.current * powerBallMultiplier;
+    const powerMax = powers.max * powerBallMultiplier;
+    const powerMid = powers.mid * powerBallMultiplier;
+    const powerMin = powers.min * powerBallMultiplier;
+
+    // Calculate wind per ring for each power value
+    const windPerRingCurrent = this.windPerRing(clubName, level, club.accuracy, powerCurrent, club.clubType);
+    const windPerRingMax = this.windPerRing(clubName, level, club.accuracy, powerMax, club.clubType);
+    const windPerRingMid = this.windPerRing(clubName, level, club.accuracy, powerMid, club.clubType);
+    const windPerRingMin = this.windPerRing(clubName, level, club.accuracy, powerMin, club.clubType);
+
+    // Calculate final wind rings for each distance
+    const current = Math.round((adjustedWindSpeed / windPerRingCurrent) * 10) / 10;
+    const max = Math.round((adjustedWindSpeed / windPerRingMax) * 10) / 10;
+    const mid = Math.round((adjustedWindSpeed / windPerRingMid) * 10) / 10;
+    const min = Math.round((adjustedWindSpeed / windPerRingMin) * 10) / 10;
+
+    return { current, max, mid, min };
+  }
+}
+
+// For browser usage
+if (typeof window !== 'undefined') {
+  window.WindCalculator = WindCalculator;
+}
+
+// For Node.js usage
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = WindCalculator;
+}
