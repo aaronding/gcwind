@@ -572,3 +572,19 @@ sl-menu-item[aria-selected='true']::part(base) {
   background-color: var(--accent-primary);
   color: white;
 }
+
+.disclaimer {
+  margin-top: 32px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border-color);
+  text-align: center;
+}
+
+.disclaimer p {
+  margin: 0;
+  max-width: 60ch;
+  margin-inline: auto;
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--text-tertiary);
+}

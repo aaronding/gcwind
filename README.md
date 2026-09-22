@@ -101,6 +101,13 @@ loaded from jsDelivr's CDN. Nothing is bundled; `npm install` only fetches lint 
 
 There's a feedback button in the app that opens a Google Form, or open an issue on this repo.
 
+## Disclaimer
+
+This is an unofficial fan-made tool. It is not affiliated with, endorsed by, or sponsored by
+Electronic Arts Inc. or Playdemic. Golf Clash is a trademark of Electronic Arts Inc. Club names,
+artwork and statistics are the property of their respective owners.
+
 ## License
 
-MIT — see [LICENSE](LICENSE).
+The MIT licence covers the code in this repository, not the Golf Clash assets it references.
+See [LICENSE](LICENSE).
