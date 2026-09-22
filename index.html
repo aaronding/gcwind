@@ -1,233 +1,281 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Golf Clash Wind Calculator</title>
-  <meta name="description" content="Free Golf Clash wind calculator tool. Calculate wind rings for all clubs with power ball, elevation, and distance adjustments. Perfect for Golf Clash players. Alternative to windchum.com">
-  <meta name="keywords" content="golf clash, wind calculator, windchum.com, windchum, golf clash wind, wind rings, golf clash calculator, golf clash tool, gcwind">
-  <meta name="author" content="gcwind.webthinking.io">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Golf Clash Wind Calculator</title>
+    <meta
+      name="description"
+      content="Free Golf Clash wind calculator tool. Calculate wind rings for all clubs with power ball, elevation, and distance adjustments. Perfect for Golf Clash players. Alternative to windchum.com"
+    />
+    <meta
+      name="keywords"
+      content="golf clash, wind calculator, windchum.com, windchum, golf clash wind, wind rings, golf clash calculator, golf clash tool, gcwind"
+    />
+    <meta name="author" content="gcwind.webthinking.io" />
 
-  <!-- Open Graph / Facebook -->
-  <meta property="og:type" content="website">
-  <meta property="og:title" content="Golf Clash Wind Calculator - gcwind.webthinking.io">
-  <meta property="og:description" content="Free Golf Clash wind calculator tool. Calculate wind rings for all clubs with power ball, elevation, and distance adjustments. Alternative to windchum.com">
-  <meta property="og:site_name" content="gcwind.webthinking.io">
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Golf Clash Wind Calculator - gcwind.webthinking.io" />
+    <meta
+      property="og:description"
+      content="Free Golf Clash wind calculator tool. Calculate wind rings for all clubs with power ball, elevation, and distance adjustments. Alternative to windchum.com"
+    />
+    <meta property="og:site_name" content="gcwind.webthinking.io" />
 
-  <!-- Twitter -->
-  <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="Golf Clash Wind Calculator - gcwind.webthinking.io">
-  <meta name="twitter:description" content="Free Golf Clash wind calculator tool. Calculate wind rings for all clubs. Alternative to windchum.com">
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Golf Clash Wind Calculator - gcwind.webthinking.io" />
+    <meta
+      name="twitter:description"
+      content="Free Golf Clash wind calculator tool. Calculate wind rings for all clubs. Alternative to windchum.com"
+    />
 
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⛳</text></svg>">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.15.0/cdn/themes/light.css"
-        media="(prefers-color-scheme: light)"/>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.15.0/cdn/themes/dark.css"
-        media="(prefers-color-scheme: dark)"/>
-  <link rel="stylesheet" href="styles.css"/>
-  <script type="module"
-          src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.15.0/cdn/shoelace-autoloader.js"></script>
-</head>
-<body>
-<div class="container">
-  <h1>⛳ Wind Calculator</h1>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⛳</text></svg>"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.15.0/cdn/themes/light.css"
+      media="(prefers-color-scheme: light)"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.15.0/cdn/themes/dark.css"
+      media="(prefers-color-scheme: dark)"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <script
+      type="module"
+      src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.15.0/cdn/shoelace-autoloader.js"
+    ></script>
+  </head>
+  <body>
+    <div class="container">
+      <h1>⛳ Wind Calculator</h1>
 
-  <sl-tab-group id="clubTypeTabGroup">
-    <sl-tab slot="nav" panel="drivers">Driver</sl-tab>
-    <sl-tab slot="nav" panel="woods">Wood</sl-tab>
-    <sl-tab slot="nav" panel="longirons">Long</sl-tab>
-    <sl-tab slot="nav" panel="shortirons">Short</sl-tab>
-    <sl-tab slot="nav" panel="wedges">Wedge</sl-tab>
-    <sl-tab slot="nav" panel="roughirons">Rough</sl-tab>
-    <sl-tab slot="nav" panel="sandwedges">Sand</sl-tab>
+      <sl-tab-group id="clubTypeTabGroup">
+        <sl-tab slot="nav" panel="drivers">Driver</sl-tab>
+        <sl-tab slot="nav" panel="woods">Wood</sl-tab>
+        <sl-tab slot="nav" panel="longirons">Long</sl-tab>
+        <sl-tab slot="nav" panel="shortirons">Short</sl-tab>
+        <sl-tab slot="nav" panel="wedges">Wedge</sl-tab>
+        <sl-tab slot="nav" panel="roughirons">Rough</sl-tab>
+        <sl-tab slot="nav" panel="sandwedges">Sand</sl-tab>
 
-    <sl-tab-panel name="drivers">
-      <div class="form-group">
-        <label>Club</label>
-        <div id="clubButtons-drivers"></div>
-      </div>
-      <div class="form-group">
-        <label>Level</label>
-        <div id="levelButtons-drivers"></div>
-      </div>
-    </sl-tab-panel>
+        <sl-tab-panel name="drivers">
+          <div class="form-group">
+            <label>Club</label>
+            <div id="clubButtons-drivers"></div>
+          </div>
+          <div class="form-group">
+            <label>Level</label>
+            <div id="levelButtons-drivers"></div>
+          </div>
+        </sl-tab-panel>
 
-    <sl-tab-panel name="woods">
-      <div class="form-group">
-        <label>Club</label>
-        <div id="clubButtons-woods"></div>
-      </div>
-      <div class="form-group">
-        <label>Level</label>
-        <div id="levelButtons-woods"></div>
-      </div>
-    </sl-tab-panel>
+        <sl-tab-panel name="woods">
+          <div class="form-group">
+            <label>Club</label>
+            <div id="clubButtons-woods"></div>
+          </div>
+          <div class="form-group">
+            <label>Level</label>
+            <div id="levelButtons-woods"></div>
+          </div>
+        </sl-tab-panel>
 
-    <sl-tab-panel name="longirons">
-      <div class="form-group">
-        <label>Club</label>
-        <div id="clubButtons-longirons"></div>
-      </div>
-      <div class="form-group">
-        <label>Level</label>
-        <div id="levelButtons-longirons"></div>
-      </div>
-    </sl-tab-panel>
+        <sl-tab-panel name="longirons">
+          <div class="form-group">
+            <label>Club</label>
+            <div id="clubButtons-longirons"></div>
+          </div>
+          <div class="form-group">
+            <label>Level</label>
+            <div id="levelButtons-longirons"></div>
+          </div>
+        </sl-tab-panel>
 
-    <sl-tab-panel name="shortirons">
-      <div class="form-group">
-        <label>Club</label>
-        <div id="clubButtons-shortirons"></div>
-      </div>
-      <div class="form-group">
-        <label>Level</label>
-        <div id="levelButtons-shortirons"></div>
-      </div>
-    </sl-tab-panel>
+        <sl-tab-panel name="shortirons">
+          <div class="form-group">
+            <label>Club</label>
+            <div id="clubButtons-shortirons"></div>
+          </div>
+          <div class="form-group">
+            <label>Level</label>
+            <div id="levelButtons-shortirons"></div>
+          </div>
+        </sl-tab-panel>
 
-    <sl-tab-panel name="wedges">
-      <div class="form-group">
-        <label>Club</label>
-        <div id="clubButtons-wedges"></div>
-      </div>
-      <div class="form-group">
-        <label>Level</label>
-        <div id="levelButtons-wedges"></div>
-      </div>
-    </sl-tab-panel>
+        <sl-tab-panel name="wedges">
+          <div class="form-group">
+            <label>Club</label>
+            <div id="clubButtons-wedges"></div>
+          </div>
+          <div class="form-group">
+            <label>Level</label>
+            <div id="levelButtons-wedges"></div>
+          </div>
+        </sl-tab-panel>
 
-    <sl-tab-panel name="roughirons">
-      <div class="form-group">
-        <label>Club</label>
-        <div id="clubButtons-roughirons"></div>
-      </div>
-      <div class="form-group">
-        <label>Level</label>
-        <div id="levelButtons-roughirons"></div>
-      </div>
-    </sl-tab-panel>
+        <sl-tab-panel name="roughirons">
+          <div class="form-group">
+            <label>Club</label>
+            <div id="clubButtons-roughirons"></div>
+          </div>
+          <div class="form-group">
+            <label>Level</label>
+            <div id="levelButtons-roughirons"></div>
+          </div>
+        </sl-tab-panel>
 
-    <sl-tab-panel name="sandwedges">
-      <div class="form-group">
-        <label>Club</label>
-        <div id="clubButtons-sandwedges"></div>
-      </div>
-      <div class="form-group">
-        <label>Level</label>
-        <div id="levelButtons-sandwedges"></div>
-      </div>
-    </sl-tab-panel>
-  </sl-tab-group>
+        <sl-tab-panel name="sandwedges">
+          <div class="form-group">
+            <label>Club</label>
+            <div id="clubButtons-sandwedges"></div>
+          </div>
+          <div class="form-group">
+            <label>Level</label>
+            <div id="levelButtons-sandwedges"></div>
+          </div>
+        </sl-tab-panel>
+      </sl-tab-group>
 
-  <sl-divider></sl-divider>
+      <sl-divider></sl-divider>
 
-  <div class="controls-container">
-    <div class="wind-input-section">
-      <div class="wind-input-wrapper">
-        <label for="windSpeed" class="wind-speed-label">Wind Speed</label>
-        <input type="number" id="windSpeed" class="wind-input-large" value="10.0" min="0.1" max="25" step="0.1"
-               placeholder="Wind">
-        <button id="clearWindSpeed" class="clear-wind-button" title="Clear">&times;</button>
-        <div class="wind-controls">
-          <button id="decreaseWind" class="wind-control-btn" title="Decrease">−</button>
-          <button id="increaseWind" class="wind-control-btn" title="Increase">+</button>
+      <div class="controls-container">
+        <div class="wind-input-section">
+          <div class="wind-input-wrapper">
+            <label for="windSpeed" class="wind-speed-label">Wind Speed</label>
+            <input
+              type="number"
+              id="windSpeed"
+              class="wind-input-large"
+              value="10.0"
+              min="0.1"
+              max="25"
+              step="0.1"
+              placeholder="Wind"
+            />
+            <button id="clearWindSpeed" class="clear-wind-button" title="Clear">&times;</button>
+            <div class="wind-controls">
+              <button id="decreaseWind" class="wind-control-btn" title="Decrease">−</button>
+              <button id="increaseWind" class="wind-control-btn" title="Increase">+</button>
+            </div>
+          </div>
         </div>
+
+        <div class="settings-column">
+          <div class="form-group">
+            <div class="distance-header">
+              <label for="powerLevel">Distance</label>
+              <sl-range id="powerLevel" min="0" max="100" value="100" step="1"></sl-range>
+              <div class="slider-value" id="powerLevelValue">100%</div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <div class="distance-header">
+              <label for="powerBall">Power Ball</label>
+              <div id="powerBallPresetButtons"></div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <div class="distance-header">
+              <label for="elevation">Elevation</label>
+              <div id="elevationPresetButtons"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="result-container">
+        <div class="result-number" id="result">-</div>
+        <div class="extra-results">
+          <div class="extra-result-item">
+            <span class="extra-label">Max</span>
+            <span class="extra-value" id="resultMax">-</span>
+          </div>
+          <div class="extra-result-item">
+            <span class="extra-label">Mid</span>
+            <span class="extra-value" id="resultMid">-</span>
+          </div>
+          <div class="extra-result-item">
+            <span class="extra-label">Min</span>
+            <span class="extra-value" id="resultMin">-</span>
+          </div>
+        </div>
+        <div class="result-details" id="resultDetails">
+          <div class="detail-item club-level-item">
+            <img
+              id="selectedClubImage"
+              class="selected-club-image"
+              src=""
+              alt=""
+              style="display: none"
+            />
+            <span id="selectedClubLevel">-</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Power Ball:</span>
+            <span id="selectedPowerBall">0</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Elevation:</span>
+            <span id="selectedElevation">0%</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Distance:</span>
+            <span id="selectedPowerLevel">100%</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="useful-links-section">
+        <h2>Useful Resources</h2>
+        <div class="links-container">
+          <a
+            href="https://golfclashnotebook.io"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="resource-link"
+          >
+            <span class="link-icon">📓</span>
+            <span class="link-text">Golf Clash Notebook</span>
+          </a>
+          <a
+            href="https://golfclashtommy.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="resource-link"
+          >
+            <span class="link-icon">⛳</span>
+            <span class="link-text">Golf Clash Tommy</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="feedback-section">
+        <sl-button id="feedbackButton" variant="default" size="medium">
+          💬 Share Feedback
+        </sl-button>
       </div>
     </div>
 
-    <div class="settings-column">
-      <div class="form-group">
-        <div class="distance-header">
-          <label for="powerLevel">Distance</label>
-          <sl-range id="powerLevel" min="0" max="100" value="100" step="1"></sl-range>
-          <div class="slider-value" id="powerLevelValue">100%</div>
-        </div>
+    <sl-dialog id="feedbackDialog" label="Feedback">
+      <div class="feedback-form-container">
+        <iframe
+          src="https://docs.google.com/forms/d/e/1FAIpQLSd11Q3XrrcepBKiVpuVaU9ErwumYj3MMg79_UE9KJcbV2zsgA/viewform?embedded=true"
+          width="640"
+          height="617"
+          >Loading…</iframe
+        >
       </div>
+      <sl-button slot="footer" variant="primary" id="closeDialogButton">Close</sl-button>
+    </sl-dialog>
 
-      <div class="form-group">
-        <div class="distance-header">
-          <label for="powerBall">Power Ball</label>
-          <div id="powerBallPresetButtons"></div>
-        </div>
-      </div>
-
-      <div class="form-group">
-        <div class="distance-header">
-          <label for="elevation">Elevation</label>
-          <div id="elevationPresetButtons"></div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="result-container">
-      <div class="result-number" id="result">-</div>
-      <div class="extra-results">
-        <div class="extra-result-item">
-          <span class="extra-label">Max</span>
-          <span class="extra-value" id="resultMax">-</span>
-        </div>
-        <div class="extra-result-item">
-          <span class="extra-label">Mid</span>
-          <span class="extra-value" id="resultMid">-</span>
-        </div>
-        <div class="extra-result-item">
-          <span class="extra-label">Min</span>
-          <span class="extra-value" id="resultMin">-</span>
-        </div>
-      </div>
-      <div class="result-details" id="resultDetails">
-        <div class="detail-item club-level-item">
-          <img id="selectedClubImage" class="selected-club-image" src="" alt="" style="display: none;">
-          <span id="selectedClubLevel">-</span>
-        </div>
-        <div class="detail-item">
-          <span class="detail-label">Power Ball:</span>
-          <span id="selectedPowerBall">0</span>
-        </div>
-        <div class="detail-item">
-          <span class="detail-label">Elevation:</span>
-          <span id="selectedElevation">0%</span>
-        </div>
-        <div class="detail-item">
-          <span class="detail-label">Distance:</span>
-          <span id="selectedPowerLevel">100%</span>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="useful-links-section">
-    <h2>Useful Resources</h2>
-    <div class="links-container">
-      <a href="https://golfclashnotebook.io" target="_blank" rel="noopener noreferrer" class="resource-link">
-        <span class="link-icon">📓</span>
-        <span class="link-text">Golf Clash Notebook</span>
-      </a>
-      <a href="https://golfclashtommy.com" target="_blank" rel="noopener noreferrer" class="resource-link">
-        <span class="link-icon">⛳</span>
-        <span class="link-text">Golf Clash Tommy</span>
-      </a>
-    </div>
-  </div>
-
-  <div class="feedback-section">
-    <sl-button id="feedbackButton" variant="default" size="medium">
-      💬 Share Feedback
-    </sl-button>
-  </div>
-</div>
-
-<sl-dialog id="feedbackDialog" label="Feedback">
-  <div class="feedback-form-container">
-    <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSd11Q3XrrcepBKiVpuVaU9ErwumYj3MMg79_UE9KJcbV2zsgA/viewform?embedded=true"
-            width="640"
-            height="617">Loading…</iframe>
-  </div>
-  <sl-button slot="footer" variant="primary" id="closeDialogButton">Close</sl-button>
-</sl-dialog>
-
-<script src="scripts/windCalculator.js"></script>
-<script src="scripts/app.js"></script>
-</body>
+    <script type="module" src="scripts/app.js"></script>
+  </body>
 </html>

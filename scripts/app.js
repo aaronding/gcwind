@@ -1,9 +1,7 @@
-// Initialize calculator
-const calculator = new WindCalculator();
+import { WindCalculator } from './windCalculator.js';
 
-// Constants
-const DISTANCE_TOLERANCE = 0.01; // Tolerance for matching distance preset values
-const DRAG_THRESHOLD = 0.02; // Minimum movement to consider as drag vs click
+// Assigned by init() once club data has loaded.
+let calculator;
 
 // State
 let selectedClubType = 'drivers';
@@ -49,14 +47,22 @@ let currentElevation = 10; // Default value
 
 // Create button groups for each club type
 function populateClubButtons() {
-  const clubTypes = ['drivers', 'woods', 'longirons', 'shortirons', 'wedges', 'roughirons', 'sandwedges'];
+  const clubTypes = [
+    'drivers',
+    'woods',
+    'longirons',
+    'shortirons',
+    'wedges',
+    'roughirons',
+    'sandwedges'
+  ];
 
-  clubTypes.forEach(clubType => {
+  clubTypes.forEach((clubType) => {
     const container = document.getElementById(`clubButtons-${clubType}`);
     const buttonGroup = document.createElement('sl-button-group');
     const clubs = calculator.clubData[clubType] || [];
 
-    clubs.forEach((club, index) => {
+    clubs.forEach((club) => {
       const button = document.createElement('sl-button');
 
       // Create image element instead of text
@@ -106,7 +112,7 @@ function selectClub(clubType, clubName, clubRarity, buttonGroup) {
 
   // Update button states
   const buttons = buttonGroup.querySelectorAll('sl-button');
-  buttons.forEach(btn => {
+  buttons.forEach((btn) => {
     if (btn.getAttribute('data-club-name') === clubName) {
       btn.variant = 'primary';
     } else {
@@ -174,7 +180,7 @@ function selectLevel(level, buttonGroup) {
 
   // Update button states
   const buttons = buttonGroup.querySelectorAll('sl-button');
-  buttons.forEach(btn => {
+  buttons.forEach((btn) => {
     if (parseInt(btn.getAttribute('data-level')) === level) {
       btn.variant = 'primary';
     } else {
@@ -186,7 +192,7 @@ function selectLevel(level, buttonGroup) {
 }
 
 // Handle tab changes
-clubTypeTabGroup.addEventListener('sl-tab-show', (event) => {
+function handleTabShow(event) {
   selectedClubType = event.detail.name;
   const clubs = calculator.clubData[selectedClubType] || [];
 
@@ -205,21 +211,21 @@ clubTypeTabGroup.addEventListener('sl-tab-show', (event) => {
       selectClub(selectedClubType, clubs[0].name, clubs[0].type, buttonGroup);
     }
   }
-});
+}
 
 // Preset elevation values
 const elevationPresets = [
-  {value: 0, label: '0'},
-  {value: 10, label: '10%'},
-  {value: 20, label: '20%'},
-  {value: 30, label: '30%'}
+  { value: 0, label: '0' },
+  { value: 10, label: '10%' },
+  { value: 20, label: '20%' },
+  { value: 30, label: '30%' }
 ];
 
 // Preset power ball values
 const powerBallPresets = [
-  {value: 2, label: '2'},
-  {value: 6, label: '6'},
-  {value: 10, label: '10'}
+  { value: 2, label: '2' },
+  { value: 6, label: '6' },
+  { value: 10, label: '10' }
 ];
 
 // Cached button references for performance
@@ -254,31 +260,34 @@ function createPresetButtonsWithMenu(config) {
   const container = document.getElementById(containerId);
   const buttonGroup = document.createElement('sl-button-group');
 
+  const select = (value) => {
+    currentValue = value;
+    updateStates();
+    onChange(value);
+  };
+
   // Create preset/shortcut buttons
-  shortcuts.forEach(value => {
+  shortcuts.forEach((value) => {
     const button = document.createElement('sl-button');
     button.textContent = formatLabel(value);
     button.size = 'small';
     button.setAttribute('data-value', value);
-
-    button.addEventListener('click', () => {
-      currentValue = value;
-      updateStates();
-      onChange(value);
-    });
+    button.addEventListener('click', () => select(value));
 
     buttonGroup.appendChild(button);
   });
 
-  // Create dropdown menu for non-shortcut values
-  const nonShortcutValues = allValues.filter(v => !shortcuts.includes(v));
+  // Create dropdown menu for the values that don't get their own button
+  const nonShortcutValues = allValues.filter((v) => !shortcuts.includes(v));
+  let dropdown = null;
+  let menuButton = null;
 
   if (nonShortcutValues.length > 0) {
-    const dropdown = document.createElement('sl-dropdown');
+    dropdown = document.createElement('sl-dropdown');
     dropdown.setAttribute('hoist', '');
     dropdown.className = className;
 
-    const menuButton = document.createElement('sl-button');
+    menuButton = document.createElement('sl-button');
     menuButton.setAttribute('slot', 'trigger');
     menuButton.size = 'small';
     menuButton.setAttribute('caret', '');
@@ -287,16 +296,11 @@ function createPresetButtonsWithMenu(config) {
 
     const menu = document.createElement('sl-menu');
 
-    nonShortcutValues.forEach(value => {
+    nonShortcutValues.forEach((value) => {
       const menuItem = document.createElement('sl-menu-item');
       menuItem.textContent = formatLabel(value);
       menuItem.setAttribute('data-value', value);
-
-      menuItem.addEventListener('click', () => {
-        currentValue = value;
-        updateStates();
-        onChange(value);
-      });
+      menuItem.addEventListener('click', () => select(value));
 
       menu.appendChild(menuItem);
     });
@@ -317,74 +321,46 @@ function createPresetButtonsWithMenu(config) {
         dropdown.open = false;
       }
     });
-
-    container.appendChild(buttonGroup);
-
-    // Cache elements
-    const presetButtons = buttonGroup.querySelectorAll(`sl-button:not(.${className}-menu-button)`);
-
-    // Update button and menu states
-    function updateStates() {
-      // Update preset button states
-      presetButtons.forEach(btn => {
-        const btnValue = parseFloat(btn.getAttribute('data-value'));
-        if (btnValue === currentValue) {
-          btn.variant = 'primary';
-        } else {
-          btn.variant = 'default';
-        }
-      });
-
-      // Update menu button label
-      const isShortcut = shortcuts.includes(currentValue);
-      if (isShortcut) {
-        menuButton.textContent = '- ';
-        menuButton.variant = 'default';
-      } else {
-        menuButton.textContent = formatLabel(currentValue) + ' ';
-        menuButton.variant = 'primary';
-      }
-    }
-
-    return {
-      buttons: presetButtons,
-      menuButton: menuButton,
-      dropdown: dropdown,
-      updateStates: updateStates,
-      setValue: (value) => {
-        currentValue = value;
-        updateStates();
-      },
-      getValue: () => currentValue
-    };
-  } else {
-    // No dropdown needed, only preset buttons
-    container.appendChild(buttonGroup);
-    const presetButtons = buttonGroup.querySelectorAll('sl-button');
-
-    function updateStates() {
-      presetButtons.forEach(btn => {
-        const btnValue = parseFloat(btn.getAttribute('data-value'));
-        if (btnValue === currentValue) {
-          btn.variant = 'primary';
-        } else {
-          btn.variant = 'default';
-        }
-      });
-    }
-
-    return {
-      buttons: presetButtons,
-      menuButton: null,
-      dropdown: null,
-      updateStates: updateStates,
-      setValue: (value) => {
-        currentValue = value;
-        updateStates();
-      },
-      getValue: () => currentValue
-    };
   }
+
+  container.appendChild(buttonGroup);
+
+  const presetButtons = menuButton
+    ? buttonGroup.querySelectorAll(`sl-button:not(.${className}-menu-button)`)
+    : buttonGroup.querySelectorAll('sl-button');
+
+  // Highlight whichever preset matches the current value; when the value only
+  // exists in the dropdown, label the menu button with it instead.
+  function updateStates() {
+    presetButtons.forEach((btn) => {
+      const btnValue = parseFloat(btn.getAttribute('data-value'));
+      btn.variant = btnValue === currentValue ? 'primary' : 'default';
+    });
+
+    if (!menuButton) {
+      return;
+    }
+
+    if (shortcuts.includes(currentValue)) {
+      menuButton.textContent = '- ';
+      menuButton.variant = 'default';
+    } else {
+      menuButton.textContent = formatLabel(currentValue) + ' ';
+      menuButton.variant = 'primary';
+    }
+  }
+
+  return {
+    buttons: presetButtons,
+    menuButton,
+    dropdown,
+    updateStates,
+    setValue: (value) => {
+      currentValue = value;
+      updateStates();
+    },
+    getValue: () => currentValue
+  };
 }
 
 // Create elevation preset buttons with dropdown menu
@@ -396,14 +372,14 @@ function createElevationPresetButtons() {
   }
 
   // Extract shortcut values from presets
-  const elevationShortcuts = elevationPresets.map(p => p.value);
+  const elevationShortcuts = elevationPresets.map((p) => p.value);
 
   elevationControl = createPresetButtonsWithMenu({
     containerId: 'elevationPresetButtons',
     allValues: allElevationValues,
     shortcuts: elevationShortcuts,
     defaultValue: currentElevation,
-    formatLabel: (value) => value > 0 ? `${value}%` : value === 0 ? '0' : `${value}%`,
+    formatLabel: (value) => (value > 0 ? `${value}%` : value === 0 ? '0' : `${value}%`),
     onChange: (value) => {
       currentElevation = value;
       calculate();
@@ -421,7 +397,7 @@ function createPowerBallPresetButtons() {
   }
 
   // Extract shortcut values from presets
-  const powerBallShortcuts = powerBallPresets.map(p => p.value);
+  const powerBallShortcuts = powerBallPresets.map((p) => p.value);
 
   powerBallControl = createPresetButtonsWithMenu({
     containerId: 'powerBallPresetButtons',
@@ -457,11 +433,6 @@ function updatePowerBall() {
     powerBallControl.setValue(currentPowerBall);
   }
 }
-
-// Handle slider interaction (Shoelace range uses sl-input and sl-change events)
-powerLevelSlider.addEventListener('sl-input', () => {
-  updatePowerLevel();
-});
 
 // Calculate wind rings
 function calculate() {
@@ -576,52 +547,55 @@ function handleWindSpeedInput() {
   calculate();
 }
 
-// Clear wind speed button
-const clearWindSpeedButton = document.getElementById('clearWindSpeed');
-clearWindSpeedButton.addEventListener('click', () => {
-  windSpeedInput.value = '';
-  windSpeedInput.focus();
-  resultDiv.textContent = '-';
-});
+// Wire up DOM listeners. Called from init() after club data is available, so no
+// handler can ever run against an unloaded calculator.
+function attachEventListeners() {
+  clubTypeTabGroup.addEventListener('sl-tab-show', handleTabShow);
+  powerLevelSlider.addEventListener('sl-input', updatePowerLevel);
+  windSpeedInput.addEventListener('input', handleWindSpeedInput);
 
-// Wind speed increase/decrease buttons
-const increaseWindButton = document.getElementById('increaseWind');
-const decreaseWindButton = document.getElementById('decreaseWind');
+  document.getElementById('clearWindSpeed').addEventListener('click', () => {
+    windSpeedInput.value = '';
+    windSpeedInput.focus();
+    resultDiv.textContent = '-';
+  });
 
-increaseWindButton.addEventListener('click', () => {
-  let currentValue = parseFloat(windSpeedInput.value) || 0;
-  currentValue = Math.min(currentValue + 0.1, 25);
-  windSpeedInput.value = Math.round(currentValue * 10) / 10;
-  handleWindSpeedInput();
-});
+  document.getElementById('increaseWind').addEventListener('click', () => {
+    const value = Math.min((parseFloat(windSpeedInput.value) || 0) + 0.1, 25);
+    windSpeedInput.value = Math.round(value * 10) / 10;
+    handleWindSpeedInput();
+  });
 
-decreaseWindButton.addEventListener('click', () => {
-  let currentValue = parseFloat(windSpeedInput.value) || 0;
-  currentValue = Math.max(currentValue - 0.1, 0.1);
-  windSpeedInput.value = Math.round(currentValue * 10) / 10;
-  handleWindSpeedInput();
-});
+  document.getElementById('decreaseWind').addEventListener('click', () => {
+    const value = Math.max((parseFloat(windSpeedInput.value) || 0) - 0.1, 0.1);
+    windSpeedInput.value = Math.round(value * 10) / 10;
+    handleWindSpeedInput();
+  });
 
-// Event listeners
-windSpeedInput.addEventListener('input', handleWindSpeedInput);
+  const feedbackDialog = document.getElementById('feedbackDialog');
+  document.getElementById('feedbackButton').addEventListener('click', () => feedbackDialog.show());
+  document
+    .getElementById('closeDialogButton')
+    .addEventListener('click', () => feedbackDialog.hide());
+}
 
-// Initialize
-populateClubButtons();
-createElevationPresetButtons();
-createPowerBallPresetButtons();
-updatePowerLevel();
-updateElevation();
-updatePowerBall();
+// Load club data, build the UI, then start listening for input.
+async function init() {
+  try {
+    calculator = await WindCalculator.load();
+  } catch (error) {
+    console.error('Could not load club data', error);
+    resultDiv.textContent = '!';
+    return;
+  }
 
-// Feedback dialog
-const feedbackDialog = document.getElementById('feedbackDialog');
-const feedbackButton = document.getElementById('feedbackButton');
-const closeDialogButton = document.getElementById('closeDialogButton');
+  populateClubButtons();
+  createElevationPresetButtons();
+  createPowerBallPresetButtons();
+  updatePowerLevel();
+  updateElevation();
+  updatePowerBall();
+  attachEventListeners();
+}
 
-feedbackButton.addEventListener('click', () => {
-  feedbackDialog.show();
-});
-
-closeDialogButton.addEventListener('click', () => {
-  feedbackDialog.hide();
-});
+init();
