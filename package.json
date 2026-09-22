@@ -1,0 +1,27 @@
+{
+  "name": "wind-tool",
+  "version": "1.0.0",
+  "description": "Golf Clash wind ring calculator",
+  "homepage": "https://gcwind.webthinking.io",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aaronding/wind-tool.git"
+  },
+  "license": "MIT",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "python3 -m http.server 8000",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "validate": "node tools/validate-clubs.js"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.17.0",
+    "eslint": "^9.17.0",
+    "globals": "^15.14.0",
+    "prettier": "^3.4.2"
+  }
+}

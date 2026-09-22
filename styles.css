@@ -60,7 +60,8 @@ label {
   color: var(--text-secondary);
 }
 
-select, input {
+select,
+input {
   width: 100%;
   padding: 10px;
   border: 2px solid var(--border-color);
@@ -71,7 +72,8 @@ select, input {
   color: var(--text-primary);
 }
 
-select:focus, input:focus {
+select:focus,
+input:focus {
   outline: none;
   border-color: var(--accent-primary);
 }
@@ -293,7 +295,7 @@ select:focus, input:focus {
   margin: 0;
 }
 
-.wind-input-large[type=number] {
+.wind-input-large[type='number'] {
   -moz-appearance: textfield;
 }
 
@@ -427,7 +429,7 @@ sl-button-group sl-button::part(base) {
   padding: 8px 0;
 }
 
-sl-button[variant="primary"]::part(base) {
+sl-button[variant='primary']::part(base) {
   background-color: var(--accent-primary);
 }
 
@@ -531,7 +533,7 @@ sl-dialog::part(body) {
   padding: 8px;
 }
 
-.elevation-menu-button[variant="primary"]::part(base) {
+.elevation-menu-button[variant='primary']::part(base) {
   background-color: var(--accent-primary);
 }
 
@@ -546,7 +548,7 @@ sl-dialog::part(body) {
   padding: 8px;
 }
 
-.powerball-menu-button[variant="primary"]::part(base) {
+.powerball-menu-button[variant='primary']::part(base) {
   background-color: var(--accent-primary);
 }
 
@@ -566,7 +568,7 @@ sl-menu-item::part(base):hover {
   background-color: var(--slider-bg);
 }
 
-sl-menu-item[aria-selected="true"]::part(base) {
+sl-menu-item[aria-selected='true']::part(base) {
   background-color: var(--accent-primary);
   color: white;
 }
