@@ -1,11 +1,11 @@
 {
-  "name": "wind-tool",
+  "name": "gcwind",
   "version": "1.0.0",
   "description": "Golf Clash wind ring calculator",
   "homepage": "https://gcwind.webthinking.io",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/aaronding/wind-tool.git"
+    "url": "git+https://github.com/aaronding/gcwind.git"
   },
   "license": "MIT",
   "private": true,
