@@ -2,6 +2,7 @@
 // Run with `npm run validate`.
 
 import fs from 'node:fs';
+import path from 'node:path';
 import { WindCalculator } from '../scripts/windCalculator.js';
 
 const CLUB_TYPES = [
@@ -17,6 +18,8 @@ const CLUB_TYPES = [
 const data = JSON.parse(fs.readFileSync(new URL('../data/clubs.json', import.meta.url), 'utf8'));
 const calculator = new WindCalculator(data);
 const errors = [];
+const imagesDir = new URL('../images/', import.meta.url).pathname;
+const referenced = new Set();
 
 for (const type of CLUB_TYPES) {
   if (!Array.isArray(data[type])) {
@@ -43,6 +46,16 @@ for (const [type, clubs] of Object.entries(data)) {
       }
     }
 
+    // A renamed or missing asset should fail here, not 404 in the browser.
+    if (club.image) {
+      const imagePath = path.join(imagesDir, club.image);
+      if (!fs.existsSync(imagePath)) {
+        errors.push(`${where}: image not found at images/${club.image}`);
+      } else {
+        referenced.add(path.resolve(imagePath));
+      }
+    }
+
     if (!Array.isArray(club.power) || club.power.length === 0) {
       errors.push(`${where}: missing power values`);
       continue;
@@ -66,6 +79,21 @@ for (const [type, clubs] of Object.entries(data)) {
     }
 
     clubCount++;
+  }
+}
+
+// Flag art that nothing points at, so stale files don't pile up. Only WebP is
+// checked: the PNGs are the sources that `npm run images` encodes from.
+const onDisk = fs
+  .readdirSync(path.join(imagesDir, 'clubs'))
+  .filter((name) => /\.webp$/i.test(name))
+  .map((name) => path.resolve(imagesDir, 'clubs', name));
+const orphans = onDisk.filter((file) => !referenced.has(file));
+
+if (orphans.length > 0) {
+  console.warn(`warning: ${orphans.length} image(s) not referenced by any club:`);
+  for (const file of orphans) {
+    console.warn(`  - images/clubs/${path.basename(file)}`);
   }
 }
 
