@@ -11,6 +11,11 @@ jobs:
     name: Lint, format and validate
     runs-on: ubuntu-latest
 
+    # A newer commit supersedes an in-flight check run.
+    concurrency:
+      group: check-${{ github.ref }}
+      cancel-in-progress: true
+
     steps:
       - uses: actions/checkout@v7
 
@@ -29,3 +34,50 @@ jobs:
 
       - name: Validate club data
         run: npm run validate
+
+  deploy:
+    name: Deploy to GitHub Pages
+    # Only publish what has already passed the checks above.
+    needs: check
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+
+    # Queue deploys rather than cancelling: interrupting a publish can leave
+    # the live site half-updated.
+    concurrency:
+      group: pages
+      cancel-in-progress: false
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/configure-pages@v6
+
+      # Publish an explicit allowlist, taken from tracked content via
+      # git archive so no untracked or ignored file can ever ship.
+      # When the Svelte port lands, this becomes a build step writing to _site.
+      - name: Assemble site
+        run: |
+          mkdir -p _site
+          git archive HEAD index.html styles.css scripts data images | tar -x -C _site
+          touch _site/.nojekyll
+          echo "published files:"
+          find _site -type f -not -path '*/images/*' | sort
+          echo "images: $(find _site/images -type f | wc -l) files"
+          echo "total: $(find _site -type f | wc -l) files, $(du -sh _site | cut -f1)"
+
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: _site
+
+      - id: deployment
+        uses: actions/deploy-pages@v5
