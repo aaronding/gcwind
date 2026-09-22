@@ -29,7 +29,7 @@
         83,
         90
       ],
-      "image": "clubs/Rocket.png"
+      "image": "clubs/Rocket.webp"
     },
     {
       "name": "The Extra Mile",
@@ -58,7 +58,7 @@
         45,
         45
       ],
-      "image": "clubs/ExtraMile.png"
+      "image": "clubs/ExtraMile.webp"
     },
     {
       "name": "Big Topper",
@@ -85,7 +85,7 @@
         51,
         60
       ],
-      "image": "clubs/BigTopper.png"
+      "image": "clubs/BigTopper.webp"
     },
     {
       "name": "The Quarterback",
@@ -116,7 +116,7 @@
         100,
         100
       ],
-      "image": "clubs/Quarterback.png"
+      "image": "clubs/Quarterback.webp"
     },
     {
       "name": "The Rock",
@@ -145,7 +145,7 @@
         100,
         100
       ],
-      "image": "clubs/Rock.png"
+      "image": "clubs/Rock.webp"
     },
     {
       "name": "Thor's Hammer",
@@ -172,7 +172,7 @@
         92,
         100
       ],
-      "image": "clubs/ThorsHammer.png"
+      "image": "clubs/ThorsHammer.webp"
     },
     {
       "name": "The Apocalypse",
@@ -199,7 +199,7 @@
         84,
         90
       ],
-      "image": "clubs/Apocalypse.png"
+      "image": "clubs/Apocalypse.webp"
     }
   ],
   "woods": [
@@ -228,7 +228,7 @@
         45,
         65
       ],
-      "image": "clubs/Horizon.png"
+      "image": "clubs/Horizon.webp"
     },
     {
       "name": "The Viper",
@@ -259,7 +259,7 @@
         67,
         72
       ],
-      "image": "clubs/Viper.png"
+      "image": "clubs/Viper.webp"
     },
     {
       "name": "The Big Dawg",
@@ -288,7 +288,7 @@
         56,
         60
       ],
-      "image": "clubs/BigDawg.png"
+      "image": "clubs/BigDawg.webp"
     },
     {
       "name": "The Hammerhead",
@@ -315,7 +315,7 @@
         100,
         100
       ],
-      "image": "clubs/Hammerhead.png"
+      "image": "clubs/Hammerhead.webp"
     },
     {
       "name": "The Guardian",
@@ -344,7 +344,7 @@
         90,
         95
       ],
-      "image": "clubs/Guardian.png"
+      "image": "clubs/Guardian.webp"
     },
     {
       "name": "The Sniper",
@@ -375,7 +375,7 @@
         100,
         100
       ],
-      "image": "clubs/Sniper.png"
+      "image": "clubs/Sniper.webp"
     },
     {
       "name": "The Cataclysm",
@@ -402,7 +402,7 @@
         80,
         90
       ],
-      "image": "clubs/Cataclysm.png"
+      "image": "clubs/Cataclysm.webp"
     }
   ],
   "longirons": [
@@ -431,7 +431,7 @@
         81,
         90
       ],
-      "image": "clubs/GrimReaper.png"
+      "image": "clubs/GrimReaper.webp"
     },
     {
       "name": "The Backbone",
@@ -462,7 +462,7 @@
         82,
         92
       ],
-      "image": "clubs/Backbone.png"
+      "image": "clubs/Backbone.webp"
     },
     {
       "name": "The Goliath",
@@ -491,7 +491,7 @@
         52,
         55
       ],
-      "image": "clubs/Goliath.png"
+      "image": "clubs/Goliath.webp"
     },
     {
       "name": "The Saturn",
@@ -522,7 +522,7 @@
         56,
         56
       ],
-      "image": "clubs/Saturn.png"
+      "image": "clubs/Saturn.webp"
     },
     {
       "name": "The B52",
@@ -549,7 +549,7 @@
         100,
         100
       ],
-      "image": "clubs/B52.png"
+      "image": "clubs/B52.webp"
     },
     {
       "name": "The Grizzly",
@@ -578,7 +578,7 @@
         100,
         100
       ],
-      "image": "clubs/Grizzly.png"
+      "image": "clubs/Grizzly.webp"
     },
     {
       "name": "The Tsunami",
@@ -605,7 +605,7 @@
         81,
         92
       ],
-      "image": "clubs/Tsunami.png"
+      "image": "clubs/Tsunami.webp"
     }
   ],
   "shortirons": [
@@ -636,7 +636,7 @@
         32,
         55
       ],
-      "image": "clubs/Apache.png"
+      "image": "clubs/Apache.webp"
     },
     {
       "name": "The Kingfisher",
@@ -663,7 +663,7 @@
         94,
         100
       ],
-      "image": "clubs/Kingfisher.png"
+      "image": "clubs/Kingfisher.webp"
     },
     {
       "name": "The Runner",
@@ -694,7 +694,7 @@
         66,
         66
       ],
-      "image": "clubs/Runner.png"
+      "image": "clubs/Runner.webp"
     },
     {
       "name": "The Thorn",
@@ -723,7 +723,7 @@
         57,
         57
       ],
-      "image": "clubs/Thorn.png"
+      "image": "clubs/Thorn.webp"
     },
     {
       "name": "The Hornet",
@@ -752,7 +752,7 @@
         96,
         100
       ],
-      "image": "clubs/Hornet.png"
+      "image": "clubs/Hornet.webp"
     },
     {
       "name": "The Claw",
@@ -783,7 +783,7 @@
         66,
         75
       ],
-      "image": "clubs/Claw.png"
+      "image": "clubs/Claw.webp"
     },
     {
       "name": "The Falcon",
@@ -810,7 +810,7 @@
         80,
         95
       ],
-      "image": "clubs/Falcon.png"
+      "image": "clubs/Falcon.webp"
     }
   ],
   "wedges": [
@@ -843,7 +843,7 @@
         60,
         64
       ],
-      "image": "clubs/Dart.png"
+      "image": "clubs/Dart.webp"
     },
     {
       "name": "The Firefly",
@@ -870,7 +870,7 @@
         70,
         90
       ],
-      "image": "clubs/Firefly.png"
+      "image": "clubs/Firefly.webp"
     },
     {
       "name": "The Boomerang",
@@ -897,7 +897,7 @@
         86,
         98
       ],
-      "image": "clubs/Boomerang.png"
+      "image": "clubs/Boomerang.webp"
     },
     {
       "name": "The Down-In-One",
@@ -926,7 +926,7 @@
         100,
         100
       ],
-      "image": "clubs/DownInOne.png"
+      "image": "clubs/DownInOne.webp"
     },
     {
       "name": "The Skewer",
@@ -957,7 +957,7 @@
         58,
         71
       ],
-      "image": "clubs/Skewer.png"
+      "image": "clubs/Skewer.webp"
     },
     {
       "name": "The Endbringer",
@@ -984,7 +984,7 @@
         100,
         100
       ],
-      "image": "clubs/Endbringer.png"
+      "image": "clubs/Endbringer.webp"
     },
     {
       "name": "The Rapier",
@@ -1013,7 +1013,7 @@
         87,
         95
       ],
-      "image": "clubs/Rapier.png"
+      "image": "clubs/Rapier.webp"
     }
   ],
   "roughirons": [
@@ -1044,7 +1044,7 @@
         100,
         100
       ],
-      "image": "clubs/Roughcutter.png"
+      "image": "clubs/Roughcutter.webp"
     },
     {
       "name": "The Junglist",
@@ -1071,7 +1071,7 @@
         71,
         80
       ],
-      "image": "clubs/Junglist.png"
+      "image": "clubs/Junglist.webp"
     },
     {
       "name": "The Machete",
@@ -1102,7 +1102,7 @@
         94,
         94
       ],
-      "image": "clubs/Machete.png"
+      "image": "clubs/Machete.webp"
     },
     {
       "name": "The Off Roader",
@@ -1129,7 +1129,7 @@
         96,
         98
       ],
-      "image": "clubs/OffRoader.png"
+      "image": "clubs/OffRoader.webp"
     },
     {
       "name": "Razor",
@@ -1158,7 +1158,7 @@
         100,
         100
       ],
-      "image": "clubs/Razor.png"
+      "image": "clubs/Razor.webp"
     },
     {
       "name": "The Amazon",
@@ -1185,7 +1185,7 @@
         92,
         100
       ],
-      "image": "clubs/Amazon.png"
+      "image": "clubs/Amazon.webp"
     },
     {
       "name": "Nirvana",
@@ -1214,7 +1214,7 @@
         100,
         100
       ],
-      "image": "clubs/Nirvana.png"
+      "image": "clubs/Nirvana.webp"
     }
   ],
   "sandwedges": [
@@ -1243,7 +1243,7 @@
         66,
         68
       ],
-      "image": "clubs/Castaway.png"
+      "image": "clubs/Castaway.webp"
     },
     {
       "name": "The Desert Storm",
@@ -1274,7 +1274,7 @@
         54,
         54
       ],
-      "image": "clubs/DesertStorm.png"
+      "image": "clubs/DesertStorm.webp"
     },
     {
       "name": "The Malibu",
@@ -1303,7 +1303,7 @@
         100,
         100
       ],
-      "image": "clubs/Malibu.png"
+      "image": "clubs/Malibu.webp"
     },
     {
       "name": "The Sahara",
@@ -1330,7 +1330,7 @@
         57,
         75
       ],
-      "image": "clubs/Sahara.png"
+      "image": "clubs/Sahara.webp"
     },
     {
       "name": "The Sand Lizard",
@@ -1361,7 +1361,7 @@
         97,
         97
       ],
-      "image": "clubs/SandLizard.png"
+      "image": "clubs/SandLizard.webp"
     },
     {
       "name": "Houdini",
@@ -1390,7 +1390,7 @@
         79,
         90
       ],
-      "image": "clubs/Houdini.png"
+      "image": "clubs/Houdini.webp"
     },
     {
       "name": "Spitfire",
@@ -1417,7 +1417,7 @@
         100,
         100
       ],
-      "image": "clubs/Spitfire.png"
+      "image": "clubs/Spitfire.webp"
     }
   ]
 }
