@@ -21,7 +21,13 @@ export default [
     }
   },
   {
-    files: ['tools/**/*.js', 'tests/**/*.js', 'eslint.config.js', 'playwright.config.js'],
+    files: [
+      'tools/**/*.js',
+      'tests/**/*.js',
+      'eslint.config.js',
+      'playwright.config.js',
+      'vitest.config.js'
+    ],
     languageOptions: {
       globals: globals.node
     }
