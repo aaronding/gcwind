@@ -23,7 +23,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "fixtures": "node tools/generate-fixtures.js",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "test:e2e:prod": "BASE_URL=https://gcwind.webthinking.io playwright test"
   },
   "devDependencies": {
     "@eslint/js": "^9.17.0",
