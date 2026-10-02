@@ -1,0 +1,16 @@
+# Cache and security headers for the Cloudflare Worker.
+# Filenames are not content-hashed yet, so cache lifetimes stay conservative
+# for anything that changes. Once the Svelte build emits hashed assets, the
+# JS and CSS rules can become immutable with a one-year max-age.
+
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Cache-Control: public, max-age=300, must-revalidate
+
+# Club art effectively never changes, and a new club means a new filename.
+/images/clubs/*
+  Cache-Control: public, max-age=86400, stale-while-revalidate=604800
+
+/data/clubs.json
+  Cache-Control: public, max-age=3600, stale-while-revalidate=86400

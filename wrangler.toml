@@ -1,0 +1,11 @@
+# Serves the site as static assets from Cloudflare's edge. There is no Worker
+# script: an assets-only Worker needs nothing but the directory.
+#
+# _site is assembled by `npm run build:site`, which extracts tracked files via
+# git archive so nothing untracked can ship.
+
+name = "gcwind"
+compatibility_date = "2026-10-02"
+
+[assets]
+directory = "./_site"

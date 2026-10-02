@@ -34,3 +34,6 @@ build/
 
 # Logs
 *.log
+
+# Build output
+_site/
