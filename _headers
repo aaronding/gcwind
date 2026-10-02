@@ -1,11 +1,27 @@
 # Cache and security headers for the Cloudflare Worker.
-# Filenames are not content-hashed yet, so cache lifetimes stay conservative
-# for anything that changes. Once the Svelte build emits hashed assets, the
-# JS and CSS rules can become immutable with a one-year max-age.
+#
+# Rules are ADDITIVE: a path matching several blocks gets each block's headers
+# appended, not overridden. So Cache-Control must never appear in /* — a broad
+# value there concatenates with the specific one and, since browsers honour the
+# first directive, silently wins. Only non-conflicting headers belong in /*.
+#
+# Lifetimes stay conservative while filenames are unhashed. Once the Svelte
+# build emits hashed assets, scripts and styles can become immutable.
 
 /*
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin
+
+/
+  Cache-Control: public, max-age=300, must-revalidate
+
+/index.html
+  Cache-Control: public, max-age=300, must-revalidate
+
+/styles.css
+  Cache-Control: public, max-age=300, must-revalidate
+
+/scripts/*
   Cache-Control: public, max-age=300, must-revalidate
 
 # Club art effectively never changes, and a new club means a new filename.

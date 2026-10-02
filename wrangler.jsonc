@@ -1,0 +1,19 @@
+// The Worker behind gcwind.webthinking.io. It serves only static assets, so it
+// has no `main` script.
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "gcwind",
+  "compatibility_date": "2026-10-02",
+
+  // Assembled by `npm run build:site` from tracked files via git archive.
+  // Response headers for these files come from _headers.
+  "assets": {
+    "directory": "./_site"
+  },
+
+  // gcwind.webthinking.io is the only address. No *.workers.dev address and no
+  // preview URLs, so nothing outside ever depends on a Cloudflare one.
+  "routes": [{ "pattern": "gcwind.webthinking.io", "custom_domain": true }],
+  "workers_dev": false,
+  "preview_urls": false
+}
