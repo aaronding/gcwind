@@ -69,6 +69,17 @@ export class WindCalculator {
     return power / clubTypeMaxDistance;
   }
 
+  /**
+   * The bottom of a club type's usable power range, as a fraction of max.
+   *
+   * Wedges, rough irons and sand wedges return 0 because they can be feathered
+   * all the way down. The longer clubs cannot: below their floor the game makes
+   * you change club, so Min is the rings at the point you would switch rather
+   * than the weakest conceivable swing.
+   *
+   * The zeroes are therefore deliberate. They also pull Mid — the midpoint of
+   * [min, max] — down to half of Max for those three types.
+   */
   minPower(power, clubType) {
     switch (clubType) {
       case 'drivers':
