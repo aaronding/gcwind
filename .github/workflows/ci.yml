@@ -35,6 +35,9 @@ jobs:
       - name: Validate club data
         run: npm run validate
 
+      - name: Tests
+        run: npm test
+
   deploy-pages:
     name: Deploy to GitHub Pages (staging)
     # Only publish what has already passed the checks above.
