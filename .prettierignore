@@ -1,3 +1,7 @@
 node_modules/
 data/clubs.json
 images/
+
+# Local editor/agent config, never committed
+.claude/
+_site/

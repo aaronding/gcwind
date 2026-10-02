@@ -35,8 +35,8 @@ jobs:
       - name: Validate club data
         run: npm run validate
 
-  deploy:
-    name: Deploy to GitHub Pages
+  deploy-pages:
+    name: Deploy to GitHub Pages (staging)
     # Only publish what has already passed the checks above.
     needs: check
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
@@ -62,18 +62,8 @@ jobs:
 
       - uses: actions/configure-pages@v6
 
-      # Publish an explicit allowlist, taken from tracked content via
-      # git archive so no untracked or ignored file can ever ship.
-      # When the Svelte port lands, this becomes a build step writing to _site.
       - name: Assemble site
-        run: |
-          mkdir -p _site
-          git archive HEAD index.html styles.css scripts data images | tar -x -C _site
-          touch _site/.nojekyll
-          echo "published files:"
-          find _site -type f -not -path '*/images/*' | sort
-          echo "images: $(find _site/images -type f | wc -l) files"
-          echo "total: $(find _site -type f | wc -l) files, $(du -sh _site | cut -f1)"
+        run: bash tools/build-site.sh
 
       - uses: actions/upload-pages-artifact@v5
         with:
@@ -81,3 +71,49 @@ jobs:
 
       - id: deployment
         uses: actions/deploy-pages@v5
+
+  deploy-worker:
+    name: Deploy to Cloudflare Worker (production)
+    # Same gate as staging: only publish what passed the checks.
+    needs: check
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+
+    concurrency:
+      group: worker
+      cancel-in-progress: false
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+          cache: npm
+
+      - run: npm ci
+
+      - name: Assemble site
+        run: bash tools/build-site.sh
+
+      # Secrets are not readable in a job-level `if`, so the presence check
+      # happens here. Until the Cloudflare credentials exist the job reports
+      # what is missing and passes, rather than failing every push.
+      - id: creds
+        env:
+          TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          ACCOUNT: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          if [ -n "$TOKEN" ] && [ -n "$ACCOUNT" ]; then
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::Skipping deploy — set CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID repository secrets to enable it."
+          fi
+
+      - name: Deploy
+        if: steps.creds.outputs.ready == 'true'
+        uses: cloudflare/wrangler-action@v4
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
