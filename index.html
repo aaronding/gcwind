@@ -55,7 +55,7 @@
     <div class="container">
       <h1>⛳ Wind Calculator</h1>
 
-      <sl-tab-group id="clubTypeTabGroup">
+      <sl-tab-group id="clubTypeTabGroup" data-testid="club-tabs">
         <sl-tab slot="nav" panel="drivers">Driver</sl-tab>
         <sl-tab slot="nav" panel="woods">Wood</sl-tab>
         <sl-tab slot="nav" panel="longirons">Long</sl-tab>
@@ -67,77 +67,77 @@
         <sl-tab-panel name="drivers">
           <div class="form-group">
             <label>Club</label>
-            <div id="clubButtons-drivers"></div>
+            <div id="clubButtons-drivers" data-testid="club-list-drivers"></div>
           </div>
           <div class="form-group">
             <label>Level</label>
-            <div id="levelButtons-drivers"></div>
+            <div id="levelButtons-drivers" data-testid="level-list-drivers"></div>
           </div>
         </sl-tab-panel>
 
         <sl-tab-panel name="woods">
           <div class="form-group">
             <label>Club</label>
-            <div id="clubButtons-woods"></div>
+            <div id="clubButtons-woods" data-testid="club-list-woods"></div>
           </div>
           <div class="form-group">
             <label>Level</label>
-            <div id="levelButtons-woods"></div>
+            <div id="levelButtons-woods" data-testid="level-list-woods"></div>
           </div>
         </sl-tab-panel>
 
         <sl-tab-panel name="longirons">
           <div class="form-group">
             <label>Club</label>
-            <div id="clubButtons-longirons"></div>
+            <div id="clubButtons-longirons" data-testid="club-list-longirons"></div>
           </div>
           <div class="form-group">
             <label>Level</label>
-            <div id="levelButtons-longirons"></div>
+            <div id="levelButtons-longirons" data-testid="level-list-longirons"></div>
           </div>
         </sl-tab-panel>
 
         <sl-tab-panel name="shortirons">
           <div class="form-group">
             <label>Club</label>
-            <div id="clubButtons-shortirons"></div>
+            <div id="clubButtons-shortirons" data-testid="club-list-shortirons"></div>
           </div>
           <div class="form-group">
             <label>Level</label>
-            <div id="levelButtons-shortirons"></div>
+            <div id="levelButtons-shortirons" data-testid="level-list-shortirons"></div>
           </div>
         </sl-tab-panel>
 
         <sl-tab-panel name="wedges">
           <div class="form-group">
             <label>Club</label>
-            <div id="clubButtons-wedges"></div>
+            <div id="clubButtons-wedges" data-testid="club-list-wedges"></div>
           </div>
           <div class="form-group">
             <label>Level</label>
-            <div id="levelButtons-wedges"></div>
+            <div id="levelButtons-wedges" data-testid="level-list-wedges"></div>
           </div>
         </sl-tab-panel>
 
         <sl-tab-panel name="roughirons">
           <div class="form-group">
             <label>Club</label>
-            <div id="clubButtons-roughirons"></div>
+            <div id="clubButtons-roughirons" data-testid="club-list-roughirons"></div>
           </div>
           <div class="form-group">
             <label>Level</label>
-            <div id="levelButtons-roughirons"></div>
+            <div id="levelButtons-roughirons" data-testid="level-list-roughirons"></div>
           </div>
         </sl-tab-panel>
 
         <sl-tab-panel name="sandwedges">
           <div class="form-group">
             <label>Club</label>
-            <div id="clubButtons-sandwedges"></div>
+            <div id="clubButtons-sandwedges" data-testid="club-list-sandwedges"></div>
           </div>
           <div class="form-group">
             <label>Level</label>
-            <div id="levelButtons-sandwedges"></div>
+            <div id="levelButtons-sandwedges" data-testid="level-list-sandwedges"></div>
           </div>
         </sl-tab-panel>
       </sl-tab-group>
@@ -151,6 +151,7 @@
             <input
               type="number"
               id="windSpeed"
+              data-testid="wind-input"
               class="wind-input-large"
               value="10.0"
               min="0.1"
@@ -158,10 +159,31 @@
               step="0.1"
               placeholder="Wind"
             />
-            <button id="clearWindSpeed" class="clear-wind-button" title="Clear">&times;</button>
+            <button
+              id="clearWindSpeed"
+              data-testid="wind-clear"
+              class="clear-wind-button"
+              title="Clear"
+            >
+              &times;
+            </button>
             <div class="wind-controls">
-              <button id="decreaseWind" class="wind-control-btn" title="Decrease">−</button>
-              <button id="increaseWind" class="wind-control-btn" title="Increase">+</button>
+              <button
+                id="decreaseWind"
+                data-testid="wind-decrease"
+                class="wind-control-btn"
+                title="Decrease"
+              >
+                −
+              </button>
+              <button
+                id="increaseWind"
+                data-testid="wind-increase"
+                class="wind-control-btn"
+                title="Increase"
+              >
+                +
+              </button>
             </div>
           </div>
         </div>
@@ -170,65 +192,73 @@
           <div class="form-group">
             <div class="distance-header">
               <label for="powerLevel">Distance</label>
-              <sl-range id="powerLevel" min="0" max="100" value="100" step="1"></sl-range>
-              <div class="slider-value" id="powerLevelValue">100%</div>
+              <sl-range
+                id="powerLevel"
+                data-testid="distance-slider"
+                min="0"
+                max="100"
+                value="100"
+                step="1"
+              ></sl-range>
+              <div class="slider-value" id="powerLevelValue" data-testid="distance-value">100%</div>
             </div>
           </div>
 
           <div class="form-group">
             <div class="distance-header">
               <label for="powerBall">Power Ball</label>
-              <div id="powerBallPresetButtons"></div>
+              <div id="powerBallPresetButtons" data-testid="powerball-control"></div>
             </div>
           </div>
 
           <div class="form-group">
             <div class="distance-header">
               <label for="elevation">Elevation</label>
-              <div id="elevationPresetButtons"></div>
+              <div id="elevationPresetButtons" data-testid="elevation-control"></div>
             </div>
           </div>
         </div>
       </div>
 
       <div class="result-container">
-        <div class="result-number" id="result">-</div>
+        <div class="result-number" id="result" data-testid="result-current">-</div>
         <div class="extra-results">
           <div class="extra-result-item">
             <span class="extra-label">Max</span>
-            <span class="extra-value" id="resultMax">-</span>
+            <span class="extra-value" id="resultMax" data-testid="result-max">-</span>
           </div>
           <div class="extra-result-item">
             <span class="extra-label">Mid</span>
-            <span class="extra-value" id="resultMid">-</span>
+            <span class="extra-value" id="resultMid" data-testid="result-mid">-</span>
           </div>
           <div class="extra-result-item">
             <span class="extra-label">Min</span>
-            <span class="extra-value" id="resultMin">-</span>
+            <span class="extra-value" id="resultMin" data-testid="result-min">-</span>
           </div>
         </div>
         <div class="result-details" id="resultDetails">
           <div class="detail-item club-level-item">
             <img
               id="selectedClubImage"
+              data-testid="detail-club-image"
               class="selected-club-image"
               src=""
               alt=""
               style="display: none"
             />
-            <span id="selectedClubLevel">-</span>
+            <span id="selectedClubLevel" data-testid="detail-level">-</span>
           </div>
           <div class="detail-item">
             <span class="detail-label">Power Ball:</span>
-            <span id="selectedPowerBall">0</span>
+            <span id="selectedPowerBall" data-testid="detail-powerball">0</span>
           </div>
           <div class="detail-item">
             <span class="detail-label">Elevation:</span>
-            <span id="selectedElevation">0%</span>
+            <span id="selectedElevation" data-testid="detail-elevation">0%</span>
           </div>
           <div class="detail-item">
             <span class="detail-label">Distance:</span>
-            <span id="selectedPowerLevel">100%</span>
+            <span id="selectedPowerLevel" data-testid="detail-distance">100%</span>
           </div>
         </div>
       </div>
@@ -258,7 +288,7 @@
       </div>
 
       <div class="feedback-section">
-        <sl-button id="feedbackButton" variant="default" size="medium">
+        <sl-button id="feedbackButton" data-testid="feedback-open" variant="default" size="medium">
           💬 Share Feedback
         </sl-button>
       </div>
@@ -272,7 +302,7 @@
       </footer>
     </div>
 
-    <sl-dialog id="feedbackDialog" label="Feedback">
+    <sl-dialog id="feedbackDialog" data-testid="feedback-dialog" label="Feedback">
       <div class="feedback-form-container">
         <iframe
           src="https://docs.google.com/forms/d/e/1FAIpQLSd11Q3XrrcepBKiVpuVaU9ErwumYj3MMg79_UE9KJcbV2zsgA/viewform?embedded=true"
@@ -281,7 +311,9 @@
           >Loading…</iframe
         >
       </div>
-      <sl-button slot="footer" variant="primary" id="closeDialogButton">Close</sl-button>
+      <sl-button slot="footer" variant="primary" id="closeDialogButton" data-testid="feedback-close"
+        >Close</sl-button
+      >
     </sl-dialog>
 
     <script type="module" src="scripts/app.js"></script>

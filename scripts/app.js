@@ -80,6 +80,7 @@ function populateClubButtons() {
 
       button.setAttribute('data-club-name', club.name);
       button.setAttribute('data-club-type', club.type);
+      button.setAttribute('data-testid', `club-${club.name}`);
       button.size = 'small';
 
       button.addEventListener('click', () => {
@@ -150,6 +151,7 @@ function populateLevelButtons() {
     const button = document.createElement('sl-button');
     button.textContent = i;
     button.setAttribute('data-level', i);
+    button.setAttribute('data-testid', `level-${i}`);
     button.size = 'small';
 
     button.addEventListener('click', () => {
@@ -272,6 +274,7 @@ function createPresetButtonsWithMenu(config) {
     button.textContent = formatLabel(value);
     button.size = 'small';
     button.setAttribute('data-value', value);
+    button.setAttribute('data-testid', `preset-${value}`);
     button.addEventListener('click', () => select(value));
 
     buttonGroup.appendChild(button);
@@ -293,6 +296,7 @@ function createPresetButtonsWithMenu(config) {
     menuButton.setAttribute('caret', '');
     menuButton.textContent = '- ';
     menuButton.className = `${className}-menu-button`;
+    menuButton.setAttribute('data-testid', 'preset-menu');
 
     const menu = document.createElement('sl-menu');
 
@@ -300,6 +304,7 @@ function createPresetButtonsWithMenu(config) {
       const menuItem = document.createElement('sl-menu-item');
       menuItem.textContent = formatLabel(value);
       menuItem.setAttribute('data-value', value);
+      menuItem.setAttribute('data-testid', `preset-option-${value}`);
       menuItem.addEventListener('click', () => select(value));
 
       menu.appendChild(menuItem);
@@ -415,7 +420,8 @@ function createPowerBallPresetButtons() {
 
 // Update power level display
 function updatePowerLevel() {
-  const percentage = parseFloat(powerLevelSlider.value || '100');
+  // `|| '100'` would turn a slider value of 0 into 100, because 0 is falsy.
+  const percentage = parseFloat(powerLevelSlider.value ?? 100);
   powerLevelValue.textContent = `${percentage}%`;
   calculate();
 }
@@ -439,7 +445,8 @@ function calculate() {
   const elevation = currentElevation;
   const powerBall = currentPowerBall;
   const windSpeed = parseFloat(windSpeedInput.value);
-  const powerRatio = parseInt(powerLevelSlider.value || '100') / 100; // 0-1 value
+  // Nullish, not falsy: a distance of 0 is a real value, not a missing one.
+  const powerRatio = parseInt(powerLevelSlider.value ?? 100, 10) / 100; // 0-1 value
   // Validate inputs
   if (!selectedClubName || !selectedLevel || isNaN(windSpeed) || windSpeed <= 0) {
     resultDiv.textContent = '-';
