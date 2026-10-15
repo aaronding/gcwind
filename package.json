@@ -18,7 +18,7 @@
     "validate": "node tools/validate-clubs.js",
     "images": "node tools/optimize-images.js",
     "build:site": "vite build && find _site -name '.DS_Store' -delete",
-    "deploy": "wrangler deploy",
+    "deploy": "wrangler deploy && node tools/check-deploy.js",
     "test": "vitest run",
     "test:watch": "vitest",
     "fixtures": "node tools/generate-fixtures.js",
@@ -29,7 +29,8 @@
     "preview": "vite preview",
     "feedback": "node tools/read-feedback.js",
     "db:migrate": "wrangler d1 migrations apply gcwind --remote",
-    "dev:worker": "wrangler dev"
+    "dev:worker": "wrangler dev",
+    "check:deploy": "node tools/check-deploy.js"
   },
   "devDependencies": {
     "@eslint/js": "^9.17.0",

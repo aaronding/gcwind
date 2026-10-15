@@ -33,7 +33,8 @@ pnpm run validate    # sanity-check the club data
 pnpm run images      # re-encode the club art
 pnpm test            # calculator unit and golden tests
 pnpm run test:e2e    # browser tests against a local build
-pnpm run deploy      # publish to the Cloudflare Worker
+pnpm run deploy      # publish to the Cloudflare Worker, then check nothing was injected
+pnpm run check:deploy # check the live page on its own
 pnpm run dev:worker  # run the Worker locally, including /api/feedback
 pnpm run feedback    # print the latest feedback from D1
 pnpm run db:migrate  # apply migrations/ to the D1 database
