@@ -93,16 +93,33 @@ test('the honeypot is hidden from people and from screen readers', async ({ page
 });
 
 test('no Google Form is loaded any more', async ({ page }) => {
-  const external = [];
+  const formServices = [];
   page.on('request', (r) => {
-    const url = r.url();
-    if (!url.startsWith('http://localhost')) external.push(url);
+    if (/docs\.google\.com|forms\.gle|typeform|jotform/i.test(r.url())) formServices.push(r.url());
   });
 
   await page.goto('/');
   await page.getByTestId('feedback-open').click();
   await page.waitForTimeout(500);
 
-  expect(page.locator('iframe')).toHaveCount(0);
+  await expect(page.locator('iframe')).toHaveCount(0);
+  expect(formServices, 'a third-party form service was contacted').toEqual([]);
+});
+
+test('the page loads nothing from a third party', async ({ page }) => {
+  // Deliberately strict, and deliberately not whitelisting anything. It passes
+  // against a local build; against the deployed site it reports whatever
+  // Cloudflare injects at the zone level, which is a decision to take knowingly
+  // rather than to silence here.
+  const origin = new URL(process.env.BASE_URL || 'http://localhost:8000').origin;
+  const external = [];
+  page.on('request', (r) => {
+    if (!r.url().startsWith(origin)) external.push(`${r.resourceType()} ${r.url()}`);
+  });
+
+  await page.goto('/');
+  await page.getByTestId('feedback-open').click();
+  await page.waitForTimeout(500);
+
   expect(external, 'the page reached a third party').toEqual([]);
 });
