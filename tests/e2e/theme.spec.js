@@ -31,6 +31,44 @@ test('light and dark override the system', async ({ page }) => {
   expect(await bg(page)).toBe(systemDark);
 });
 
+test('returns to following the system when auto is chosen again', async ({ page }) => {
+  // The gap that let a broken toggle through: every earlier test moved between
+  // light and dark and never back, so "auto" was only ever the untouched
+  // starting state.
+  await page.emulateMedia({ colorScheme: 'dark' });
+  await page.goto('/');
+  const systemDark = await bg(page);
+
+  await page.getByTestId('theme-light').click();
+  expect(await attr(page)).toBe('light');
+  expect(await bg(page)).not.toBe(systemDark);
+
+  await page.getByTestId('theme-auto').click();
+  expect(await attr(page)).toBe('auto');
+  await expect(page.getByTestId('theme-auto')).toHaveAttribute('aria-pressed', 'true');
+  expect(await bg(page), 'auto did not go back to the system colour').toBe(systemDark);
+
+  // And it keeps following the system afterwards.
+  await page.emulateMedia({ colorScheme: 'light' });
+  expect(await bg(page)).not.toBe(systemDark);
+});
+
+test('every move between the three choices takes effect', async ({ page }) => {
+  await page.emulateMedia({ colorScheme: 'light' });
+  await page.goto('/');
+
+  const order = ['dark', 'light', 'auto', 'dark', 'auto', 'light'];
+  for (const choice of order) {
+    await page.getByTestId(`theme-${choice}`).click();
+    expect(await attr(page), `after choosing ${choice}`).toBe(choice);
+    const expected = choice === 'dark' ? 'dark' : 'light';
+    const scheme = await page.evaluate(
+      () => getComputedStyle(document.documentElement).colorScheme
+    );
+    expect(scheme, `color-scheme after ${choice}`).toContain(expected);
+  }
+});
+
 test('remembers the choice across a reload', async ({ page }) => {
   await page.emulateMedia({ colorScheme: 'light' });
   await page.goto('/');

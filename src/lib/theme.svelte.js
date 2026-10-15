@@ -29,6 +29,29 @@ export function resolve(theme) {
     : 'light';
 }
 
+/**
+ * Writes the choice to the document and to storage.
+ *
+ * Called straight from `set`, rather than by an effect watching the store from
+ * another component. A module-level $state observed across module boundaries
+ * does not survive hot reloading: the toggle ends up holding one instance of
+ * this module and the effect another, so clicks update the buttons while the
+ * page keeps its old colours. Applying it here keeps click and effect on the
+ * same path.
+ */
+function apply(chosen) {
+  document.documentElement.dataset.theme = chosen;
+
+  try {
+    localStorage.setItem(STORAGE_KEY, chosen);
+  } catch {
+    // Nothing useful to do if writing fails.
+  }
+
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if (meta) meta.setAttribute('content', THEME_COLOR[resolve(chosen)]);
+}
+
 class Theme {
   current = $state(readStoredTheme());
 
@@ -36,37 +59,24 @@ class Theme {
     return resolve(this.current);
   }
 
-  set(theme) {
-    if (!THEMES.includes(theme)) return;
-    this.current = theme;
+  set(next) {
+    if (!THEMES.includes(next)) return;
+    this.current = next;
+    apply(next);
   }
 }
 
 export const theme = new Theme();
 
-/** Keeps the document and storage in step with the choice. */
+/** Syncs the document with the stored choice, and follows the system on auto. */
 export function applyTheme() {
+  apply(theme.current);
+
+  // On auto the system can change under us, so keep the chrome colour current.
   $effect(() => {
-    const chosen = theme.current;
-    document.documentElement.dataset.theme = chosen;
-
-    try {
-      localStorage.setItem(STORAGE_KEY, chosen);
-    } catch {
-      // Nothing useful to do if writing fails.
-    }
-  });
-
-  // On auto, the system can change under us, so keep the chrome colour current.
-  $effect(() => {
-    const update = () => {
-      const meta = document.querySelector('meta[name="theme-color"]');
-      if (meta) meta.setAttribute('content', THEME_COLOR[resolve(theme.current)]);
-    };
-
-    update();
-
     const query = matchMedia('(prefers-color-scheme: dark)');
+    const update = () => apply(theme.current);
+
     query.addEventListener('change', update);
     return () => query.removeEventListener('change', update);
   });
