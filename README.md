@@ -18,25 +18,25 @@ adjust for power ball, elevation and shot distance, and it tells you how many ri
 ## Running locally
 
 ```bash
-npm install
-npm run dev
+pnpm install
+pnpm run dev
 ```
 
 ## Development
 
 ```bash
-npm run build       # production build into _site/
-npm run preview     # serve the build
-npm run lint
-npm run format
-npm run validate    # sanity-check the club data
-npm run images      # re-encode the club art
-npm test            # calculator unit and golden tests
-npm run test:e2e    # browser tests against a local build
-npm run deploy      # publish to the Cloudflare Worker
+pnpm run build       # production build into _site/
+pnpm run preview     # serve the build
+pnpm run lint
+pnpm run format
+pnpm run validate    # sanity-check the club data
+pnpm run images      # re-encode the club art
+pnpm test            # calculator unit and golden tests
+pnpm run test:e2e    # browser tests against a local build
+pnpm run deploy      # publish to the Cloudflare Worker
 ```
 
-`npm run test:e2e:prod` runs the same browser tests against the live site.
+`pnpm run test:e2e:prod` runs the same browser tests against the live site.
 
 Linting, formatting, data validation, unit tests and end-to-end tests all run in CI on every
 push and pull request.

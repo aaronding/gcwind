@@ -32,7 +32,10 @@ export default defineConfig({
   webServer: isRemote
     ? undefined
     : {
-        command: 'npm run build && npx vite preview --port 8000 --strictPort',
+        // exec so vite replaces the shell: run through a package-manager
+        // wrapper instead and Playwright is left holding the wrapper, which
+        // outlives the server and hangs the run after every test has passed.
+        command: 'pnpm run build && exec node_modules/.bin/vite preview --port 8000 --strictPort',
         url: 'http://localhost:8000',
         reuseExistingServer: !process.env.CI,
         stdout: 'ignore'
