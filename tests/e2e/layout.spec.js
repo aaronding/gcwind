@@ -55,3 +55,20 @@ test('keeps the wind stepper usable on a phone', async ({ page }) => {
     expect(box.height, `${id} height`).toBeGreaterThanOrEqual(44);
   }
 });
+
+test('names one canonical address, so the two URLs do not compete', async ({ page }) => {
+  // The app answers at both gcwind.webthinking.io and webthinking.io/gcwind.
+  // Without a canonical they are duplicate content and search engines split
+  // the ranking between them, which works against the windchum keywords the
+  // meta deliberately targets.
+  await page.goto('/');
+
+  const canonical = page.locator('link[rel="canonical"]');
+  await expect(canonical).toHaveCount(1);
+  await expect(canonical).toHaveAttribute('href', 'https://gcwind.webthinking.io/');
+
+  await expect(page.locator('meta[property="og:url"]')).toHaveAttribute(
+    'content',
+    'https://gcwind.webthinking.io/'
+  );
+});
