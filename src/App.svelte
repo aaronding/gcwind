@@ -115,17 +115,11 @@
     </div>
   </section>
 
-  <div class="feedback">
-    <button
-      class="chunky feedback-btn"
-      data-testid="feedback-open"
-      onclick={() => feedback.showModal()}
-    >
-      💬 Share Feedback
-    </button>
-  </div>
-
   <footer class="site-footer">
+    <button class="footer-link" data-testid="feedback-open" onclick={() => feedback.showModal()}>
+      Feedback
+    </button>
+    <span aria-hidden="true">·</span>
     <button class="footer-link" data-testid="about-open" onclick={() => about.showModal()}>
       About &amp; disclaimer
     </button>
@@ -247,20 +241,11 @@
     background: var(--green-100);
   }
 
-  .feedback {
-    display: grid;
-    justify-items: center;
-  }
-
-  .feedback-btn {
-    padding: 0 20px;
-    font-weight: 700;
-  }
-
   .site-footer {
     border-top: 1px solid var(--edge);
     padding-top: 14px;
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     justify-content: center;
     gap: 2px;
