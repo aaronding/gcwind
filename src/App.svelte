@@ -145,6 +145,10 @@
     margin: 0 auto;
     padding: 20px 16px 48px;
     display: grid;
+    /* minmax(0, 1fr), not the implicit auto: an auto column is sized by its
+       widest child's min-content, so a single row that refuses to shrink
+       stretches the whole page and forces horizontal scrolling. */
+    grid-template-columns: minmax(0, 1fr);
     gap: 16px;
   }
 

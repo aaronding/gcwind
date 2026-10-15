@@ -7,13 +7,23 @@
 </script>
 
 <div class="wind">
-  <button class="clear" data-testid="wind-clear" aria-label="Clear wind speed" onclick={onclear}>
-    ×
-  </button>
+  <div class="top">
+    <label class="label" for="wind">Wind Speed</label>
+    <button class="clear" data-testid="wind-clear" aria-label="Clear wind speed" onclick={onclear}>
+      ×
+    </button>
+  </div>
 
-  <label class="label" for="wind">Wind Speed</label>
+  <div class="stepper">
+    <button
+      class="step"
+      data-testid="wind-decrease"
+      aria-label="Decrease wind speed"
+      onclick={() => onnudge(-0.1)}
+    >
+      −
+    </button>
 
-  <div class="readout">
     <input
       id="wind"
       type="number"
@@ -25,19 +35,9 @@
       data-testid="wind-input"
       oninput={(e) => oninput(e.currentTarget.value)}
     />
-  </div>
 
-  <div class="steppers">
     <button
-      class="step chunky"
-      data-testid="wind-decrease"
-      aria-label="Decrease wind speed"
-      onclick={() => onnudge(-0.1)}
-    >
-      −
-    </button>
-    <button
-      class="step chunky"
+      class="step"
       data-testid="wind-increase"
       aria-label="Increase wind speed"
       onclick={() => onnudge(0.1)}
@@ -48,47 +48,108 @@
 </div>
 
 <style>
+  /* The most-used control in the app, so it is laid out for a thumb: both
+     steppers flank the value rather than sitting below it. That also stops the
+     card being a tall block of green with the number floating in dead space. */
   .wind {
-    position: relative;
     display: grid;
-    gap: 10px;
-    justify-items: center;
-    padding: 16px 14px;
+    gap: 6px;
+    padding: 10px 12px 14px;
     border-radius: var(--radius-lg);
-    /* The one place a gradient earns its keep: this is the input you touch most. */
-    background: linear-gradient(160deg, var(--green-500), var(--green-700));
+    background: linear-gradient(165deg, var(--green-500), var(--green-700));
     box-shadow:
       0 5px 0 var(--green-900),
       var(--shadow-card);
   }
 
-  .label {
-    font-family: var(--font-display);
-    font-size: 13px;
-    font-weight: 700;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-    color: rgb(255 255 255 / 85%);
-  }
-
-  .readout {
-    position: relative;
+  .top {
     display: flex;
     align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    min-height: 26px;
+  }
+
+  .label {
+    font-family: var(--font-display);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgb(255 255 255 / 80%);
+  }
+
+  .clear {
+    width: 26px;
+    height: 26px;
+    border: none;
+    border-radius: 50%;
+    background: rgb(255 255 255 / 16%);
+    color: rgb(255 255 255 / 85%);
+    font-size: 16px;
+    line-height: 1;
+    cursor: pointer;
+    flex: 0 0 auto;
+  }
+
+  .clear:hover {
+    background: rgb(255 255 255 / 30%);
+    color: var(--on-dark);
+  }
+
+  .stepper {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .step {
+    width: 50px;
+    height: 50px;
+    border: none;
+    border-radius: 50%;
+    background: rgb(255 255 255 / 20%);
+    color: var(--on-dark);
+    font-size: 26px;
+    font-weight: 700;
+    line-height: 1;
+    cursor: pointer;
+    box-shadow: 0 3px 0 rgb(0 0 0 / 20%);
+    transition:
+      transform 90ms ease,
+      box-shadow 90ms ease,
+      background-color 120ms ease;
+  }
+
+  .step:hover {
+    background: rgb(255 255 255 / 30%);
+  }
+
+  .step:active {
+    transform: translateY(3px);
+    box-shadow: 0 0 0 rgb(0 0 0 / 20%);
+  }
+
+  .step:focus-visible,
+  .clear:focus-visible {
+    outline: 3px solid var(--gold-400);
+    outline-offset: 2px;
   }
 
   input {
     width: 100%;
-    max-width: 180px;
+    min-width: 0;
     border: none;
     background: transparent;
     color: var(--on-dark);
     font-family: var(--font-display);
-    font-size: 54px;
+    font-size: clamp(38px, 11vw, 48px);
     font-weight: 800;
-    line-height: 1;
+    line-height: 1.05;
     text-align: center;
     padding: 0;
+    font-variant-numeric: tabular-nums;
     -moz-appearance: textfield;
     appearance: textfield;
   }
@@ -105,44 +166,9 @@
     border-radius: var(--radius-sm);
   }
 
-  .clear {
-    position: absolute;
-    right: 10px;
-    top: 10px;
-    width: 30px;
-    height: 30px;
-    border: none;
-    border-radius: 50%;
-    background: rgb(255 255 255 / 22%);
-    color: var(--on-dark);
-    font-size: 19px;
-    line-height: 1;
-    cursor: pointer;
-  }
-
-  .clear:hover {
-    background: rgb(255 255 255 / 34%);
-  }
-
-  .steppers {
-    display: flex;
-    gap: 14px;
-  }
-
-  .step {
-    width: 54px;
-    min-height: 40px;
-    border-radius: 999px;
-    background: rgb(255 255 255 / 20%);
-    color: var(--on-dark);
-    font-size: 22px;
-    font-weight: 700;
-    line-height: 1;
-    box-shadow: 0 3px 0 rgb(0 0 0 / 22%);
-  }
-
-  .step:active:not(:disabled) {
-    transform: translateY(3px);
-    box-shadow: 0 0 0 rgb(0 0 0 / 22%);
+  @media (prefers-reduced-motion: reduce) {
+    .step:active {
+      transform: none;
+    }
   }
 </style>

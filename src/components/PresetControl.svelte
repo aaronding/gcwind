@@ -90,6 +90,30 @@
     justify-content: space-between;
   }
 
+  /* Below this the label and five buttons cannot share a line without
+     overflowing, so the label moves above and the buttons spread the width,
+     which also makes them easier to hit. */
+  @media (max-width: 430px) {
+    .row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 6px;
+    }
+
+    .control {
+      justify-content: stretch;
+    }
+
+    .preset {
+      flex: 1 1 0;
+      min-width: 0;
+    }
+
+    .menu-wrap {
+      flex: 0 0 auto;
+    }
+  }
+
   .label {
     font-family: var(--font-display);
     font-weight: 700;
@@ -100,6 +124,7 @@
   .control {
     display: flex;
     gap: 6px;
+    min-width: 0;
   }
 
   .preset {

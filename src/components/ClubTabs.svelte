@@ -19,24 +19,28 @@
 </div>
 
 <style>
+  /* All seven are always visible. "Driver" needs 51px at 15px type, and a
+     375px phone leaves only 50px per tab across one row, so below the
+     breakpoint they wrap to two rows rather than shrinking to an unreadable
+     12px or scrolling out of sight. */
   .tabs {
-    display: flex;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
     gap: 4px;
     padding: 4px;
     background: var(--surface-sunken);
     border-radius: var(--radius-lg);
-    overflow-x: auto;
-    scrollbar-width: none;
   }
 
-  .tabs::-webkit-scrollbar {
-    display: none;
+  @media (min-width: 560px) {
+    .tabs {
+      grid-template-columns: repeat(7, 1fr);
+    }
   }
 
   .tab {
-    flex: 1 0 auto;
-    min-width: 62px;
-    padding: 10px 12px;
+    min-width: 0;
+    padding: 11px 6px;
     border: none;
     border-radius: calc(var(--radius-lg) - 4px);
     background: transparent;
