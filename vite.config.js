@@ -3,6 +3,13 @@ import { svelte } from '@sveltejs/vite-plugin-svelte';
 
 export default defineConfig({
   plugins: [svelte()],
+
+  // Relative asset paths, not Vite's default absolute ones. The app answers at
+  // gcwind.webthinking.io and at webthinking.io/gcwind, and an absolute
+  // /assets/... resolves to the wrong place under the subpath: the HTML loads
+  // and the bundle 404s, leaving a broken page. Relative works at both.
+  base: './',
+
   build: {
     outDir: '_site',
     emptyOutDir: true,
