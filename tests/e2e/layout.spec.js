@@ -72,3 +72,20 @@ test('names one canonical address, so the two URLs do not compete', async ({ pag
     'https://gcwind.webthinking.io/'
   );
 });
+
+test('share metadata names people and things, not hostnames', async ({ page }) => {
+  // These three all held a hostname where a name belongs, which left the tool
+  // listed as its own author and a bare domain as the share-card label.
+  await page.goto('/');
+
+  const meta = async (selector) => page.locator(selector).first().getAttribute('content');
+
+  expect(await meta('meta[name="author"]')).toBe('webthinking');
+  expect(await meta('meta[property="og:site_name"]')).toBe('gcwind');
+
+  for (const selector of ['meta[property="og:title"]', 'meta[name="twitter:title"]']) {
+    const title = await meta(selector);
+    expect(title).toBe('Golf Clash Wind Calculator');
+    expect(title, 'a hostname crept back into the title').not.toContain('webthinking.io');
+  }
+});
