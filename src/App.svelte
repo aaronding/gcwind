@@ -129,6 +129,16 @@
     <button class="footer-link" data-testid="about-open" onclick={() => about.showModal()}>
       About &amp; disclaimer
     </button>
+    <span aria-hidden="true">·</span>
+    <a
+      class="footer-link"
+      href="https://webthinking.io"
+      data-testid="webthinking-link"
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      webthinking.io
+    </a>
   </footer>
 </div>
 
@@ -136,6 +146,11 @@
   <p>
     A wind ring calculator for Golf Clash. Pick your club and level, enter the wind speed, adjust
     for power ball, elevation and shot distance, and it tells you how many rings to aim off.
+  </p>
+  <p>
+    One of a few small browser tools at
+    <a href="https://webthinking.io" target="_blank" rel="noopener noreferrer">webthinking.io</a>.
+    The calculation runs entirely on your device; nothing you pick is sent anywhere.
   </p>
   <p>
     This is an unofficial fan-made tool. It is not affiliated with, endorsed by, or sponsored by
@@ -245,12 +260,18 @@
   .site-footer {
     border-top: 1px solid var(--edge);
     padding-top: 14px;
-    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    color: var(--ink-faint);
+    font-size: 13px;
   }
 
   .footer-link {
     border: none;
     background: none;
+    font: inherit;
     padding: 6px 10px;
     font-size: 13px;
     color: var(--ink-faint);

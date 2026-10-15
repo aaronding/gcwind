@@ -213,6 +213,17 @@ test('the resource links point where they should', async ({ page }) => {
   await expect(page.getByRole('link', { name: /Notebook/ })).toHaveCount(0);
 });
 
+test('links back to webthinking.io without posing as a game resource', async ({ page }) => {
+  const link = page.getByTestId('webthinking-link');
+  await expect(link).toHaveAttribute('href', 'https://webthinking.io');
+  await expect(link).toHaveAttribute('rel', /noopener/);
+
+  // It belongs in the footer, not among the Golf Clash resources, where a
+  // player looking for game help would be misled by it.
+  await expect(page.locator('.link-row [data-testid="webthinking-link"]')).toHaveCount(0);
+  await expect(page.locator('.link-row a')).toHaveCount(3);
+});
+
 test('the feedback dialog opens and closes', async ({ page }) => {
   await page.getByTestId('feedback-open').click();
   await expect(page.getByTestId('feedback-dialog')).toHaveAttribute('open', '');
