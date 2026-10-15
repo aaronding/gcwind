@@ -180,9 +180,37 @@ test('the four club types with a floor keep a non-zero minimum', async ({ page }
   }
 });
 
-test('the club image and disclaimer are present', async ({ page }) => {
+test('the selected club image is shown', async ({ page }) => {
   await expect(page.getByTestId('detail-club-image')).toBeVisible();
-  await expect(page.getByText(/Not affiliated with, endorsed by/)).toBeVisible();
+});
+
+// Changed deliberately: the disclaimer used to sit at the foot of every visit
+// and now lives behind the About link, so it is no longer visible on load.
+test('the about dialog carries the disclaimer', async ({ page }) => {
+  const disclaimer = page.getByText(/not affiliated with, endorsed by/i);
+  await expect(disclaimer).toBeHidden();
+
+  await page.getByTestId('about-open').click();
+  await expect(page.getByTestId('about-dialog')).toHaveAttribute('open', '');
+  await expect(disclaimer).toBeVisible();
+
+  await page.getByTestId('about-dialog-close').click();
+  await expect(page.getByTestId('about-dialog')).not.toHaveAttribute('open', '');
+});
+
+test('the resource links point where they should', async ({ page }) => {
+  const links = page.locator('.link-row a');
+  await expect(links).toHaveCount(3);
+  await expect(page.getByRole('link', { name: /Golf Clash Tommy/ })).toHaveAttribute(
+    'href',
+    'https://golfclashtommy.com'
+  );
+  await expect(page.getByRole('link', { name: /r\/GolfClash/ })).toHaveAttribute(
+    'href',
+    'https://www.reddit.com/r/GolfClash/'
+  );
+  // Removed on request; make sure it does not creep back.
+  await expect(page.getByRole('link', { name: /Notebook/ })).toHaveCount(0);
 });
 
 test('the feedback dialog opens and closes', async ({ page }) => {

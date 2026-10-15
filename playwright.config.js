@@ -37,7 +37,10 @@ export default defineConfig({
         // outlives the server and hangs the run after every test has passed.
         command: 'pnpm run build && exec node_modules/.bin/vite preview --port 8000 --strictPort',
         url: 'http://localhost:8000',
-        reuseExistingServer: !process.env.CI,
+        // Never reuse: a lingering preview server from an earlier run serves a
+        // stale build, which has produced both false failures and false passes.
+        // Rebuilding and restarting costs under a second.
+        reuseExistingServer: false,
         stdout: 'ignore'
       }
 });

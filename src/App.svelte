@@ -14,10 +14,12 @@
   import DistanceSlider from './components/DistanceSlider.svelte';
   import ResultPanel from './components/ResultPanel.svelte';
   import PresetControl from './components/PresetControl.svelte';
+  import Modal from './components/Modal.svelte';
 
   persist();
 
   let feedback = $state(null);
+  let about = $state(null);
 
   const distanceLabel = $derived(
     app.distance === 100
@@ -94,11 +96,14 @@
   <section class="links panel">
     <h2>Useful Resources</h2>
     <div class="link-row">
-      <a href="https://golfclashnotebook.io" target="_blank" rel="noopener noreferrer">
-        📓 Golf Clash Notebook
-      </a>
       <a href="https://golfclashtommy.com" target="_blank" rel="noopener noreferrer">
         ⛳ Golf Clash Tommy
+      </a>
+      <a href="https://www.youtube.com/@GolfClashTommy" target="_blank" rel="noopener noreferrer">
+        ▶️ Tommy on YouTube
+      </a>
+      <a href="https://www.reddit.com/r/GolfClash/" target="_blank" rel="noopener noreferrer">
+        💬 r/GolfClash
       </a>
     </div>
   </section>
@@ -113,14 +118,24 @@
     </button>
   </div>
 
-  <footer class="disclaimer">
-    <p>
-      Not affiliated with, endorsed by, or sponsored by Electronic Arts Inc. or Playdemic. Golf
-      Clash is a trademark of Electronic Arts Inc. Club names, artwork and statistics are the
-      property of their respective owners.
-    </p>
+  <footer class="site-footer">
+    <button class="footer-link" data-testid="about-open" onclick={() => about.showModal()}>
+      About &amp; disclaimer
+    </button>
   </footer>
 </div>
+
+<Modal bind:dialog={about} testid="about-dialog" title="About this tool">
+  <p>
+    A wind ring calculator for Golf Clash. Pick your club and level, enter the wind speed, adjust
+    for power ball, elevation and shot distance, and it tells you how many rings to aim off.
+  </p>
+  <p>
+    This is an unofficial fan-made tool. It is not affiliated with, endorsed by, or sponsored by
+    Electronic Arts Inc. or Playdemic. Golf Clash is a trademark of Electronic Arts Inc. Club names,
+    artwork and statistics are the property of their respective owners.
+  </p>
+</Modal>
 
 <dialog
   bind:this={feedback}
@@ -225,18 +240,31 @@
     font-weight: 700;
   }
 
-  .disclaimer {
+  .site-footer {
     border-top: 1px solid var(--edge);
-    padding-top: 16px;
+    padding-top: 14px;
     text-align: center;
   }
 
-  .disclaimer p {
-    margin: 0 auto;
-    max-width: 60ch;
-    font-size: 12px;
-    line-height: 1.6;
+  .footer-link {
+    border: none;
+    background: none;
+    padding: 6px 10px;
+    font-size: 13px;
     color: var(--ink-faint);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    cursor: pointer;
+    border-radius: var(--radius-sm);
+  }
+
+  .footer-link:hover {
+    color: var(--ink);
+  }
+
+  .footer-link:focus-visible {
+    outline: 3px solid var(--green-500);
+    outline-offset: 2px;
   }
 
   dialog {
