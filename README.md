@@ -34,7 +34,13 @@ pnpm run images      # re-encode the club art
 pnpm test            # calculator unit and golden tests
 pnpm run test:e2e    # browser tests against a local build
 pnpm run deploy      # publish to the Cloudflare Worker
+pnpm run dev:worker  # run the Worker locally, including /api/feedback
+pnpm run feedback    # print the latest feedback from D1
+pnpm run db:migrate  # apply migrations/ to the D1 database
 ```
+
+The dev server does not run the Worker, so `/api/feedback` only answers under
+`pnpm run dev:worker` or once deployed.
 
 `pnpm run test:e2e:prod` runs the same browser tests against the live site.
 
@@ -43,7 +49,13 @@ push and pull request.
 
 ## Feedback
 
-There's a feedback button in the app, or open an issue here.
+The app has a feedback form that posts to this site's own `/api/feedback`, so no
+third-party form service sees what people write. Messages go to a Cloudflare D1
+database, are kept for a year, and are deleted after that by the Worker's daily
+Cron Trigger. Nothing is sent until Send is pressed, and nothing beyond the
+message itself is collected.
+
+Read them with `pnpm run feedback`, or open an issue here.
 
 ## Disclaimer
 

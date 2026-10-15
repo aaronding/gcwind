@@ -15,6 +15,7 @@
   import ResultPanel from './components/ResultPanel.svelte';
   import PresetControl from './components/PresetControl.svelte';
   import Modal from './components/Modal.svelte';
+  import FeedbackDialog from './components/FeedbackDialog.svelte';
 
   persist();
 
@@ -137,22 +138,7 @@
   </p>
 </Modal>
 
-<dialog
-  bind:this={feedback}
-  data-testid="feedback-dialog"
-  onclick={(e) => e.target === feedback && feedback.close()}
->
-  <div class="dialog-body">
-    <h2>Feedback</h2>
-    <iframe
-      title="Feedback form"
-      src="https://docs.google.com/forms/d/e/1FAIpQLSd11Q3XrrcepBKiVpuVaU9ErwumYj3MMg79_UE9KJcbV2zsgA/viewform?embedded=true"
-    ></iframe>
-    <button class="chunky close" data-testid="feedback-close" onclick={() => feedback.close()}>
-      Close
-    </button>
-  </div>
-</dialog>
+<FeedbackDialog bind:dialog={feedback} />
 
 <style>
   .page {
@@ -265,37 +251,6 @@
   .footer-link:focus-visible {
     outline: 3px solid var(--green-500);
     outline-offset: 2px;
-  }
-
-  dialog {
-    border: none;
-    border-radius: var(--radius-lg);
-    padding: 0;
-    max-width: 94vw;
-    background: var(--surface);
-    color: var(--ink);
-  }
-
-  dialog::backdrop {
-    background: rgb(8 20 12 / 55%);
-  }
-
-  .dialog-body {
-    padding: 18px;
-    display: grid;
-    gap: 12px;
-    justify-items: center;
-  }
-
-  iframe {
-    width: min(640px, 86vw);
-    height: min(560px, 62vh);
-    border: none;
-  }
-
-  .close {
-    padding: 0 26px;
-    font-weight: 700;
   }
 
   @media (max-width: 680px) {

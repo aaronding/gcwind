@@ -216,6 +216,6 @@ test('the resource links point where they should', async ({ page }) => {
 test('the feedback dialog opens and closes', async ({ page }) => {
   await page.getByTestId('feedback-open').click();
   await expect(page.getByTestId('feedback-dialog')).toHaveAttribute('open', '');
-  await page.getByTestId('feedback-close').click();
+  await page.getByTestId('feedback-dialog-close').click();
   await expect(page.getByTestId('feedback-dialog')).not.toHaveAttribute('open', '');
 });
