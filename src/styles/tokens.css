@@ -4,6 +4,10 @@
  * accent for the thing you came for, and the game's three rarity tiers used as
  * real information rather than decoration.
  *
+ * Each theme-dependent token is declared once with light-dark(), which resolves
+ * against the computed color-scheme. The theme toggle therefore only has to set
+ * color-scheme — there is no second copy of the palette to keep in step.
+ *
  * ui-rounded is a CSS generic that resolves to SF Rounded on Apple platforms,
  * which is where most of a mobile golf tool's traffic is. Elsewhere it falls
  * back to the system face. That keeps the rounded, game-like feel without
@@ -11,12 +15,15 @@
  */
 
 :root {
+  /* Auto: follow the operating system. The toggle overrides this below. */
+  color-scheme: light dark;
+
   --font-display: ui-rounded, 'SF Pro Rounded', 'Hiragino Maru Gothic ProN', system-ui, sans-serif;
   --font-body: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
 
-  /* Course */
-  --green-100: #e6f4ea;
-  --green-300: #8fd79f;
+  /* Course. The mid greens hold up on both themes, so only the extremes move. */
+  --green-100: light-dark(#e6f4ea, #16301d);
+  --green-300: light-dark(#8fd79f, #2f6b3c);
   --green-500: #3fa34d;
   --green-600: #2f8a3d;
   --green-700: #24702f;
@@ -27,18 +34,18 @@
   --gold-500: #f5b623;
   --gold-600: #d1920f;
 
-  /* Rarity, straight from the club data */
-  --rarity-common: #9aa5b1;
-  --rarity-rare: #3b82f6;
-  --rarity-epic: #a855f7;
+  /* Rarity, straight from the club data. */
+  --rarity-common: light-dark(#9aa5b1, #8d99a6);
+  --rarity-rare: light-dark(#3b82f6, #60a5fa);
+  --rarity-epic: light-dark(#a855f7, #c084fc);
 
-  --surface: #ffffff;
-  --surface-sunken: #eef3ee;
-  --page: #f4f7f3;
-  --ink: #16271c;
-  --ink-muted: #5d6f63;
-  --ink-faint: #8a9a90;
-  --edge: #d9e2db;
+  --surface: light-dark(#ffffff, #16241b);
+  --surface-sunken: light-dark(#eef3ee, #101c14);
+  --page: light-dark(#f4f7f3, #0c1710);
+  --ink: light-dark(#16271c, #e4ede6);
+  --ink-muted: light-dark(#5d6f63, #a3b5a9);
+  --ink-faint: light-dark(#8a9a90, #76897d);
+  --edge: light-dark(#d9e2db, #27392d);
   --on-dark: #ffffff;
 
   --radius-sm: 8px;
@@ -47,37 +54,16 @@
 
   /* The depth that makes a button feel like a game button. */
   --bevel: 4px;
-  --shadow-card: 0 2px 10px rgb(18 51 27 / 8%);
+  --shadow-card: light-dark(0 2px 10px rgb(18 51 27 / 8%), 0 2px 10px rgb(0 0 0 / 35%));
 
   --tap: 44px;
 }
 
-:root:not([data-theme='light']) {
-  @media (prefers-color-scheme: dark) {
-    --green-100: #16301d;
-    --green-300: #2f6b3c;
-
-    --surface: #16241b;
-    --surface-sunken: #101c14;
-    --page: #0c1710;
-    --ink: #e4ede6;
-    --ink-muted: #a3b5a9;
-    --ink-faint: #76897d;
-    --edge: #27392d;
-    --shadow-card: 0 2px 10px rgb(0 0 0 / 35%);
-  }
+/* The toggle writes data-theme on <html>; absent or "auto" means follow the OS. */
+:root[data-theme='light'] {
+  color-scheme: light;
 }
 
 :root[data-theme='dark'] {
-  --green-100: #16301d;
-  --green-300: #2f6b3c;
-
-  --surface: #16241b;
-  --surface-sunken: #101c14;
-  --page: #0c1710;
-  --ink: #e4ede6;
-  --ink-muted: #a3b5a9;
-  --ink-faint: #76897d;
-  --edge: #27392d;
-  --shadow-card: 0 2px 10px rgb(0 0 0 / 35%);
+  color-scheme: dark;
 }

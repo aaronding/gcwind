@@ -16,8 +16,11 @@
   import PresetControl from './components/PresetControl.svelte';
   import Modal from './components/Modal.svelte';
   import FeedbackDialog from './components/FeedbackDialog.svelte';
+  import ThemeToggle from './components/ThemeToggle.svelte';
+  import { applyTheme } from './lib/theme.svelte.js';
 
   persist();
+  applyTheme();
 
   let feedback = $state(null);
   let about = $state(null);
@@ -35,8 +38,11 @@
 
 <div class="page">
   <header>
-    <h1>⛳ Wind Calculator</h1>
-    <p class="tagline">Pick your club, read the rings.</p>
+    <div class="titles">
+      <h1>⛳ Wind Calculator</h1>
+      <p class="tagline">Pick your club, read the rings.</p>
+    </div>
+    <ThemeToggle />
   </header>
 
   <ClubTabs bind:value={app.clubType} />
@@ -154,13 +160,23 @@
   }
 
   header {
-    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .titles {
     display: grid;
     gap: 2px;
+    min-width: 0;
   }
 
   h1 {
-    font-size: clamp(26px, 7vw, 34px);
+    /* Small enough that the title does not wrap beside the theme toggle on a
+       375px phone, and still the largest thing in the header. */
+    font-size: clamp(21px, 5.6vw, 34px);
+    line-height: 1.15;
   }
 
   .tagline {

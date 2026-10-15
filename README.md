@@ -12,7 +12,7 @@ adjust for power ball, elevation and shot distance, and it tells you how many ri
 - Adjusts for power ball, elevation and shot distance
 - Clubs tinted by rarity, so tier is readable at a glance
 - Remembers your selections between visits
-- Light and dark themes
+- Light, dark, or follow the system, remembered between visits
 - Built for one-handed use on a phone
 
 ## Running locally
