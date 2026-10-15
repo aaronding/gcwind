@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest';
 import fs from 'node:fs';
-import { WindCalculator } from '../scripts/windCalculator.js';
+import { WindCalculator } from '../src/lib/windCalculator.js';
 
 const clubData = JSON.parse(
-  fs.readFileSync(new URL('../data/clubs.json', import.meta.url), 'utf8')
+  fs.readFileSync(new URL('../src/lib/clubs.json', import.meta.url), 'utf8')
 );
 const calculator = new WindCalculator(clubData);
 

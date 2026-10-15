@@ -4,12 +4,12 @@
 /**
  * Computes Golf Clash wind rings for a club at a given level.
  *
- * Club stats live in `data/clubs.json` rather than in this file. Either pass
+ * Club stats live in `clubs.json` rather than in this file. Either pass
  * them in directly, or use the async `WindCalculator.load()` helper.
  */
 export class WindCalculator {
   /**
-   * @param {Object} clubData - Clubs keyed by club type, as in data/clubs.json
+   * @param {Object} clubData - Clubs keyed by club type, as in clubs.json
    */
   constructor(clubData) {
     if (!clubData) {

@@ -10,28 +10,36 @@ adjust for power ball, elevation and shot distance, and it tells you how many ri
 - All seven club categories, with per-club stats at every level
 - Rings at four distances: current, max, mid and min
 - Adjusts for power ball, elevation and shot distance
+- Clubs tinted by rarity, so tier is readable at a glance
+- Remembers your selections between visits
 - Light and dark themes
 - Built for one-handed use on a phone
 
 ## Running locally
 
 ```bash
-npm start
+npm install
+npm run dev
 ```
-
-Serves the app on <http://localhost:8000>.
 
 ## Development
 
 ```bash
-npm install       # dev tooling only
+npm run build       # production build into _site/
+npm run preview     # serve the build
 npm run lint
 npm run format
-npm run validate  # sanity-check the club data
-npm run images    # re-encode the club art
+npm run validate    # sanity-check the club data
+npm run images      # re-encode the club art
+npm test            # calculator unit and golden tests
+npm run test:e2e    # browser tests against a local build
+npm run deploy      # publish to the Cloudflare Worker
 ```
 
-Linting, formatting and club data validation run in CI on every push and pull request.
+`npm run test:e2e:prod` runs the same browser tests against the live site.
+
+Linting, formatting, data validation, unit tests and end-to-end tests all run in CI on every
+push and pull request.
 
 ## Feedback
 

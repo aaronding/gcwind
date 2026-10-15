@@ -4,11 +4,11 @@
 
 import fs from 'node:fs';
 import { createHash } from 'node:crypto';
-import { WindCalculator } from '../scripts/windCalculator.js';
+import { WindCalculator } from '../src/lib/windCalculator.js';
 import { sweep } from '../tests/helpers/sweep.js';
 
 const clubData = JSON.parse(
-  fs.readFileSync(new URL('../data/clubs.json', import.meta.url), 'utf8')
+  fs.readFileSync(new URL('../src/lib/clubs.json', import.meta.url), 'utf8')
 );
 const rows = sweep(new WindCalculator(clubData));
 const hash = createHash('sha256').update(rows.join('\n')).digest('hex');

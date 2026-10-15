@@ -1,0 +1,83 @@
+/* Design tokens.
+ *
+ * The palette evokes Golf Clash without copying it: fairway greens, a gold
+ * accent for the thing you came for, and the game's three rarity tiers used as
+ * real information rather than decoration.
+ *
+ * ui-rounded is a CSS generic that resolves to SF Rounded on Apple platforms,
+ * which is where most of a mobile golf tool's traffic is. Elsewhere it falls
+ * back to the system face. That keeps the rounded, game-like feel without
+ * shipping or fetching a font.
+ */
+
+:root {
+  --font-display: ui-rounded, 'SF Pro Rounded', 'Hiragino Maru Gothic ProN', system-ui, sans-serif;
+  --font-body: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+
+  /* Course */
+  --green-100: #e6f4ea;
+  --green-300: #8fd79f;
+  --green-500: #3fa34d;
+  --green-600: #2f8a3d;
+  --green-700: #24702f;
+  --green-900: #12331b;
+
+  /* The payoff colour: used for the result and nothing else. */
+  --gold-400: #ffd166;
+  --gold-500: #f5b623;
+  --gold-600: #d1920f;
+
+  /* Rarity, straight from the club data */
+  --rarity-common: #9aa5b1;
+  --rarity-rare: #3b82f6;
+  --rarity-epic: #a855f7;
+
+  --surface: #ffffff;
+  --surface-sunken: #eef3ee;
+  --page: #f4f7f3;
+  --ink: #16271c;
+  --ink-muted: #5d6f63;
+  --ink-faint: #8a9a90;
+  --edge: #d9e2db;
+  --on-dark: #ffffff;
+
+  --radius-sm: 8px;
+  --radius: 14px;
+  --radius-lg: 22px;
+
+  /* The depth that makes a button feel like a game button. */
+  --bevel: 4px;
+  --shadow-card: 0 2px 10px rgb(18 51 27 / 8%);
+
+  --tap: 44px;
+}
+
+:root:not([data-theme='light']) {
+  @media (prefers-color-scheme: dark) {
+    --green-100: #16301d;
+    --green-300: #2f6b3c;
+
+    --surface: #16241b;
+    --surface-sunken: #101c14;
+    --page: #0c1710;
+    --ink: #e4ede6;
+    --ink-muted: #a3b5a9;
+    --ink-faint: #76897d;
+    --edge: #27392d;
+    --shadow-card: 0 2px 10px rgb(0 0 0 / 35%);
+  }
+}
+
+:root[data-theme='dark'] {
+  --green-100: #16301d;
+  --green-300: #2f6b3c;
+
+  --surface: #16241b;
+  --surface-sunken: #101c14;
+  --page: #0c1710;
+  --ink: #e4ede6;
+  --ink-muted: #a3b5a9;
+  --ink-faint: #76897d;
+  --edge: #27392d;
+  --shadow-card: 0 2px 10px rgb(0 0 0 / 35%);
+}

@@ -97,7 +97,7 @@ jobs:
       - uses: actions/configure-pages@v6
 
       - name: Assemble site
-        run: bash tools/build-site.sh
+        run: npm run build:site
 
       - uses: actions/upload-pages-artifact@v5
         with:
@@ -128,7 +128,7 @@ jobs:
       - run: npm ci
 
       - name: Assemble site
-        run: bash tools/build-site.sh
+        run: npm run build:site
 
       # Secrets are not readable in a job-level `if`, so the presence check
       # happens here. Until the Cloudflare credentials exist the job reports

@@ -4,7 +4,7 @@
 // The source PNGs are not kept in the working tree — only the WebP output is.
 // They remain in git history, so restore them before re-running this:
 //
-//   git checkout 548759c -- images/clubs
+//   git checkout 548759c -- public/images/clubs
 //
 // then delete the PNGs again once the WebP files are regenerated.
 //
@@ -20,7 +20,7 @@ const SIZE = 192;
 const QUALITY = 80;
 
 const dir = path.dirname(new URL(import.meta.url).pathname);
-const clubDir = path.join(dir, '..', 'images', 'clubs');
+const clubDir = path.join(dir, '..', 'public', 'images', 'clubs');
 
 const sources = fs
   .readdirSync(clubDir)
@@ -30,7 +30,7 @@ const sources = fs
 if (sources.length === 0) {
   console.error(`no PNGs found in ${clubDir}`);
   console.error('the sources live in git history — restore with:');
-  console.error('  git checkout 548759c -- images/clubs');
+  console.error('  git checkout 548759c -- public/images/clubs');
   process.exit(1);
 }
 

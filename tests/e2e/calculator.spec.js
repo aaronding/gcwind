@@ -96,9 +96,10 @@ test('a dropdown value relabels the menu button and clears the shortcut', async 
   await control.getByTestId('preset-30').click();
   await expect(control.getByTestId('preset-menu')).toHaveText('-');
 
-  // Hover rather than click: on a hover-capable device mouseenter already
-  // opens the dropdown, so a click on the trigger would toggle it shut again.
-  await control.getByTestId('preset-menu').hover();
+  // Changed with the Svelte rebuild: the dropdown opens on click now. The old
+  // version opened on hover, which did nothing on touch and fought its own
+  // click handler. Clicking works on both pointer types.
+  await control.getByTestId('preset-menu').click();
   await control.getByTestId('preset-option-45').click();
   await expect(page.getByTestId('detail-elevation')).toHaveText('45%');
   await expect(control.getByTestId('preset-menu')).toHaveText('45%');
@@ -136,6 +137,8 @@ test('wind speed is clamped to the minimum', async ({ page }) => {
   await expect(wind).toHaveValue('0.1');
 });
 
+// The slider is a native <input type="range"> since Shoelace was removed, so
+// it emits `input` rather than `sl-input`. Same user-visible behaviour.
 test('distance labels read Max, Mid and Min at the ends and middle', async ({ page }) => {
   const slider = page.getByTestId('distance-slider');
   const label = page.getByTestId('detail-distance');
@@ -144,19 +147,19 @@ test('distance labels read Max, Mid and Min at the ends and middle', async ({ pa
 
   await slider.evaluate((el) => {
     el.value = 50;
-    el.dispatchEvent(new CustomEvent('sl-input', { bubbles: true }));
+    el.dispatchEvent(new Event('input', { bubbles: true }));
   });
   await expect(label).toHaveText('Mid');
 
   await slider.evaluate((el) => {
     el.value = 0;
-    el.dispatchEvent(new CustomEvent('sl-input', { bubbles: true }));
+    el.dispatchEvent(new Event('input', { bubbles: true }));
   });
   await expect(label).toHaveText('Min');
 
   await slider.evaluate((el) => {
     el.value = 37;
-    el.dispatchEvent(new CustomEvent('sl-input', { bubbles: true }));
+    el.dispatchEvent(new Event('input', { bubbles: true }));
   });
   await expect(label).toHaveText('37%');
 });

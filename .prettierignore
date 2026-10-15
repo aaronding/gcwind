@@ -7,3 +7,6 @@ images/
 _site/
 test-results/
 playwright-report/
+
+# Build output
+_site/

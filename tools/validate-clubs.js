@@ -1,9 +1,9 @@
-// Sanity-checks data/clubs.json against the calculator.
+// Sanity-checks src/lib/clubs.json against the calculator.
 // Run with `npm run validate`.
 
 import fs from 'node:fs';
 import path from 'node:path';
-import { WindCalculator } from '../scripts/windCalculator.js';
+import { WindCalculator } from '../src/lib/windCalculator.js';
 
 const CLUB_TYPES = [
   'drivers',
@@ -15,10 +15,10 @@ const CLUB_TYPES = [
   'sandwedges'
 ];
 
-const data = JSON.parse(fs.readFileSync(new URL('../data/clubs.json', import.meta.url), 'utf8'));
+const data = JSON.parse(fs.readFileSync(new URL('../src/lib/clubs.json', import.meta.url), 'utf8'));
 const calculator = new WindCalculator(data);
 const errors = [];
-const imagesDir = new URL('../images/', import.meta.url).pathname;
+const imagesDir = new URL('../public/images/', import.meta.url).pathname;
 const referenced = new Set();
 
 for (const type of CLUB_TYPES) {
@@ -50,7 +50,7 @@ for (const [type, clubs] of Object.entries(data)) {
     if (club.image) {
       const imagePath = path.join(imagesDir, club.image);
       if (!fs.existsSync(imagePath)) {
-        errors.push(`${where}: image not found at images/${club.image}`);
+        errors.push(`${where}: image not found at public/images/${club.image}`);
       } else {
         referenced.add(path.resolve(imagePath));
       }
@@ -93,7 +93,7 @@ const orphans = onDisk.filter((file) => !referenced.has(file));
 if (orphans.length > 0) {
   console.warn(`warning: ${orphans.length} image(s) not referenced by any club:`);
   for (const file of orphans) {
-    console.warn(`  - images/clubs/${path.basename(file)}`);
+    console.warn(`  - public/images/clubs/${path.basename(file)}`);
   }
 }
 

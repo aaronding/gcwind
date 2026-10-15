@@ -1,12 +1,12 @@
 import { describe, it, expect } from 'vitest';
 import fs from 'node:fs';
 import { createHash } from 'node:crypto';
-import { WindCalculator } from '../scripts/windCalculator.js';
+import { WindCalculator } from '../src/lib/windCalculator.js';
 import { sweep } from './helpers/sweep.js';
 
 const read = (name) => fs.readFileSync(new URL(name, import.meta.url), 'utf8');
 
-const clubData = JSON.parse(read('../data/clubs.json'));
+const clubData = JSON.parse(read('../src/lib/clubs.json'));
 const calculator = new WindCalculator(clubData);
 const golden = JSON.parse(read('./fixtures/golden.json'));
 

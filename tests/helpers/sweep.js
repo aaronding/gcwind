@@ -8,7 +8,7 @@ export const POWER_BALLS = [0, 2, 6, 10];
 export const RATIOS = [0, 0.5, 1];
 
 /**
- * @param {import('../../scripts/windCalculator.js').WindCalculator} calculator
+ * @param {import('../../src/lib/windCalculator.js').WindCalculator} calculator
  * @returns {string[]} one `type|club|level|wind|elev|pb|ratio|{rings}` row per case
  */
 export function sweep(calculator) {

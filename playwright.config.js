@@ -32,7 +32,7 @@ export default defineConfig({
   webServer: isRemote
     ? undefined
     : {
-        command: 'python3 tools/serve.py 8000',
+        command: 'npm run build && npx vite preview --port 8000 --strictPort',
         url: 'http://localhost:8000',
         reuseExistingServer: !process.env.CI,
         stdout: 'ignore'

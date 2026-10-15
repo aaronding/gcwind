@@ -1,0 +1,88 @@
+@import './tokens.css';
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  color-scheme: light dark;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--page);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -webkit-text-size-adjust: 100%;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+}
+
+/* The press that makes a control feel physical: the face drops onto its bevel
+ * and the shadow collapses. Applied by anything using .chunky.
+ */
+.chunky {
+  position: relative;
+  border: none;
+  border-radius: var(--radius);
+  background: var(--surface);
+  box-shadow:
+    0 var(--bevel) 0 var(--edge),
+    var(--shadow-card);
+  transition:
+    transform 90ms ease,
+    box-shadow 90ms ease,
+    background-color 120ms ease;
+  cursor: pointer;
+  min-height: var(--tap);
+}
+
+.chunky:active:not(:disabled) {
+  transform: translateY(var(--bevel));
+  box-shadow: 0 0 0 var(--edge);
+}
+
+.chunky:focus-visible {
+  outline: 3px solid var(--green-500);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition-duration: 1ms !important;
+    animation-duration: 1ms !important;
+  }
+
+  .chunky:active:not(:disabled) {
+    transform: none;
+  }
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
