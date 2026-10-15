@@ -1,0 +1,15 @@
+# pnpm's settings for gcwind. pnpm reads its settings from this file and ignores
+# them in .npmrc.
+
+# Hold back any package version published less than a day ago, so a compromised
+# release has time to be noticed and pulled before it can land here. In minutes.
+minimumReleaseAge: 1440
+
+# The only dependencies allowed to run install scripts: Vite's and Wrangler's
+# bundler, Wrangler's local runtime, and macOS file watching for the dev server.
+# Each fetches or builds a platform binary. Nothing else needs to execute code
+# at install time.
+allowBuilds:
+  esbuild: true
+  workerd: true
+  fsevents: true

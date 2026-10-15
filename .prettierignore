@@ -10,3 +10,6 @@ playwright-report/
 
 # Build output
 _site/
+
+# Generated lockfile
+pnpm-lock.yaml
