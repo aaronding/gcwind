@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { AppState } from '../src/lib/state.svelte.js';
+import { AppState, keyWindDigit } from '../src/lib/state.svelte.js';
 import { defaultSelections } from '../src/lib/clubs.js';
 
 const starter = defaultSelections();
@@ -290,5 +290,31 @@ describe('restore', () => {
     expect(state.accounts.map((a) => a.name)).toEqual(['Main', 'Alt']);
     expect(state.account.name).toBe('Alt');
     expect(state.account.activeBag).toBe(1);
+  });
+});
+
+describe('the wind keypad', () => {
+  /** The digits typed in turn, from a fresh entry. */
+  const keys = (digits) => [...digits].reduce((entry, d) => keyWindDigit(entry, Number(d)), '');
+
+  it('fills in from the right, one decimal place', () => {
+    expect(keys('5')).toBe('5');
+    expect(keys('125')).toBe('125');
+    expect(keys('80')).toBe('80');
+  });
+
+  it('drops leading zeros', () => {
+    expect(keys('085')).toBe('85');
+    expect(keys('00')).toBe('0');
+  });
+
+  it('starts a new number after three digits', () => {
+    expect(keys('1257')).toBe('7');
+  });
+
+  it('starts a new number rather than go past the maximum', () => {
+    expect(keys('250')).toBe('250');
+    expect(keys('26')).toBe('26');
+    expect(keys('261')).toBe('1');
   });
 });

@@ -204,8 +204,9 @@ test('keeps the wind stepper usable on a phone', async ({ page }) => {
   await page.setViewportSize({ width: 375, height: 800 });
   await page.goto('/');
 
-  // Both steppers flank the value and must be comfortably tappable.
-  for (const id of ['wind-decrease', 'wind-increase']) {
+  // The steppers and the keypad must be comfortably tappable.
+  const keys = Array.from({ length: 10 }, (_, d) => `wind-key-${d}`);
+  for (const id of ['wind-decrease', 'wind-increase', 'wind-clear', ...keys]) {
     const box = await page.getByTestId(id).boundingBox();
     expect(box.width, `${id} width`).toBeGreaterThanOrEqual(44);
     expect(box.height, `${id} height`).toBeGreaterThanOrEqual(44);

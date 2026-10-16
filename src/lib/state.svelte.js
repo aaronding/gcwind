@@ -37,6 +37,19 @@ export const WIND_MIN = 0.1;
 export const WIND_MAX = 25;
 
 /**
+ * The wind keypad has no decimal key: wind always has one decimal place, so
+ * the digits fill in from the right like a till. 1, 2, 5 is 12.5 and 8, 0 is
+ * 8.0. `entry` is the digits typed so far and the result is the new digits.
+ * A fourth digit, or one that would go past the maximum, starts a new number,
+ * so a slip never leaves the wind stuck out of range.
+ */
+export function keyWindDigit(entry, digit) {
+  let next = String(Number(`${entry}${digit}`));
+  if (entry.length >= 3 || Number(next) / 10 > WIND_MAX) next = String(digit);
+  return next;
+}
+
+/**
  * Where the club in hand comes from: one of the account's bags, or Flex, which
  * is any club at any level. Both are chosen in the bag row. See
  * docs/modes-and-bags.md.

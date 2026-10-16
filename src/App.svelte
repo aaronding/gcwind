@@ -353,7 +353,7 @@
 
   .controls {
     display: grid;
-    grid-template-columns: minmax(0, 260px) minmax(0, 1fr);
+    grid-template-columns: minmax(0, 340px) minmax(0, 1fr);
     gap: 14px;
     align-items: stretch;
   }
