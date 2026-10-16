@@ -241,11 +241,19 @@ describe('calculateWindRings', () => {
     );
   });
 
-  it("keeps lowering rings down to the rough iron rule's -30% elevation", () => {
+  it('keeps lowering rings down to a -30% elevation', () => {
     const minus20 = calculator.calculateWindRings('The Roughcutter', 9, 10, -20, 0, 0, 1).current;
     const minus30 = calculator.calculateWindRings('The Roughcutter', 9, 10, -30, 0, 0, 1).current;
     expect(minus30).toBeGreaterThan(0);
     expect(minus30).toBeLessThan(minus20);
+  });
+
+  it('already applies the rough iron rule, so rough irons need no extra -30%', () => {
+    // The 1.45 rough iron multiplier lowers rings by about 31%, the same as the
+    // -30% elevation players use as the "rough iron rule" in other tools.
+    expect(1 - 1 / calculator.getCategoryMultiplier('roughirons')).toBeCloseTo(0.31, 2);
+    expect(1 - 1 / calculator.getCategoryMultiplier('sandwedges')).toBeCloseTo(0.13, 2);
+    expect(calculator.getCategoryMultiplier('wedges')).toBe(1);
   });
 
   it('raises rings as the power ball tier rises', () => {

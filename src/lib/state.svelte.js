@@ -18,7 +18,8 @@ export const CLUB_TYPES = [
 ];
 
 export const ELEVATION_SHORTCUTS = [0, 10, 20, 30];
-// -30% is where the rough iron rule starts, so the range reaches down to it.
+// Down to -30% for steep downhill shots. The "rough iron rule" players quote is
+// not one of them: the calculator already applies it (see categoryAdjustment).
 export const ELEVATION_VALUES = Array.from({ length: 17 }, (_, i) => -30 + i * 5);
 export const POWER_BALL_SHORTCUTS = [2, 6, 10];
 export const POWER_BALL_VALUES = Array.from({ length: 11 }, (_, i) => i);
@@ -74,6 +75,16 @@ class AppState {
 
   get maxLevel() {
     return maxLevelFor(this.club?.type);
+  }
+
+  /**
+   * How much the club type's own wind adjustment lowers the rings, as a whole
+   * percentage (31 for rough irons, 13 for sand wedges), or 0 for none. Shown
+   * so players who know the rough iron rule don't apply it again as elevation.
+   */
+  get categoryAdjustment() {
+    const multiplier = calculator.getCategoryMultiplier(this.clubType);
+    return Math.round((1 - 1 / multiplier) * 100);
   }
 
   get level() {

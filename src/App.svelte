@@ -114,6 +114,8 @@
     powerBall={app.powerBall}
     elevation={app.elevation}
     {distanceLabel}
+    clubType={app.clubType}
+    categoryAdjustment={app.categoryAdjustment}
   />
 
   <section class="links panel">
