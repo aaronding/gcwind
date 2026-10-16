@@ -89,3 +89,39 @@ test('share metadata names people and things, not hostnames', async ({ page }) =
     expect(title, 'a hostname crept back into the title').not.toContain('webthinking.io');
   }
 });
+
+test('names the app with the gcwind wordmark', async ({ page }) => {
+  await page.goto('/');
+
+  // The flag is decoration and the gradient half is a span inside the
+  // heading; neither may change or split the name.
+  await expect(page.getByRole('heading', { level: 1, name: 'gcwind', exact: true })).toBeVisible();
+});
+
+for (const width of [320, 375]) {
+  test(`shows the feedback button in the header without scrolling at ${width}px`, async ({
+    page
+  }) => {
+    // Most visitors arrive on a phone and never reach the footer, which is
+    // where this used to be.
+    await page.setViewportSize({ width, height: 640 });
+    await page.goto('/');
+
+    const button = page.locator('header').getByTestId('feedback-open');
+    await expect(button).toBeInViewport({ ratio: 1 });
+    await expect(button).toHaveAccessibleName('Feedback');
+
+    const box = await button.boundingBox();
+    expect(box.y, 'feedback button sits on the first row').toBeLessThan(60);
+    expect(box.width, 'feedback button is icon-only on a phone').toBeLessThan(40);
+  });
+}
+
+test('labels the feedback button on a wide screen', async ({ page }) => {
+  await page.setViewportSize({ width: 1024, height: 800 });
+  await page.goto('/');
+
+  const button = page.locator('header').getByTestId('feedback-open');
+  const box = await button.boundingBox();
+  expect(box.width, 'feedback button shows its label').toBeGreaterThan(60);
+});
