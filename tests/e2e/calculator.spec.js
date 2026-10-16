@@ -266,6 +266,7 @@ test('the about dialog carries the disclaimer', async ({ page }) => {
   await expect(page.getByTestId('about-dialog')).toHaveAttribute('open', '');
   await expect(disclaimer).toBeVisible();
 
+  await expect(page.getByTestId('app-version')).toHaveText(/^Version \d+\.\d+\.\d+$/);
   await page.getByTestId('about-dialog-close').click();
   await expect(page.getByTestId('about-dialog')).not.toHaveAttribute('open', '');
 });

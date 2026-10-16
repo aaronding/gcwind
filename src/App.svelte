@@ -145,7 +145,7 @@
       target="_blank"
       rel="noopener noreferrer"
     >
-      webthinking.io
+      © 2006 webthinking.io
     </a>
   </footer>
 </div>
@@ -165,6 +165,7 @@
     Electronic Arts Inc. or Playdemic. Golf Clash is a trademark of Electronic Arts Inc. Club names,
     artwork and statistics are the property of their respective owners.
   </p>
+  <p class="version" data-testid="app-version">Version {__APP_VERSION__}</p>
 </Modal>
 
 <FeedbackDialog bind:dialog={feedback} />
@@ -374,6 +375,11 @@
     text-underline-offset: 3px;
     cursor: pointer;
     border-radius: var(--radius-sm);
+  }
+
+  .version {
+    color: var(--muted, inherit);
+    font-size: 0.85em;
   }
 
   .footer-link:hover {
