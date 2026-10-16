@@ -19,8 +19,8 @@ tells you how many rings to aim off.
 - Light, dark, or follow the system, remembered between visits
 - Built for one-handed use on a phone
 
-How bags, Flex and accounts work, and what is planned next, is in
-[docs/modes-and-bags.md](docs/modes-and-bags.md).
+How bags, Flex and accounts work is in [docs/modes-and-bags.md](docs/modes-and-bags.md), and
+what is planned next is in [docs/plan.md](docs/plan.md).
 
 ## Running locally
 

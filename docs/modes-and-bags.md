@@ -227,6 +227,10 @@ Each step is its own pull request, reviewed before the next one starts.
 Bags are saved in this browser from step 2 onwards, the way picks were saved before. Step
 5 adds the backup on top.
 
+Step 2 shipped in 1.2.0. The remaining steps now run in the order set in
+[plan.md](plan.md): save and backup (with an optional sync code) comes next, and accounts
+come last.
+
 ## Decisions
 
 Settled when the design was approved, and revised in review (October 2026):
@@ -235,8 +239,9 @@ Settled when the design was approved, and revised in review (October 2026):
    Sand).
 2. **Tournament holes:** one plan per hole. The `holes` list can take a `shots` list later
    (a tee shot and an approach) without a migration.
-3. **Ball:** the power ball level only. `calculateWindRings()` also takes a wind ball
-   level (0 to 10) that the UI never sets; it can join the ball setup later.
+3. **Ball:** the power ball level only. The game already applies the wind ball to the wind
+   it shows, so gcwind never asks for it (confirmed in review). `calculateWindRings()`
+   still takes a wind ball level, always 0.
 4. **No mode switch** (revised in review; it was Tour · Checkpoint · Tournament). Flex sits
    in the bag row before Bag 1, and Tournament becomes a switch in step 4.
 5. **Bags in use:** one to five, and a new player starts with one (revised in review; it
