@@ -241,6 +241,13 @@ describe('calculateWindRings', () => {
     );
   });
 
+  it("keeps lowering rings down to the rough iron rule's -30% elevation", () => {
+    const minus20 = calculator.calculateWindRings('The Roughcutter', 9, 10, -20, 0, 0, 1).current;
+    const minus30 = calculator.calculateWindRings('The Roughcutter', 9, 10, -30, 0, 0, 1).current;
+    expect(minus30).toBeGreaterThan(0);
+    expect(minus30).toBeLessThan(minus20);
+  });
+
   it('raises rings as the power ball tier rises', () => {
     const none = calculator.calculateWindRings('The Rocket', 10, 10, 0, 0, 0, 1).current;
     const ten = calculator.calculateWindRings('The Rocket', 10, 10, 0, 10, 0, 1).current;

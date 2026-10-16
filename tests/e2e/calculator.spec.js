@@ -105,6 +105,16 @@ test('a dropdown value relabels the menu button and clears the shortcut', async 
   await expect(control.getByTestId('preset-menu')).toHaveText('45%');
 });
 
+test('elevation reaches -30% for the rough iron rule and survives a reload', async ({ page }) => {
+  const control = page.getByTestId('elevation-control');
+  await control.getByTestId('preset-menu').click();
+  await control.getByTestId('preset-option--30').click();
+  await expect(page.getByTestId('detail-elevation')).toHaveText('-30%');
+
+  await page.reload();
+  await expect(page.getByTestId('detail-elevation')).toHaveText('-30%');
+});
+
 test('wind speed accepts typing, stepping and clearing', async ({ page }) => {
   const wind = page.getByTestId('wind-input');
 
