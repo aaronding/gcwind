@@ -1,7 +1,18 @@
 <script>
   import ResultDial from './ResultDial.svelte';
 
-  let { rings, club, level, powerBall, elevation, distanceLabel } = $props();
+  let {
+    rings,
+    club,
+    level,
+    powerBall,
+    elevation,
+    distanceLabel,
+    clubType,
+    categoryAdjustment = 0
+  } = $props();
+
+  const categoryNames = { roughirons: 'Rough iron', sandwedges: 'Sand wedge' };
 
   const show = (v) => (rings ? v : '-');
 </script>
@@ -52,6 +63,14 @@
       </dl>
     </div>
   </div>
+
+  {#if categoryAdjustment > 0}
+    <p class="note" data-testid="category-note">
+      {categoryNames[clubType] ?? 'Club type'} adjustment already applied ({categoryAdjustment}%
+      fewer rings{clubType === 'roughirons' ? ', the "rough iron rule"' : ''}). Enter the elevation
+      the game shows.
+    </p>
+  {/if}
 </section>
 
 <style>
@@ -150,6 +169,17 @@
 
   dt {
     color: var(--ink-muted);
+  }
+
+  .note {
+    flex: 1 1 100%;
+    margin: 0;
+    padding: 9px 12px;
+    font-size: 13px;
+    line-height: 1.4;
+    color: var(--ink-muted);
+    background: var(--surface-sunken);
+    border-radius: var(--radius-sm);
   }
 
   dd {

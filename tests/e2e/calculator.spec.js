@@ -105,7 +105,7 @@ test('a dropdown value relabels the menu button and clears the shortcut', async 
   await expect(control.getByTestId('preset-menu')).toHaveText('45%');
 });
 
-test('elevation reaches -30% for the rough iron rule and survives a reload', async ({ page }) => {
+test('elevation reaches -30% and survives a reload', async ({ page }) => {
   const control = page.getByTestId('elevation-control');
   await control.getByTestId('preset-menu').click();
   await control.getByTestId('preset-option--30').click();
@@ -113,6 +113,22 @@ test('elevation reaches -30% for the rough iron rule and survives a reload', asy
 
   await page.reload();
   await expect(page.getByTestId('detail-elevation')).toHaveText('-30%');
+});
+
+test('rough irons and sand wedges say their adjustment is already applied', async ({ page }) => {
+  const note = page.getByTestId('category-note');
+  await expect(note).toHaveCount(0);
+
+  await page.getByRole('tab', { name: 'Rough' }).click();
+  await expect(note).toContainText('Rough iron adjustment already applied (31%');
+  await expect(note).toContainText('rough iron rule');
+
+  await page.getByRole('tab', { name: 'Sand' }).click();
+  await expect(note).toContainText('Sand wedge adjustment already applied (13%');
+  await expect(note).not.toContainText('rough iron rule');
+
+  await page.getByRole('tab', { name: 'Wedge' }).click();
+  await expect(note).toHaveCount(0);
 });
 
 test('wind speed accepts typing, stepping and clearing', async ({ page }) => {
