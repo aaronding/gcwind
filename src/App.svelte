@@ -36,15 +36,31 @@
   );
 </script>
 
-<div class="page">
-  <header>
-    <div class="titles">
-      <h1>⛳ Wind Calculator</h1>
-      <p class="tagline">Pick your club, read the rings.</p>
+<header class="site-header">
+  <div class="bar">
+    <!-- The flag is hidden from assistive technology and the gradient span is
+         inline, so the heading's accessible name is exactly "gcwind". -->
+    <h1 class="wordmark" data-testid="wordmark">
+      <span class="logo" aria-hidden="true">⛳</span>gc<span class="wind">wind</span>
+    </h1>
+    <div class="actions">
+      <button
+        class="feedback-button"
+        data-testid="feedback-open"
+        onclick={() => feedback.showModal()}
+      >
+        <svg viewBox="0 0 16 16" aria-hidden="true">
+          <path d="M2.5 3.5h11v7h-6l-3 2.5v-2.5h-2z" />
+        </svg>
+        <span class="feedback-label">Feedback</span>
+      </button>
+      <ThemeToggle />
     </div>
-    <ThemeToggle />
-  </header>
+    <p class="tagline">Golf Clash wind calculator</p>
+  </div>
+</header>
 
+<div class="page">
   <ClubTabs bind:value={app.clubType} />
 
   <section class="panel">
@@ -116,10 +132,6 @@
   </section>
 
   <footer class="site-footer">
-    <button class="footer-link" data-testid="feedback-open" onclick={() => feedback.showModal()}>
-      Feedback
-    </button>
-    <span aria-hidden="true">·</span>
     <button class="footer-link" data-testid="about-open" onclick={() => about.showModal()}>
       About &amp; disclaimer
     </button>
@@ -159,7 +171,7 @@
   .page {
     max-width: 820px;
     margin: 0 auto;
-    padding: 20px 16px 48px;
+    padding: 16px 16px 48px;
     display: grid;
     /* minmax(0, 1fr), not the implicit auto: an auto column is sized by its
        widest child's min-content, so a single row that refuses to shrink
@@ -168,30 +180,126 @@
     gap: 16px;
   }
 
-  header {
+  /* A full-width band one step up from the page, closed off by a hairline, so
+     the header reads as chrome rather than as the first card of content. */
+  .site-header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--edge);
+  }
+
+  /* Lined up with .page: same width, same side padding. The tagline takes a
+     row of its own so the wordmark and the actions share the first row even
+     on a 320px phone. */
+  .bar {
+    max-width: 820px;
+    margin: 0 auto;
+    padding: 14px 16px 12px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      'brand actions'
+      'tagline tagline';
+    align-items: center;
+    column-gap: 12px;
+    row-gap: 2px;
+  }
+
+  /* "gc" in the text colour, "wind" running from fairway green to sky blue,
+     after the webthinking.io and padbench.com wordmarks. */
+  .wordmark {
+    grid-area: brand;
+    font-size: clamp(26px, 6vw, 34px);
+    font-weight: 700;
+    letter-spacing: -0.045em;
+    line-height: 1.1;
+  }
+
+  .logo {
+    margin-right: 0.25em;
+    letter-spacing: 0;
+  }
+
+  .wind {
+    background: linear-gradient(90deg, var(--wordmark-1), var(--wordmark-2) 55%, var(--wordmark-3));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    /* Shown wherever background-clip: text is not supported. */
+    color: var(--wordmark-2);
+  }
+
+  .actions {
+    grid-area: actions;
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-  }
-
-  .titles {
-    display: grid;
-    gap: 2px;
-    min-width: 0;
-  }
-
-  h1 {
-    /* Small enough that the title does not wrap beside the theme toggle on a
-       375px phone, and still the largest thing in the header. */
-    font-size: clamp(21px, 5.6vw, 34px);
-    line-height: 1.15;
+    gap: 8px;
   }
 
   .tagline {
+    grid-area: tagline;
     margin: 0;
     color: var(--ink-muted);
     font-size: 14px;
+  }
+
+  .feedback-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 34px;
+    padding: 0 12px;
+    border: 1.5px solid var(--green-500);
+    border-radius: 999px;
+    background: var(--green-100);
+    color: var(--accent-ink);
+    font-size: 14px;
+    font-weight: 700;
+    white-space: nowrap;
+    cursor: pointer;
+    transition:
+      background-color 120ms ease,
+      color 120ms ease;
+  }
+
+  .feedback-button:hover {
+    border-color: var(--green-700);
+    background: var(--green-700);
+    color: var(--on-dark);
+  }
+
+  .feedback-button:focus-visible {
+    outline: 3px solid var(--green-500);
+    outline-offset: 2px;
+  }
+
+  .feedback-button svg {
+    width: 16px;
+    height: 16px;
+    flex: none;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.6;
+    stroke-linejoin: round;
+  }
+
+  /* On phones the pill keeps its icon and outline and moves the word to the
+     accessibility tree, which leaves the header row to the wordmark. Same
+     breakpoint as the stacked .controls below. */
+  @media (max-width: 680px) {
+    .feedback-button {
+      width: 34px;
+      padding: 0;
+      justify-content: center;
+    }
+
+    .feedback-label {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
   }
 
   .panel {
