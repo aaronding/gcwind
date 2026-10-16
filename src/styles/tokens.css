@@ -38,6 +38,11 @@
   --rarity-common: light-dark(#9aa5b1, #8d99a6);
   --rarity-rare: light-dark(#3b82f6, #60a5fa);
   --rarity-epic: light-dark(#a855f7, #c084fc);
+  /* Deeper shades of the same three, for the level badges: white numbers on
+     them keep 4.5:1 in both themes, which the frame colours above do not. */
+  --rarity-common-strong: #64707d;
+  --rarity-rare-strong: #2563eb;
+  --rarity-epic-strong: #9333ea;
 
   --surface: light-dark(#ffffff, #16241b);
   --surface-sunken: light-dark(#eef3ee, #101c14);
@@ -47,6 +52,8 @@
   --ink-faint: light-dark(#8a9a90, #76897d);
   --edge: light-dark(#d9e2db, #27392d);
   --on-dark: #ffffff;
+  /* Only for actions that throw something away, such as resetting a bag. */
+  --danger: light-dark(#c0362c, #ff8f84);
 
   /* Green text that keeps 4.5:1 on --green-100 and --surface in both themes,
      for actions that sit on a tinted fill rather than a solid green one. */

@@ -10,6 +10,10 @@
   import ClubTabs from './components/ClubTabs.svelte';
   import ClubPicker from './components/ClubPicker.svelte';
   import LevelPicker from './components/LevelPicker.svelte';
+  import BagBar from './components/BagBar.svelte';
+  import BagClubs from './components/BagClubs.svelte';
+  import BagEditor from './components/BagEditor.svelte';
+  import BagManager from './components/BagManager.svelte';
   import WindInput from './components/WindInput.svelte';
   import DistanceSlider from './components/DistanceSlider.svelte';
   import ResultPanel from './components/ResultPanel.svelte';
@@ -24,6 +28,8 @@
 
   let feedback = $state(null);
   let about = $state(null);
+  let editor = $state(null);
+  let manager = $state(null);
 
   const distanceLabel = $derived(
     app.distance === 100
@@ -61,22 +67,44 @@
 </header>
 
 <div class="page">
-  <ClubTabs bind:value={app.clubType} />
+  <div class="in-use">
+    <BagBar
+      account={app.account}
+      flex={app.mode === 'flex'}
+      onflex={() => app.useFlex()}
+      onbag={(i) => app.switchBag(i)}
+      onadd={() => app.addBag()}
+      onmanage={() => manager.open()}
+    />
 
-  <section class="panel">
-    <ClubPicker
-      clubs={app.clubs}
-      clubType={app.clubType}
-      selected={app.club?.name}
-      onselect={(name) => app.selectClub(name)}
-    />
-    <LevelPicker
-      max={app.maxLevel}
-      clubType={app.clubType}
-      selected={app.level}
-      onselect={(level) => app.selectLevel(level)}
-    />
-  </section>
+    {#if app.mode === 'flex'}
+      <ClubTabs bind:value={app.clubType} />
+
+      <section class="panel">
+        <ClubPicker
+          clubs={app.clubs}
+          clubType={app.clubType}
+          selected={app.club?.name}
+          onselect={(name) => app.selectClub(name)}
+        />
+        <LevelPicker
+          max={app.maxLevel}
+          clubType={app.clubType}
+          selected={app.level}
+          onselect={(level) => app.selectLevel(level)}
+        />
+      </section>
+    {:else}
+      <section class="panel">
+        <BagClubs
+          selections={app.bag.selections}
+          selected={app.clubType}
+          onselect={(type) => (app.clubType = type)}
+          onedit={() => editor.open()}
+        />
+      </section>
+    {/if}
+  </div>
 
   <section class="controls">
     <WindInput
@@ -169,6 +197,10 @@
 </Modal>
 
 <FeedbackDialog bind:dialog={feedback} />
+
+<BagEditor bind:this={editor} />
+
+<BagManager bind:this={manager} onedit={(i) => editor.open(i)} />
 
 <style>
   .page {
@@ -273,6 +305,11 @@
   .feedback-button:focus-visible {
     outline: 3px solid var(--green-500);
     outline-offset: 2px;
+  }
+
+  .in-use {
+    display: grid;
+    gap: 10px;
   }
 
   .feedback-button svg {
