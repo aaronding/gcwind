@@ -48,6 +48,16 @@
   --edge: light-dark(#d9e2db, #27392d);
   --on-dark: #ffffff;
 
+  /* Green text that keeps 4.5:1 on --green-100 and --surface in both themes,
+     for actions that sit on a tinted fill rather than a solid green one. */
+  --accent-ink: light-dark(#24702f, #8fd79f);
+
+  /* The "wind" half of the wordmark: fairway green through teal to open sky.
+     Each stop is lifted in the dark theme so the word stays readable there. */
+  --wordmark-1: light-dark(#2f8a3d, #5cc26b);
+  --wordmark-2: light-dark(#0f8f8a, #2dd4bf);
+  --wordmark-3: light-dark(#1f7fd6, #60a5fa);
+
   --radius-sm: 8px;
   --radius: 14px;
   --radius-lg: 22px;
