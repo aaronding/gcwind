@@ -38,15 +38,18 @@
   }
 </script>
 
-<Modal bind:dialog testid="feedback-dialog" title="Share feedback">
+<Modal bind:dialog testid="feedback-dialog" title="Share feedback" wide>
   <form onsubmit={send}>
     <label for="feedback-message">What would you like to tell us?</label>
+    <!-- The native dialog focuses `autofocus` on every open, so people can type at once. -->
+    <!-- svelte-ignore a11y_autofocus -->
     <textarea
+      autofocus
       id="feedback-message"
       data-testid="feedback-message"
       bind:value={message}
       maxlength={MAX}
-      rows="6"
+      rows="12"
       required
       placeholder="A bug, an idea, a club that looks wrong. Leave your email if you'd like a reply."
     ></textarea>
