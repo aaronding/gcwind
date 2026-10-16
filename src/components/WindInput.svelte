@@ -4,6 +4,11 @@
   let { value, oninput, onnudge, onclear } = $props();
 
   const display = $derived(Number.isFinite(value) ? value.toFixed(1) : '');
+
+  // A cleared wind parks the thumb at the left end rather than letting the
+  // browser default it to the middle of the track.
+  const position = $derived(Number.isFinite(value) ? value : WIND_MIN);
+  const fill = $derived(`${((position - WIND_MIN) / (WIND_MAX - WIND_MIN)) * 100}%`);
 </script>
 
 <div class="wind">
@@ -45,6 +50,21 @@
       +
     </button>
   </div>
+
+  <!-- Drag for the rough number, then the steppers for the last tenth. It goes
+       through the same handler as typing, so clamping and saving match. -->
+  <input
+    class="slider"
+    type="range"
+    min={WIND_MIN}
+    max={WIND_MAX}
+    step="0.1"
+    value={position}
+    aria-label="Wind speed"
+    data-testid="wind-slider"
+    style:--fill={fill}
+    oninput={(e) => oninput(e.currentTarget.value)}
+  />
 </div>
 
 <style>
@@ -164,6 +184,65 @@
     outline: 3px solid var(--gold-400);
     outline-offset: 4px;
     border-radius: var(--radius-sm);
+  }
+
+  /* White on the green card, filled up to the thumb so the wind reads as an
+     amount at a glance. */
+  .slider {
+    appearance: none;
+    width: 100%;
+    height: 30px;
+    margin: 2px 0 0;
+    background: transparent;
+    cursor: pointer;
+  }
+
+  .slider::-webkit-slider-runnable-track {
+    height: 8px;
+    border-radius: 999px;
+    background: linear-gradient(
+      to right,
+      rgb(255 255 255 / 85%) var(--fill),
+      rgb(255 255 255 / 22%) var(--fill)
+    );
+  }
+
+  .slider::-moz-range-track {
+    height: 8px;
+    border-radius: 999px;
+    background: rgb(255 255 255 / 22%);
+  }
+
+  .slider::-moz-range-progress {
+    height: 8px;
+    border-radius: 999px;
+    background: rgb(255 255 255 / 85%);
+  }
+
+  .slider::-webkit-slider-thumb {
+    appearance: none;
+    width: 26px;
+    height: 26px;
+    margin-top: -9px;
+    border: none;
+    border-radius: 50%;
+    background: var(--on-dark);
+    box-shadow: 0 3px 0 rgb(0 0 0 / 20%);
+  }
+
+  .slider::-moz-range-thumb {
+    width: 26px;
+    height: 26px;
+    border: none;
+    border-radius: 50%;
+    background: var(--on-dark);
+    box-shadow: 0 3px 0 rgb(0 0 0 / 20%);
+  }
+
+  .slider:focus-visible {
+    outline: 3px solid var(--gold-400);
+    outline-offset: 4px;
+    border-radius: 999px;
   }
 
   @media (prefers-reduced-motion: reduce) {

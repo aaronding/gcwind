@@ -137,6 +137,52 @@ test('wind speed is clamped to the minimum', async ({ page }) => {
   await expect(wind).toHaveValue('0.1');
 });
 
+test('the wind slider and the number move together', async ({ page }) => {
+  const wind = page.getByTestId('wind-input');
+  const slider = page.getByTestId('wind-slider');
+
+  await expect(slider).toHaveValue('10');
+
+  await slider.evaluate((el) => {
+    el.value = 18.4;
+    el.dispatchEvent(new Event('input', { bubbles: true }));
+  });
+  await expect(wind).toHaveValue('18.4');
+  await expect(rings(page).current).not.toHaveText('8.3');
+
+  await wind.fill('6.5');
+  await expect(slider).toHaveValue('6.5');
+
+  // Arrow keys step by a tenth, like the steppers.
+  await slider.focus();
+  await page.keyboard.press('ArrowRight');
+  await expect(wind).toHaveValue('6.6');
+
+  // Cleared wind parks the thumb at the left end; moving it brings a result back.
+  await page.getByTestId('wind-clear').click();
+  await expect(slider).toHaveValue('0.1');
+  await expect(rings(page).current).toHaveText('-');
+
+  await slider.evaluate((el) => {
+    el.value = 12;
+    el.dispatchEvent(new Event('input', { bubbles: true }));
+  });
+  await expect(wind).toHaveValue('12.0');
+  await expect(rings(page).current).not.toHaveText('-');
+});
+
+test('clicking along the wind slider sets the wind', async ({ page }) => {
+  const slider = page.getByTestId('wind-slider');
+  const box = await slider.boundingBox();
+
+  // About four fifths of the way along a 0.1-25 track is roughly 20.
+  await slider.click({ position: { x: box.width * 0.8, y: box.height / 2 } });
+
+  const wind = Number(await page.getByTestId('wind-input').inputValue());
+  expect(wind).toBeGreaterThan(18);
+  expect(wind).toBeLessThan(22);
+});
+
 // The slider is a native <input type="range"> since Shoelace was removed, so
 // it emits `input` rather than `sl-input`. Same user-visible behaviour.
 test('distance labels read Max, Mid and Min at the ends and middle', async ({ page }) => {
