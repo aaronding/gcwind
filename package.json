@@ -17,6 +17,7 @@
     "format:check": "prettier --check .",
     "validate": "node tools/validate-clubs.js",
     "images": "node tools/optimize-images.js",
+    "icons": "node tools/generate-icons.js",
     "build:site": "vite build && find _site -name '.DS_Store' -delete",
     "deploy": "wrangler deploy && node tools/check-deploy.js",
     "test": "vitest run",

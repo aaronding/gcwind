@@ -38,6 +38,7 @@ pnpm run lint
 pnpm run format
 pnpm run validate    # sanity-check the club data
 pnpm run images      # re-encode the club art
+pnpm run icons       # redraw the app icon and favicon
 pnpm test            # calculator unit and golden tests
 pnpm run test:e2e    # browser tests against a local build
 pnpm run deploy      # publish to the Cloudflare Worker, then check nothing was injected

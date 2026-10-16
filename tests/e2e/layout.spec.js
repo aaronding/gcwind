@@ -250,7 +250,7 @@ test('share metadata names people and things, not hostnames', async ({ page }) =
 test('names the app with the gcwind wordmark', async ({ page }) => {
   await page.goto('/');
 
-  // The flag is decoration and the gradient half is a span inside the
+  // The logo is decoration and the gradient half is a span inside the
   // heading; neither may change or split the name.
   await expect(page.getByRole('heading', { level: 1, name: 'gcwind', exact: true })).toBeVisible();
 });
