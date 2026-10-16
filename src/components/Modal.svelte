@@ -1,12 +1,13 @@
 <script>
   // A native <dialog>: focus trapping, Escape and the backdrop come from the
   // platform rather than from script.
-  let { dialog = $bindable(), testid, title, children } = $props();
+  let { dialog = $bindable(), testid, title, wide = false, children } = $props();
 </script>
 
 <dialog
   bind:this={dialog}
   data-testid={testid}
+  class:wide
   onclick={(e) => e.target === dialog && dialog.close()}
 >
   <div class="body">
@@ -37,6 +38,10 @@
     background: var(--surface);
     color: var(--ink);
     box-shadow: 0 18px 50px rgb(8 20 12 / 28%);
+  }
+
+  dialog.wide {
+    width: min(760px, 94vw);
   }
 
   dialog::backdrop {
