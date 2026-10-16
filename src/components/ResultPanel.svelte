@@ -44,7 +44,12 @@
             data-testid="detail-club-image"
           />
         {/if}
-        <span class="level" data-testid="detail-level" aria-hidden="true">Lv {level}</span>
+        <span
+          class="level-badge"
+          data-rarity={club?.type}
+          data-testid="detail-level"
+          aria-hidden="true">{level}</span
+        >
       </span>
       <span class="club-name">
         {club?.name ?? '–'}<span class="visually-hidden">, level {level}</span>
@@ -176,23 +181,10 @@
     object-fit: contain;
   }
 
-  /* A small pill over the picture's corner. Ink on surface inverts with the
-     theme, so it reads in both. */
-  .level {
-    position: absolute;
-    right: -10px;
-    bottom: -6px;
-    padding: 1px 6px;
-    border-radius: 999px;
-    background: var(--ink);
-    color: var(--surface);
-    box-shadow: 0 0 0 2px var(--surface);
-    font-family: var(--font-display);
-    font-size: 11px;
-    font-weight: 800;
-    line-height: 1.45;
-    white-space: nowrap;
-    font-variant-numeric: tabular-nums;
+  /* The same badge as the bag's club cards. */
+  .level-badge {
+    right: -8px;
+    bottom: -4px;
   }
 
   .club-name {

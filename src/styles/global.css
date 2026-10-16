@@ -61,6 +61,61 @@ button {
   outline-offset: 2px;
 }
 
+/* Sizes and colours for .chunky buttons in dialogs. */
+.chunky.compact {
+  min-height: 40px;
+  padding: 0 16px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.chunky.primary {
+  background: var(--green-500);
+  color: var(--on-dark);
+  box-shadow: 0 var(--bevel) 0 var(--green-700);
+}
+
+.chunky.danger {
+  background: var(--danger);
+  color: var(--surface);
+  box-shadow: 0 var(--bevel) 0 color-mix(in srgb, var(--danger), black 30%);
+}
+
+/* A club's level as a small number on the corner of its picture, the way the
+ * game shows it, in the club's rarity colour. The picture is the positioned
+ * parent; each component places the badge on its corner. --badge-ring is the
+ * colour around it, normally the card the picture sits on.
+ */
+.level-badge {
+  position: absolute;
+  min-width: 18px;
+  padding: 0 4px;
+  border-radius: 999px;
+  background: var(--badge, var(--rarity-common-strong));
+  color: var(--on-dark);
+  box-shadow: 0 0 0 2px var(--badge-ring, var(--surface));
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 16px;
+  text-align: center;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.level-badge[data-rarity='Common'] {
+  --badge: var(--rarity-common-strong);
+}
+
+.level-badge[data-rarity='Rare'] {
+  --badge: var(--rarity-rare-strong);
+}
+
+.level-badge[data-rarity='Epic'] {
+  --badge: var(--rarity-epic-strong);
+}
+
 @media (prefers-reduced-motion: reduce) {
   * {
     transition-duration: 1ms !important;

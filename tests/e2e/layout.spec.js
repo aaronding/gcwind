@@ -3,25 +3,142 @@ import { test, expect } from '@playwright/test';
 // Layout regressions are invisible to the behavioural specs: every control can
 // work perfectly while the page scrolls sideways on a phone. 320px is the
 // narrowest screen worth supporting; 560px is where the club tabs stop
-// wrapping.
+// wrapping and the club cards go to one row.
 const WIDTHS = [320, 375, 414, 560, 768, 1024];
 
-for (const width of WIDTHS) {
-  test(`fits the viewport at ${width}px`, async ({ page }) => {
-    await page.setViewportSize({ width, height: 800 });
-    await page.goto('/');
-    await expect(page.getByTestId('result-current')).not.toHaveText('-');
+const horizontalScroll = (page) =>
+  page.evaluate(() => ({
+    scroll: document.documentElement.scrollWidth,
+    client: document.documentElement.clientWidth
+  }));
 
-    const { scroll, client } = await page.evaluate(() => ({
-      scroll: document.documentElement.scrollWidth,
-      client: document.documentElement.clientWidth
-    }));
+/** The text of every matching element that is not wholly inside the viewport. */
+const offscreen = (page, selector) =>
+  page.evaluate((selector) => {
+    const w = document.documentElement.clientWidth;
+    return [...document.querySelectorAll(selector)]
+      .filter((el) => {
+        const b = el.getBoundingClientRect();
+        return b.left < -1 || b.right > w + 1;
+      })
+      .map((el) => el.getAttribute('aria-label') ?? el.textContent.trim());
+  }, selector);
 
-    expect(scroll, `page scrolls horizontally at ${width}px`).toBeLessThanOrEqual(client);
+/** Starts the page with `count` bags, the last one in use, so the bag row is at its fullest. */
+async function withBags(page, count) {
+  await page.addInitScript((count) => {
+    if (localStorage.getItem('gcwind:v2')) return;
+    localStorage.setItem(
+      'gcwind:v2',
+      JSON.stringify({
+        version: 2,
+        accounts: [{ activeBag: count - 1, bags: Array.from({ length: count }, () => ({})) }]
+      })
+    );
+  }, count);
+}
+
+for (const choice of ['bag', 'flex']) {
+  for (const width of WIDTHS) {
+    test(`fits the viewport at ${width}px, five bags, on ${choice === 'bag' ? 'a bag' : 'Flex'}`, async ({
+      page
+    }) => {
+      await withBags(page, 5);
+      await page.setViewportSize({ width, height: 800 });
+      await page.goto('/');
+      await page.getByTestId(choice === 'bag' ? 'bag-5' : 'bag-flex').click();
+      await expect(page.getByTestId('result-current')).not.toHaveText('-');
+
+      const { scroll, client } = await horizontalScroll(page);
+      expect(scroll, `page scrolls horizontally at ${width}px`).toBeLessThanOrEqual(client);
+    });
+  }
+}
+
+for (const count of [1, 4, 5]) {
+  test(`shows Flex, ${count} bag${count > 1 ? 's' : ''} and all seven club cards without scrolling, at every width`, async ({
+    page
+  }) => {
+    await withBags(page, count);
+    for (const width of WIDTHS) {
+      await page.setViewportSize({ width, height: 800 });
+      await page.goto('/');
+
+      await expect(page.getByTestId('bag-flex')).toBeVisible();
+      await expect(page.getByTestId(/^bag-\d$/)).toHaveCount(count);
+      await expect(page.getByTestId('bag-add')).toHaveCount(count < 5 ? 1 : 0);
+      await expect(page.getByTestId(/^bag-club-/)).toHaveCount(7);
+
+      expect(await offscreen(page, '[data-testid^="bag"]'), `off-screen at ${width}px`).toEqual([]);
+    }
   });
 }
 
+test('keeps the bag buttons easy to tap on a phone, and not too wide on a desktop', async ({
+  page
+}) => {
+  const buttons = (page) => page.getByTestId('bag-bar').getByRole('group').getByRole('button');
+
+  // Few bags: wide targets.
+  await page.setViewportSize({ width: 375, height: 800 });
+  await page.goto('/');
+  await page.getByTestId('bag-add').click();
+  for (const id of ['bag-flex', 'bag-1', 'bag-2']) {
+    const box = await page.getByTestId(id).boundingBox();
+    expect(box.width, `${id} width`).toBeGreaterThanOrEqual(44);
+    expect(box.height, `${id} height`).toBeGreaterThanOrEqual(44);
+  }
+
+  // Five bags, even on the narrowest phone: still a full-height target, and
+  // never narrower than 34px.
+  for (const width of [320, 375]) {
+    await page.setViewportSize({ width, height: 800 });
+    while ((await page.getByTestId('bag-add').count()) > 0) {
+      await page.getByTestId('bag-add').click();
+    }
+    for (const box of await Promise.all((await buttons(page).all()).map((b) => b.boundingBox()))) {
+      expect(box.width, `button width at ${width}px`).toBeGreaterThanOrEqual(34);
+      expect(box.height, `button height at ${width}px`).toBeGreaterThanOrEqual(44);
+    }
+    const manage = await page.getByTestId('bags-manage').boundingBox();
+    expect(manage.width, `manage button width at ${width}px`).toBeGreaterThanOrEqual(34);
+    // The name may give way to its icon, but never leaves the button's name.
+    await expect(page.getByTestId('bags-manage')).toHaveAccessibleName('Bag 5, manage bags');
+  }
+
+  await page.setViewportSize({ width: 1024, height: 800 });
+  const group = await page.getByTestId('bag-bar').getByRole('group').boundingBox();
+  expect(group.width, 'bag buttons stop at a comfortable width').toBeLessThanOrEqual(420);
+});
+
+test('keeps the bag short on a phone, so more of the page fits', async ({ page }) => {
+  // Seven cards and Edit in two rows of four, each row well under the 85px
+  // the cards took before.
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/');
+  const cards = await page.getByTestId('bag-clubs').boundingBox();
+  expect(cards.height).toBeLessThanOrEqual(140);
+});
+
+test('fits the bag editor on the narrowest phone', async ({ page }) => {
+  await page.setViewportSize({ width: 320, height: 640 });
+  await page.goto('/');
+  await page.getByTestId('bag-edit').click();
+
+  const editor = page.getByTestId('bag-editor');
+  await expect(editor).toBeVisible();
+  expect(await offscreen(page, '[data-testid="bag-editor"] [data-testid^="bag-club-"]')).toEqual(
+    []
+  );
+  const { scroll, client } = await horizontalScroll(page);
+  expect(scroll).toBeLessThanOrEqual(client);
+});
+
 test('shows all seven club tabs without scrolling, at every width', async ({ page }) => {
+  // The tabs belong to Flex, which the app then remembers across loads.
+  await page.goto('/');
+  await page.getByTestId('bag-flex').click();
+
   for (const width of WIDTHS) {
     await page.setViewportSize({ width, height: 800 });
     await page.goto('/');
@@ -30,17 +147,7 @@ test('shows all seven club tabs without scrolling, at every width', async ({ pag
     await expect(tabs, `tab count at ${width}px`).toHaveCount(7);
 
     // Every tab must be inside the viewport, not off the side of a scroller.
-    const offscreen = await page.evaluate(() => {
-      const w = document.documentElement.clientWidth;
-      return [...document.querySelectorAll('[role="tab"]')]
-        .filter((t) => {
-          const b = t.getBoundingClientRect();
-          return b.left < -1 || b.right > w + 1;
-        })
-        .map((t) => t.textContent.trim());
-    });
-
-    expect(offscreen, `tabs off-screen at ${width}px`).toEqual([]);
+    expect(await offscreen(page, '[role="tab"]'), `tabs off-screen at ${width}px`).toEqual([]);
   }
 });
 
