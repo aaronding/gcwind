@@ -18,50 +18,53 @@
 </script>
 
 <section class="result">
-  <ResultDial {rings} />
+  <div class="dial">
+    <ResultDial {rings} />
+  </div>
 
-  <div class="side">
-    <div class="spread">
-      {#each [['Max', rings?.max, 'result-max'], ['Mid', rings?.mid, 'result-mid'], ['Min', rings?.min, 'result-min']] as [name, value, id] (id)}
-        <div class="stat">
-          <span class="stat-label">{name}</span>
-          <span class="stat-value" data-testid={id}>{show(value)}</span>
-        </div>
-      {/each}
-    </div>
+  <div class="spread">
+    {#each [['Max', rings?.max, 'result-max'], ['Mid', rings?.mid, 'result-mid'], ['Min', rings?.min, 'result-min']] as [name, value, id] (id)}
+      <div class="stat">
+        <span class="stat-label">{name}</span>
+        <span class="stat-value" data-testid={id}>{show(value)}</span>
+      </div>
+    {/each}
+  </div>
 
-    <div class="details">
-      <div class="club">
+  <div class="details">
+    <div class="club">
+      <!-- The level sits on the picture, the way the game shows it. -->
+      <span class="pic">
         {#if club}
           <img
             src={`images/${club.image}`}
             alt=""
-            width="44"
-            height="44"
+            width="52"
+            height="52"
             data-testid="detail-club-image"
           />
         {/if}
-        <div class="club-text">
-          <span class="club-name">{club?.name ?? '–'}</span>
-          <span class="club-level" data-testid="detail-level">Lv. {level}</span>
-        </div>
-      </div>
-
-      <dl>
-        <div>
-          <dt>Power Ball</dt>
-          <dd data-testid="detail-powerball">{powerBall}</dd>
-        </div>
-        <div>
-          <dt>Elevation</dt>
-          <dd data-testid="detail-elevation">{elevation}%</dd>
-        </div>
-        <div>
-          <dt>Distance</dt>
-          <dd data-testid="detail-distance">{distanceLabel}</dd>
-        </div>
-      </dl>
+        <span class="level" data-testid="detail-level" aria-hidden="true">Lv {level}</span>
+      </span>
+      <span class="club-name">
+        {club?.name ?? '–'}<span class="visually-hidden">, level {level}</span>
+      </span>
     </div>
+
+    <dl>
+      <div>
+        <dt>Power Ball</dt>
+        <dd data-testid="detail-powerball">{powerBall}</dd>
+      </div>
+      <div>
+        <dt>Elevation</dt>
+        <dd data-testid="detail-elevation">{elevation}%</dd>
+      </div>
+      <div>
+        <dt>Distance</dt>
+        <dd data-testid="detail-distance">{distanceLabel}</dd>
+      </div>
+    </dl>
   </div>
 
   {#if categoryAdjustment > 0}
@@ -74,32 +77,39 @@
 </section>
 
 <style>
+  /* Max, Mid and Min always stack beside the dial. On a phone the club and its
+     settings go underneath, side by side; on a wider screen they move to the
+     other side of the dial, which leaves it in the middle of the card. */
   .result {
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-areas:
+      'dial spread'
+      'details details';
     align-items: center;
-    gap: 18px;
-    padding: 18px;
+    gap: 16px 14px;
+    padding: 16px;
     background: var(--surface);
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-card);
   }
 
-  .side {
-    flex: 1 1 210px;
-    display: grid;
-    gap: 14px;
+  .dial {
+    grid-area: dial;
   }
 
   .spread {
+    grid-area: spread;
+    align-self: stretch;
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-auto-rows: 1fr;
     gap: 8px;
   }
 
   .stat {
     display: grid;
     justify-items: center;
+    align-content: center;
     gap: 2px;
     padding: 9px 6px;
     background: var(--surface-sunken);
@@ -122,36 +132,75 @@
   }
 
   .details {
+    grid-area: details;
     display: grid;
-    gap: 12px;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    align-items: center;
+    gap: 12px 16px;
+  }
+
+  /* The app's own breakpoint for side-by-side controls. */
+  @media (min-width: 681px) {
+    .result {
+      grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+      grid-template-areas: 'details dial spread';
+      gap: 22px;
+      padding: 18px 22px;
+    }
+
+    .details {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 14px;
+    }
   }
 
   .club {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 16px;
+    min-width: 0;
   }
 
-  .club img {
-    width: 44px;
-    height: 44px;
+  .pic {
+    position: relative;
+    flex: 0 0 auto;
+    display: grid;
+    place-items: center;
+    width: 52px;
+    height: 52px;
+  }
+
+  .pic img {
+    width: 52px;
+    height: 52px;
     object-fit: contain;
   }
 
-  .club-text {
-    display: grid;
+  /* A small pill over the picture's corner. Ink on surface inverts with the
+     theme, so it reads in both. */
+  .level {
+    position: absolute;
+    right: -10px;
+    bottom: -6px;
+    padding: 1px 6px;
+    border-radius: 999px;
+    background: var(--ink);
+    color: var(--surface);
+    box-shadow: 0 0 0 2px var(--surface);
+    font-family: var(--font-display);
+    font-size: 11px;
+    font-weight: 800;
+    line-height: 1.45;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
   }
 
   .club-name {
+    min-width: 0;
     font-family: var(--font-display);
     font-weight: 800;
     font-size: 15px;
     line-height: 1.2;
-  }
-
-  .club-level {
-    font-size: 13px;
-    color: var(--ink-muted);
   }
 
   dl {
@@ -171,8 +220,10 @@
     color: var(--ink-muted);
   }
 
+  /* Placed in a row of its own only when it is shown, so its gap never
+     leaves a blank strip at the bottom of the card. */
   .note {
-    flex: 1 1 100%;
+    grid-column: 1 / -1;
     margin: 0;
     padding: 9px 12px;
     font-size: 13px;
