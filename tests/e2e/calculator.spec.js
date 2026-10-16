@@ -168,7 +168,65 @@ test('wind speed is clamped to the minimum', async ({ page }) => {
   const wind = page.getByTestId('wind-input');
   await wind.fill('0.05');
   await wind.dispatchEvent('input');
+  await wind.blur();
   await expect(wind).toHaveValue('0.1');
+});
+
+test('clicking the wind speed selects it, so typing replaces it', async ({ page }) => {
+  const wind = page.getByTestId('wind-input');
+  await wind.click();
+  await wind.pressSequentially('12.5');
+  await expect(wind).toHaveValue('12.5');
+  await wind.press('Enter');
+
+  // Formatted once you leave the field.
+  await wind.click();
+  await wind.pressSequentially('8');
+  await wind.press('Enter');
+  await expect(wind).toHaveValue('8.0');
+});
+
+test('the wind keypad fills in from the right', async ({ page }) => {
+  const wind = page.getByTestId('wind-input');
+  const press = async (digits) => {
+    for (const d of digits) await page.getByTestId(`wind-key-${d}`).click();
+  };
+
+  await press('125');
+  await expect(wind).toHaveValue('12.5');
+
+  // A fourth digit starts a new number.
+  await press('8');
+  await expect(wind).toHaveValue('0.8');
+  await press('0');
+  await expect(wind).toHaveValue('8.0');
+
+  await page.getByTestId('wind-clear').click();
+  await expect(wind).toHaveValue('');
+  await expect(rings(page).current).toHaveText('-');
+
+  await press('95');
+  await expect(wind).toHaveValue('9.5');
+
+  // A stepper ends the entry, so the next digit starts afresh.
+  await page.getByTestId('wind-increase').click();
+  await expect(wind).toHaveValue('9.6');
+  await press('3');
+  await expect(wind).toHaveValue('0.3');
+});
+
+test('the wind keypad starts a new number after a pause', async ({ page }) => {
+  await page.clock.install();
+  await page.goto('/');
+  const wind = page.getByTestId('wind-input');
+
+  await page.getByTestId('wind-key-1').click();
+  await page.getByTestId('wind-key-2').click();
+  await expect(wind).toHaveValue('1.2');
+
+  await page.clock.runFor(3000);
+  await page.getByTestId('wind-key-7').click();
+  await expect(wind).toHaveValue('0.7');
 });
 
 test('the wind slider and the number move together', async ({ page }) => {
