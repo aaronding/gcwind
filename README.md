@@ -48,6 +48,8 @@ The dev server does not run the Worker, so `/api/feedback` only answers under
 Linting, formatting, data validation, unit tests and end-to-end tests all run in CI on every
 push and pull request.
 
+Built with help from [Claude Code](https://claude.com/claude-code).
+
 ## Feedback
 
 The app has a feedback form that posts to this site's own `/api/feedback`, so no
