@@ -18,7 +18,8 @@ export const CLUB_TYPES = [
 ];
 
 export const ELEVATION_SHORTCUTS = [0, 10, 20, 30];
-export const ELEVATION_VALUES = Array.from({ length: 15 }, (_, i) => -20 + i * 5);
+// -30% is where the rough iron rule starts, so the range reaches down to it.
+export const ELEVATION_VALUES = Array.from({ length: 17 }, (_, i) => -30 + i * 5);
 export const POWER_BALL_SHORTCUTS = [2, 6, 10];
 export const POWER_BALL_VALUES = Array.from({ length: 11 }, (_, i) => i);
 
