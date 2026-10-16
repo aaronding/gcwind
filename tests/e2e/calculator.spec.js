@@ -33,7 +33,9 @@ test('opens on the driver tab with the first club at max level', async ({ page }
   await expect(r.min).toHaveText('7.1');
 
   await expect(page.getByTestId('wind-input')).toHaveValue('10.0');
-  await expect(page.getByTestId('detail-level')).toHaveText('Lv. 10');
+  // Changed deliberately: the level is a badge on the club picture now, which
+  // reads "Lv 10" rather than "Lv. 10".
+  await expect(page.getByTestId('detail-level')).toHaveText('Lv 10');
   await expect(page.getByTestId('detail-powerball')).toHaveText('2');
   await expect(page.getByTestId('detail-elevation')).toHaveText('10%');
   await expect(page.getByTestId('detail-distance')).toHaveText('Max');
@@ -59,23 +61,23 @@ test('level count follows club rarity', async ({ page }) => {
 test('each tab remembers its own club and level', async ({ page }) => {
   await page.getByTestId('club-list-drivers').getByTestId('club-The Apocalypse').click();
   await page.getByTestId('level-list-drivers').getByTestId('level-3').click();
-  await expect(page.getByTestId('detail-level')).toHaveText('Lv. 3');
+  await expect(page.getByTestId('detail-level')).toHaveText('Lv 3');
 
   await page.getByRole('tab', { name: 'Wedge' }).click();
-  await expect(page.getByTestId('detail-level')).not.toHaveText('Lv. 3');
+  await expect(page.getByTestId('detail-level')).not.toHaveText('Lv 3');
 
   await page.getByRole('tab', { name: 'Driver' }).click();
-  await expect(page.getByTestId('detail-level')).toHaveText('Lv. 3');
+  await expect(page.getByTestId('detail-level')).toHaveText('Lv 3');
 });
 
 test('a remembered level is clamped when the new club has fewer', async ({ page }) => {
   await page.getByTestId('club-list-drivers').getByTestId('club-The Rocket').click();
   await page.getByTestId('level-list-drivers').getByTestId('level-10').click();
-  await expect(page.getByTestId('detail-level')).toHaveText('Lv. 10');
+  await expect(page.getByTestId('detail-level')).toHaveText('Lv 10');
 
   // Epic tops out at 8.
   await page.getByTestId('club-list-drivers').getByTestId('club-The Apocalypse').click();
-  await expect(page.getByTestId('detail-level')).toHaveText('Lv. 8');
+  await expect(page.getByTestId('detail-level')).toHaveText('Lv 8');
 });
 
 test('elevation and power ball shortcuts recalculate', async ({ page }) => {

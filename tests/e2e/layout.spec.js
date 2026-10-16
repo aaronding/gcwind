@@ -44,6 +44,55 @@ test('shows all seven club tabs without scrolling, at every width', async ({ pag
   }
 });
 
+test('puts Max, Mid and Min beside the dial, and the club below it on a phone or before it on a desktop', async ({
+  page
+}) => {
+  const boxes = async () => ({
+    dial: await page.getByTestId('result-dial').boundingBox(),
+    club: await page.getByTestId('detail-club-image').boundingBox(),
+    stats: await Promise.all(
+      ['result-max', 'result-mid', 'result-min'].map((id) => page.getByTestId(id).boundingBox())
+    )
+  });
+
+  await page.setViewportSize({ width: 375, height: 800 });
+  await page.goto('/');
+
+  let { dial, club, stats } = await boxes();
+  for (const [i, box] of stats.entries()) {
+    expect(box.x, `stat ${i} sits right of the dial`).toBeGreaterThanOrEqual(dial.x + dial.width);
+    expect(box.y, `stat ${i} starts within the dial's height`).toBeGreaterThanOrEqual(dial.y);
+    expect(box.y + box.height, `stat ${i} ends within it`).toBeLessThanOrEqual(
+      dial.y + dial.height
+    );
+  }
+  expect(club.y, 'club details sit below the dial').toBeGreaterThanOrEqual(dial.y + dial.height);
+
+  await page.setViewportSize({ width: 1024, height: 800 });
+  ({ dial, club, stats } = await boxes());
+  expect(club.x + club.width, 'club details sit left of the dial').toBeLessThanOrEqual(dial.x);
+  for (const [i, box] of stats.entries()) {
+    expect(box.x, `stat ${i} sits right of the dial`).toBeGreaterThanOrEqual(dial.x + dial.width);
+  }
+  // Stacked, as on a phone: one column, top to bottom.
+  expect(stats[1].y).toBeGreaterThan(stats[0].y);
+  expect(stats[2].y).toBeGreaterThan(stats[1].y);
+  expect(Math.abs(stats[2].x - stats[0].x)).toBeLessThan(2);
+});
+
+test('makes the ring count the largest number on the page, at every width', async ({ page }) => {
+  // The rings are what a player opens the app for; the wind speed is the
+  // only other number of comparable size.
+  const size = (id) =>
+    page.getByTestId(id).evaluate((el) => Number.parseFloat(getComputedStyle(el).fontSize));
+
+  for (const width of WIDTHS) {
+    await page.setViewportSize({ width, height: 800 });
+    await page.goto('/');
+    expect(await size('result-current'), `at ${width}px`).toBeGreaterThan(await size('wind-input'));
+  }
+});
+
 test('keeps the wind stepper usable on a phone', async ({ page }) => {
   await page.setViewportSize({ width: 375, height: 800 });
   await page.goto('/');
