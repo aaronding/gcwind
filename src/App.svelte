@@ -7,6 +7,7 @@
     POWER_BALL_SHORTCUTS,
     POWER_BALL_VALUES
   } from './lib/state.svelte.js';
+  import logo from './assets/logo.svg';
   import ClubTabs from './components/ClubTabs.svelte';
   import ClubPicker from './components/ClubPicker.svelte';
   import LevelPicker from './components/LevelPicker.svelte';
@@ -47,7 +48,7 @@
     <!-- The flag is hidden from assistive technology and the gradient span is
          inline, so the heading's accessible name is exactly "gcwind". -->
     <h1 class="wordmark" data-testid="wordmark">
-      <span class="logo" aria-hidden="true">⛳</span>gc<span class="wind">wind</span>
+      <img class="logo" src={logo} alt="" />gc<span class="wind">wind</span>
     </h1>
     <div class="actions">
       <button
@@ -249,9 +250,12 @@
     line-height: 1.1;
   }
 
+  /* The app icon, a little taller than the lowercase letters it leads. */
   .logo {
-    margin-right: 0.25em;
-    letter-spacing: 0;
+    width: 1.05em;
+    height: 1.05em;
+    margin-right: 0.22em;
+    vertical-align: -0.17em;
   }
 
   .wind {

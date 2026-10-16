@@ -28,5 +28,15 @@
 /images/clubs/*
   Cache-Control: public, max-age=86400, stale-while-revalidate=604800
 
+# The icons change rarely, but keep the same names when they do.
+/icon.svg
+  Cache-Control: public, max-age=86400, stale-while-revalidate=604800
+
+/icons/*
+  Cache-Control: public, max-age=86400, stale-while-revalidate=604800
+
+/manifest.webmanifest
+  Cache-Control: public, max-age=3600, stale-while-revalidate=86400
+
 /data/clubs.json
   Cache-Control: public, max-age=3600, stale-while-revalidate=86400
