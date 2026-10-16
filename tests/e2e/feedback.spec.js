@@ -123,3 +123,9 @@ test('the page loads nothing from a third party', async ({ page }) => {
 
   expect(external, 'the page reached a third party').toEqual([]);
 });
+
+test('the message box has focus when the dialog opens', async ({ page }) => {
+  await page.goto('/');
+  await page.getByTestId('feedback-open').click();
+  await expect(page.getByTestId('feedback-message')).toBeFocused();
+});
