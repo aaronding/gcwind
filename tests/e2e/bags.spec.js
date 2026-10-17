@@ -139,15 +139,16 @@ test('Flex picks any club and level, keeps its own picks, and is remembered', as
   await expect(card(page, 'drivers')).toHaveAccessibleName('Driver: The Rocket, level 10');
 });
 
-test('the bag manager adds, renames, edits, copies, resets and removes bags', async ({ page }) => {
+test('the bag manager adds, renames, edits and removes bags, and a removal can be undone', async ({
+  page
+}) => {
   await open(page);
   await page.getByTestId('bags-manage').click();
   const manager = page.getByTestId('bags-dialog');
   await expect(manager).toBeVisible();
 
-  // With one bag there is nothing to copy to or remove.
-  await manager.getByTestId('bag-more-1').click();
-  await expect(manager.getByTestId('bag-copy-1')).toHaveCount(0);
+  // Each bag has Edit, and Remove once there is more than one.
+  await expect(manager.getByTestId('bag-edit-1')).toBeVisible();
   await expect(manager.getByTestId('bag-remove-1')).toHaveCount(0);
 
   // Add three more; the new bag's name is ready to type over.
@@ -156,6 +157,7 @@ test('the bag manager adds, renames, edits, copies, resets and removes bags', as
     await expect(manager.getByTestId(`bag-name-${i}`)).toBeFocused();
   }
   await expect(bagButtons(page)).toHaveCount(4);
+  await expect(manager.getByTestId('bag-remove-1')).toBeVisible();
 
   // Rename Bag 2; the button for it says so to screen readers.
   await manager.getByTestId('bag-name-2').fill('Approach');
@@ -163,48 +165,65 @@ test('the bag manager adds, renames, edits, copies, resets and removes bags', as
   await expect(page.getByTestId('bag-2')).toHaveAccessibleName('Bag 2: Approach');
 
   // Edit Bag 1's clubs from the manager; the editor opens on top of it.
-  await manager.getByTestId('bag-more-1').click();
   await manager.getByTestId('bag-edit-1').click();
   await pick(page, 'drivers', 'Big Topper', 7);
   await page.getByTestId('bag-editor-done').click();
   await expect(manager).toBeVisible();
 
-  // Copy Bag 1 to Bag 4, which asks first.
-  await manager.getByTestId('bag-copy-target-1').selectOption({ label: 'Bag 4' });
-  await manager.getByTestId('bag-copy-1').click();
-  await expect(manager.getByTestId('bag-copy-confirm')).toContainText('“Bag 4”');
-  await manager.getByTestId('bag-copy-yes').click();
-  await page.getByTestId('bags-dialog-close').click();
-
-  // The copy has Bag 1's clubs and keeps its own name.
-  await page.getByTestId('bag-4').click();
-  await expect(page.getByTestId('bag-name')).toHaveText('Bag 4');
-  await expect(card(page, 'drivers')).toHaveAccessibleName('Driver: Big Topper, level 7');
-
-  // Reset Bag 4, which also asks first.
-  await page.getByTestId('bags-manage').click();
-  await manager.getByTestId('bag-more-4').click();
-  await manager.getByTestId('bag-reset-4').click();
-  await manager.getByTestId('bag-reset-yes').click();
-  await expect(manager).toBeVisible();
-
-  // Remove Bag 2, which asks first. Bags 3 and 4 move up a number.
-  await manager.getByTestId('bag-more-2').click();
+  // Remove Bag 2 at once; Undo puts it back where it was.
   await manager.getByTestId('bag-remove-2').click();
-  await expect(manager.getByTestId('bag-remove-confirm')).toContainText('“Approach”');
-  await manager.getByTestId('bag-remove-yes').click();
+  await expect(manager.getByTestId('bag-removed')).toContainText('Removed “Approach”');
+  await expect(bagButtons(page)).toHaveCount(3);
+  await manager.getByTestId('bag-undo-remove').click();
+  await expect(manager.getByTestId('bag-removed')).toHaveCount(0);
+  await expect(manager.getByTestId('bag-name-2')).toHaveValue('Approach');
+  await expect(bagButtons(page)).toHaveCount(4);
+
+  // Remove it for good. Bags 3 and 4 move up a number; Bag 4, the last one
+  // added, is still the bag in use.
+  await manager.getByTestId('bag-remove-2').click();
   await page.getByTestId('bags-dialog-close').click();
 
   await expect(bagButtons(page)).toHaveCount(3);
   await expect(page.getByTestId('bag-2')).toHaveAccessibleName('Bag 2');
-  // The bag in use was Bag 4, which is Bag 3 now, still reset.
+  // The bag in use was Bag 4, which is Bag 3 now.
   await expect(page.getByTestId('bag-3')).toHaveAttribute('aria-pressed', 'true');
   await expect(page.getByTestId('bag-name')).toHaveText('Bag 3');
-  await expect(card(page, 'drivers')).toHaveAccessibleName('Driver: The Rocket, level 10');
 
-  // Bag 1 is unchanged by any of it.
+  // Bag 1 kept its edit.
   await page.getByTestId('bag-1').click();
   await expect(card(page, 'drivers')).toHaveAccessibleName('Driver: Big Topper, level 7');
+
+  // Reopening the manager forgets the last removal.
+  await page.getByTestId('bags-manage').click();
+  await expect(manager.getByTestId('bag-removed')).toHaveCount(0);
+});
+
+test('the bag manager has no note at five bags, and Add a bag goes', async ({ page }) => {
+  await open(page);
+  for (let i = 0; i < 4; i++) await page.getByTestId('bag-add').click();
+  await page.getByTestId('bags-manage').click();
+  const manager = page.getByTestId('bags-dialog');
+  await expect(manager.getByTestId('bag-add-manager')).toHaveCount(0);
+  await expect(manager.getByTestId('backup-export')).toBeVisible();
+  await expect(manager).not.toContainText('Five bags');
+});
+
+test('the page behind an open dialog does not scroll', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await open(page);
+  await page.getByTestId('bags-manage').click();
+  await expect(page.getByTestId('bags-dialog')).toBeVisible();
+
+  const before = await page.evaluate(() => scrollY);
+  await page.mouse.move(195, 40);
+  await page.mouse.wheel(0, 600);
+  await page.waitForTimeout(200);
+  expect(await page.evaluate(() => scrollY)).toBe(before);
+
+  await page.getByTestId('bags-dialog-close').click();
+  await page.mouse.wheel(0, 600);
+  await expect.poll(() => page.evaluate(() => scrollY)).toBeGreaterThan(before);
 });
 
 test('picks saved before bags become Bag 1 and the Flex picks', async ({ page }) => {

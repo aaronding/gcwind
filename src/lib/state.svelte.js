@@ -60,6 +60,8 @@ const STORAGE_KEY = 'gcwind:v2';
 // Read once to migrate, and never deleted, so rolling back to the build before
 // bags still finds the picks it saved.
 const LEGACY_STORAGE_KEY = 'gcwind:v1';
+// What the last import replaced, for one undo.
+const UNDO_KEY = 'gcwind:v2:undo';
 
 /** Exported for the tests; the app uses the single `app` below. */
 export class AppState {
@@ -78,6 +80,9 @@ export class AppState {
   /** Each account holds one to MAX_BAGS bags; see bags.js. */
   accounts = $state([newAccount(defaultAccountName(0))]);
   activeAccount = $state(0);
+
+  /** The bags as they were before the last removal, for one undo. Not saved. */
+  removed = $state(null);
 
   get account() {
     return this.accounts[this.activeAccount] ?? this.accounts[0];
@@ -201,13 +206,20 @@ export class AppState {
   /**
    * Removes a bag, unless it is the only one. The bags after it move up a
    * number, and a default name moves with its number. Removing the bag in use
-   * switches to the one before it.
+   * switches to the one before it. What was removed is kept in `removed` until
+   * undoRemove() or forgetRemoved().
    */
   removeBag(index) {
     const account = this.account;
     const { bags } = account;
     if (bags.length < 2 || !Number.isInteger(index) || !bags[index]) return;
 
+    this.removed = {
+      name: bags[index].name,
+      account: this.activeAccount,
+      bags: $state.snapshot(bags),
+      activeBag: account.activeBag
+    };
     bags.splice(index, 1);
     for (let i = index; i < bags.length; i++) {
       if (bags[i].name === defaultBagName(i + 1)) bags[i].name = defaultBagName(i);
@@ -223,17 +235,19 @@ export class AppState {
     bag.name = cleanName(name, defaultBagName(index));
   }
 
-  resetBag(index) {
-    const bag = this.account.bags[index];
-    if (!bag) return;
-    bag.selections = defaultSelections();
+  /** Puts back the bag removeBag() last took out, numbers and bag in use as they were. */
+  undoRemove() {
+    const account = this.accounts[this.removed?.account];
+    if (account) {
+      account.bags = this.removed.bags;
+      account.activeBag = this.removed.activeBag;
+    }
+    this.removed = null;
   }
 
-  /** Copies the clubs, not the name: the target slot keeps what it is called. */
-  copyBag(from, to) {
-    const { bags } = this.account;
-    if (from === to || !bags[from] || !bags[to]) return;
-    bags[to].selections = $state.snapshot(bags[from].selections);
+  /** Ends the chance to undo a removal: anything else changed since may not fit it. */
+  forgetRemoved() {
+    this.removed = null;
   }
 
   nudgeWind(delta) {
@@ -294,9 +308,91 @@ export class AppState {
       this.activeAccount = bags.activeAccount;
     }
   }
+
+  /**
+   * Everything saved, replaced by `saved`: what an imported backup does.
+   * restore() keeps whatever `saved` lacks or cannot use, which suits loading
+   * storage over a fresh start but would mix two sets of data here, so the
+   * backup is restored over defaults first and then taken whole.
+   */
+  replaceWith(saved) {
+    const next = new AppState();
+    next.restore(saved);
+    for (const key of SAVED_FIELDS) this[key] = $state.snapshot(next[key]);
+    this.removed = null;
+  }
+
+  /**
+   * The bags and Flex picks from a store another tab saved, leaving this tab's
+   * shot as it is. Returns whether anything changed, which is how two tabs
+   * stop answering each other's writes.
+   */
+  adoptBags(saved) {
+    const next = new AppState();
+    next.restore(saved);
+    const bags = (state) => JSON.stringify([state.flex, state.activeAccount, state.accounts]);
+    if (bags(next) === bags(this)) return false;
+    for (const key of ['flex', 'activeAccount', 'accounts']) this[key] = $state.snapshot(next[key]);
+    this.removed = null;
+    return true;
+  }
 }
 
+/** What toJSON() saves, apart from its version. */
+const SAVED_FIELDS = [
+  'mode',
+  'clubType',
+  'windSpeed',
+  'powerBall',
+  'elevation',
+  'distance',
+  'flex',
+  'activeAccount',
+  'accounts'
+];
+
 export const app = new AppState();
+
+/** Whether the data an import replaced is kept, so the import can be undone. */
+export const undo = $state({ available: false });
+
+/** The undo copy, for when storage refuses to keep it. */
+let undoCopy = null;
+
+/**
+ * Replaces everything saved with an imported store, keeping what was there
+ * for one undo. The copy goes to storage, so it outlives a reload; if storage
+ * refuses it, it is kept for this visit only.
+ */
+export function replaceSaved(saved) {
+  undoCopy = JSON.stringify(app.toJSON());
+  try {
+    localStorage.setItem(UNDO_KEY, undoCopy);
+  } catch {
+    // Kept in memory instead.
+  }
+  app.replaceWith(saved);
+  undo.available = true;
+}
+
+/** Puts back what the last import replaced. Once only. */
+export function undoReplace() {
+  let copy = undoCopy;
+  try {
+    copy = localStorage.getItem(UNDO_KEY) ?? copy;
+    localStorage.removeItem(UNDO_KEY);
+  } catch {
+    // Use the copy in memory.
+  }
+  undoCopy = null;
+  undo.available = false;
+  if (!copy) return;
+  try {
+    app.replaceWith(JSON.parse(copy));
+  } catch {
+    // A damaged copy: nothing to put back.
+  }
+}
 
 /** Persist across visits. Storage can throw or be empty, so never assume it. */
 export function persist() {
@@ -312,6 +408,25 @@ export function persist() {
       // Private mode, blocked storage, or corrupt JSON: try the next, then defaults.
     }
   }
+
+  try {
+    undo.available = localStorage.getItem(UNDO_KEY) !== null;
+  } catch {
+    // No storage, so nothing kept to undo.
+  }
+
+  // Another tab saved: take its bags, so an older tab never writes its own
+  // bags back over an import or an edit. Each tab keeps its own shot. The
+  // write this causes holds the same bags, so the other tab leaves it there.
+  addEventListener('storage', (e) => {
+    if (e.key === UNDO_KEY) undo.available = e.newValue !== null;
+    if (e.key !== STORAGE_KEY || !e.newValue) return;
+    try {
+      app.adoptBags(JSON.parse(e.newValue));
+    } catch {
+      // A damaged write from the other tab: keep what this tab has.
+    }
+  });
 
   $effect(() => {
     const snapshot = JSON.stringify(app.toJSON());

@@ -38,6 +38,9 @@
     background: var(--surface);
     color: var(--ink);
     box-shadow: 0 18px 50px rgb(8 20 12 / 28%);
+    /* Scrolling past either end of a tall dialog stops there, rather than
+       carrying on to the page behind it. */
+    overscroll-behavior: contain;
   }
 
   dialog.wide {

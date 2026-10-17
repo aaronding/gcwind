@@ -97,36 +97,6 @@ describe('bags', () => {
     expect(state.account.activeBag).toBe(0);
   });
 
-  it('copies clubs but not the name, and the copy is independent', () => {
-    withBags(state, 4);
-    state.renameBag(0, 'Main');
-    state.setBagClub(0, 'drivers', 'The Apocalypse');
-    state.copyBag(0, 3);
-
-    expect(state.account.bags[3].name).toBe('Bag 4');
-    expect(state.account.bags[3].selections.drivers.club).toBe('The Apocalypse');
-
-    state.setBagLevel(0, 'drivers', 2);
-    expect(state.account.bags[3].selections.drivers.level).toBe(8);
-  });
-
-  it('ignores a copy onto itself or out of range', () => {
-    withBags(state, 2);
-    state.setBagClub(0, 'drivers', 'The Apocalypse');
-    state.copyBag(0, 0);
-    state.copyBag(0, 7);
-    state.copyBag(9, 1);
-    expect(state.account.bags[1].selections).toEqual(starter);
-  });
-
-  it('resets a bag to the starter clubs and keeps its name', () => {
-    withBags(state, 3);
-    state.renameBag(2, 'Windy days');
-    state.setBagClub(2, 'wedges', 'The Firefly');
-    state.resetBag(2);
-    expect(state.account.bags[2]).toEqual({ name: 'Windy days', selections: starter });
-  });
-
   it('cleans names, and an empty name brings back the default', () => {
     withBags(state, 2);
     state.renameBag(1, '  Approach\n');
@@ -205,6 +175,42 @@ describe('adding and removing bags', () => {
     withBags(state, 2);
     for (const index of [-1, 2, 1.5, '1']) state.removeBag(index);
     expect(state.account.bags).toHaveLength(2);
+  });
+
+  it('undoes a removal: the bag, its number, the names after it and the bag in use', () => {
+    withBags(state, 4);
+    state.renameBag(1, 'Approach');
+    state.setBagClub(1, 'drivers', 'The Apocalypse');
+    state.switchBag(1);
+    const before = stored(state);
+
+    state.removeBag(1);
+    expect(state.removed.name).toBe('Approach');
+    expect(state.account.bags.map((b) => b.name)).toEqual(['Bag 1', 'Bag 2', 'Bag 3']);
+
+    state.undoRemove();
+    expect(stored(state)).toEqual(before);
+    expect(state.removed).toBeNull();
+    expect(state.club.name).toBe('The Apocalypse');
+  });
+
+  it('undoes only the last removal, and nothing once it is forgotten', () => {
+    withBags(state, 3);
+    state.removeBag(2);
+    state.removeBag(1);
+    state.undoRemove();
+    expect(state.account.bags).toHaveLength(2);
+
+    state.removeBag(1);
+    state.forgetRemoved();
+    state.undoRemove();
+    expect(state.account.bags).toHaveLength(1);
+  });
+
+  it('does not save what a removal could undo', () => {
+    withBags(state, 2);
+    state.removeBag(1);
+    expect(state.toJSON()).not.toHaveProperty('removed');
   });
 });
 

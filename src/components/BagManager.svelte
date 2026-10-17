@@ -1,51 +1,43 @@
 <script>
   // Everything about bags except switching, which BagBar does in one tap: each
-  // bag's name, and Edit clubs, Copy to, Reset and Remove, then Add a bag.
+  // bag's name, Edit and Remove, then Add a bag, and Export and Import of
+  // everything saved. Removing asks nothing and offers Undo instead.
   import { tick } from 'svelte';
   import Modal from './Modal.svelte';
-  import { app, CLUB_TYPES } from '../lib/state.svelte.js';
-  import { clubFor } from '../lib/clubs.js';
-  import { MAX_BAGS, NAME_MAX_LENGTH, bagLabel } from '../lib/bags.js';
+  import MiniClubs from './MiniClubs.svelte';
+  import BackupPanel from './BackupPanel.svelte';
+  import { app } from '../lib/state.svelte.js';
+  import { MAX_BAGS, NAME_MAX_LENGTH } from '../lib/bags.js';
 
   /** `onedit(i)` opens the bag editor on bag i, above this dialog. */
   let { onedit } = $props();
 
   let dialog = $state();
-  /** The bag whose actions are showing. */
-  let expanded = $state(null);
-  let copyTarget = $state(1);
-  /** @type {null | { kind: 'copy', from: number, to: number } | { kind: 'reset' | 'remove', bag: number }} */
-  let confirming = $state(null);
   let list = $state();
+  let backup = $state();
 
   export function open() {
     reset();
     dialog.showModal();
   }
 
+  /** Clears what the last visit left showing, and the chance to undo it. */
   function reset() {
-    expanded = null;
-    confirming = null;
-  }
-
-  function toggle(i) {
-    confirming = null;
-    expanded = expanded === i ? null : i;
-    copyTarget = i === 0 ? 1 : 0;
+    app.forgetRemoved();
+    backup?.reset();
   }
 
   function rename(e, i) {
+    app.forgetRemoved();
     app.renameBag(i, e.currentTarget.value);
     // Put back the cleaned name, which also restores the default when the
     // field was emptied while the bag already had it.
     e.currentTarget.value = app.account.bags[i].name;
   }
 
-  function confirmed() {
-    if (confirming?.kind === 'copy') app.copyBag(confirming.from, confirming.to);
-    if (confirming?.kind === 'reset') app.resetBag(confirming.bag);
-    if (confirming?.kind === 'remove') app.removeBag(confirming.bag);
-    reset();
+  function edit(i) {
+    app.forgetRemoved();
+    onedit(i);
   }
 
   /** Adds a bag and puts the cursor in its name, the first thing to change. */
@@ -56,20 +48,6 @@
     const field = list?.querySelector(`[data-testid="bag-name-${app.account.bags.length}"]`);
     field?.focus();
     field?.select();
-  }
-
-  const quoted = (i) => `“${app.account.bags[i].name}”`;
-
-  function removeQuestion(i) {
-    const after = i < app.account.bags.length - 1 ? ' The bags after it move up a number.' : '';
-    return `Remove ${quoted(i)} and its clubs?${after}`;
-  }
-
-  function clubsOf(bag) {
-    return CLUB_TYPES.map(({ key }) => {
-      const { club: name, level } = bag.selections[key];
-      return { key, name, level, image: clubFor(key, name)?.image };
-    });
   }
 </script>
 
@@ -90,178 +68,92 @@
             data-testid={`bag-name-${i + 1}`}
             onchange={(e) => rename(e, i)}
           />
-          <button
-            class="more"
-            aria-expanded={expanded === i}
-            aria-controls={`bag-actions-${i}`}
-            aria-label={`Edit, copy, reset or remove bag ${i + 1}`}
-            data-testid={`bag-more-${i + 1}`}
-            onclick={() => toggle(i)}
-          >
-            <svg viewBox="0 0 16 16" aria-hidden="true">
-              <circle cx="3.5" cy="8" r="1.2" />
-              <circle cx="8" cy="8" r="1.2" />
-              <circle cx="12.5" cy="8" r="1.2" />
-            </svg>
-          </button>
+          <div class="row-actions">
+            <button
+              class="icon-button"
+              title="Edit clubs"
+              aria-label={`Edit the clubs in bag ${i + 1}`}
+              data-testid={`bag-edit-${i + 1}`}
+              onclick={() => edit(i)}
+            >
+              <svg viewBox="0 0 16 16" aria-hidden="true">
+                <path d="M10.5 2.5l3 3L6 13H3v-3z" />
+                <path d="M9 4l3 3" />
+              </svg>
+            </button>
+            {#if app.account.bags.length > 1}
+              <button
+                class="icon-button danger"
+                title="Remove"
+                aria-label={`Remove bag ${i + 1}`}
+                data-testid={`bag-remove-${i + 1}`}
+                onclick={() => app.removeBag(i)}
+              >
+                <svg viewBox="0 0 16 16" aria-hidden="true">
+                  <path d="M2.5 4.5h11M6.5 4.5V3h3v1.5M4 4.5l.7 8.5h6.6l.7-8.5M6.8 7v4M9.2 7v4" />
+                </svg>
+              </button>
+            {/if}
+          </div>
 
-          <ul class="mini" aria-label={`Clubs in bag ${i + 1}`}>
-            {#each clubsOf(bag) as club (club.key)}
-              <li title={`${club.name} · Lv ${club.level}`}>
-                {#if club.image}
-                  <img src={`images/${club.image}`} alt="" width="26" height="26" loading="lazy" />
-                {/if}
-                <span class="visually-hidden">{club.name}, level {club.level}</span>
-              </li>
-            {/each}
-          </ul>
-
-          {#if expanded === i}
-            <div class="actions" id={`bag-actions-${i}`}>
-              {#if confirming?.kind === 'copy'}
-                <div class="confirm" role="alert" data-testid="bag-copy-confirm">
-                  <p>
-                    Replace the clubs in {quoted(confirming.to)} with the clubs from {quoted(i)}?
-                  </p>
-                  <div class="confirm-actions">
-                    <button class="chunky compact" onclick={() => (confirming = null)}>
-                      Cancel
-                    </button>
-                    <button
-                      class="chunky compact primary"
-                      data-testid="bag-copy-yes"
-                      onclick={confirmed}
-                    >
-                      Replace
-                    </button>
-                  </div>
-                </div>
-              {:else if confirming?.kind === 'reset'}
-                <div class="confirm" role="alert" data-testid="bag-reset-confirm">
-                  <p>Put the starter clubs back in {quoted(i)}?</p>
-                  <div class="confirm-actions">
-                    <button class="chunky compact" onclick={() => (confirming = null)}>
-                      Cancel
-                    </button>
-                    <button
-                      class="chunky compact danger"
-                      data-testid="bag-reset-yes"
-                      onclick={confirmed}
-                    >
-                      Reset
-                    </button>
-                  </div>
-                </div>
-              {:else if confirming?.kind === 'remove'}
-                <div class="confirm" role="alert" data-testid="bag-remove-confirm">
-                  <p>{removeQuestion(i)}</p>
-                  <div class="confirm-actions">
-                    <button class="chunky compact" onclick={() => (confirming = null)}>
-                      Cancel
-                    </button>
-                    <button
-                      class="chunky compact danger"
-                      data-testid="bag-remove-yes"
-                      onclick={confirmed}
-                    >
-                      Remove
-                    </button>
-                  </div>
-                </div>
-              {:else}
-                <button
-                  class="chunky compact"
-                  data-testid={`bag-edit-${i + 1}`}
-                  onclick={() => onedit(i)}
-                >
-                  Edit clubs
-                </button>
-                {#if app.account.bags.length > 1}
-                  <div class="copy">
-                    <label for={`bag-copy-${i}`}>Copy to</label>
-                    <select
-                      id={`bag-copy-${i}`}
-                      bind:value={copyTarget}
-                      data-testid={`bag-copy-target-${i + 1}`}
-                    >
-                      {#each app.account.bags as other, j (j)}
-                        {#if j !== i}
-                          <option value={j}>{bagLabel(other, j)}</option>
-                        {/if}
-                      {/each}
-                    </select>
-                    <button
-                      class="chunky compact"
-                      data-testid={`bag-copy-${i + 1}`}
-                      onclick={() => (confirming = { kind: 'copy', from: i, to: copyTarget })}
-                    >
-                      Copy
-                    </button>
-                  </div>
-                {/if}
-                <div class="risky">
-                  <button
-                    class="text-button danger"
-                    data-testid={`bag-reset-${i + 1}`}
-                    onclick={() => (confirming = { kind: 'reset', bag: i })}
-                  >
-                    Reset
-                  </button>
-                  {#if app.account.bags.length > 1}
-                    <button
-                      class="text-button danger"
-                      data-testid={`bag-remove-${i + 1}`}
-                      onclick={() => (confirming = { kind: 'remove', bag: i })}
-                    >
-                      Remove
-                    </button>
-                  {/if}
-                </div>
-              {/if}
-            </div>
-          {/if}
+          <div class="clubs">
+            <MiniClubs selections={bag.selections} label={`Clubs in bag ${i + 1}`} />
+          </div>
         </li>
       {/each}
     </ol>
 
-    {#if app.account.bags.length < MAX_BAGS}
-      <div class="add">
-        <button class="chunky compact" data-testid="bag-add-manager" onclick={add}>
+    {#if app.removed}
+      <p class="removed" role="status" data-testid="bag-removed">
+        Removed “{app.removed.name}”.
+        <button class="text-button" data-testid="bag-undo-remove" onclick={() => app.undoRemove()}>
+          Undo
+        </button>
+      </p>
+    {/if}
+
+    <div class="add">
+      {#if app.account.bags.length < MAX_BAGS}
+        <button class="chunky compact filled" data-testid="bag-add-manager" onclick={add}>
           Add a bag
         </button>
-        <p>It starts with the clubs in use.</p>
-      </div>
-    {:else}
-      <p class="add-note">Five bags is the most, as in the game.</p>
-    {/if}
+      {/if}
+      <button
+        class="chunky compact filled"
+        data-testid="backup-export"
+        onclick={() => backup.exportFile()}
+      >
+        Export
+      </button>
+      <button
+        class="chunky compact filled"
+        data-testid="backup-import"
+        onclick={() => backup.chooseFile()}
+      >
+        Import
+      </button>
+    </div>
+
+    <BackupPanel bind:this={backup} />
   </div>
 </Modal>
 
 <style>
   .manager {
-    /* A fixed width, so opening a bag's actions does not resize the dialog
-       under the pointer. */
+    /* A fixed width, so a removal or the import summary does not resize the
+       dialog under the pointer. */
     width: min(480px, calc(92vw - 36px));
     display: grid;
     gap: 14px;
   }
 
-  .more:focus-visible,
   .text-button:focus-visible,
-  input:focus-visible,
-  select:focus-visible {
+  input:focus-visible {
     outline: 3px solid var(--green-500);
     outline-offset: 1px;
   }
 
-  .copy label {
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--ink-muted);
-  }
-
-  input,
-  select {
+  input {
     width: 100%;
     min-height: 40px;
     padding: 0 10px;
@@ -277,7 +169,7 @@
   .text-button {
     flex: 0 0 auto;
     min-height: 40px;
-    padding: 0 6px;
+    padding: 0 8px;
     border: none;
     border-radius: var(--radius-sm);
     background: none;
@@ -301,7 +193,7 @@
 
   .bag {
     display: grid;
-    grid-template-columns: 30px minmax(0, 1fr) 40px;
+    grid-template-columns: 30px minmax(0, 1fr) auto;
     align-items: center;
     column-gap: 8px;
     row-gap: 6px;
@@ -334,113 +226,68 @@
     font-weight: 600;
   }
 
-  .more {
+  .row-actions {
+    display: flex;
+  }
+
+  .icon-button {
     display: grid;
     place-items: center;
     width: 40px;
-    height: 36px;
+    height: 40px;
     padding: 0;
     border: none;
     border-radius: var(--radius-sm);
     background: none;
-    color: var(--ink-muted);
+    color: var(--accent-ink);
     cursor: pointer;
   }
 
-  .more[aria-expanded='true'] {
+  .icon-button:hover {
     background: var(--surface);
-    color: var(--ink);
   }
 
-  .more svg {
-    width: 18px;
-    height: 18px;
-    fill: currentColor;
+  .icon-button:focus-visible {
+    outline: 3px solid var(--green-500);
+    outline-offset: 1px;
   }
 
-  .mini {
+  .icon-button.danger {
+    color: var(--danger);
+  }
+
+  .icon-button svg {
+    width: 20px;
+    height: 20px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .clubs {
     grid-column: 2 / -1;
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    gap: 4px;
   }
 
-  .mini li {
-    display: grid;
-    place-items: center;
-    width: 30px;
-    height: 30px;
-    border-radius: 8px;
-    background: var(--surface);
-  }
-
-  .mini img {
-    width: 26px;
-    height: 26px;
-    object-fit: contain;
-  }
-
-  .actions {
-    grid-column: 1 / -1;
+  .removed {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    justify-content: space-between;
-    gap: 8px 12px;
-    padding: 10px;
-    border-radius: var(--radius-sm);
-    background: var(--surface);
-  }
-
-  .copy {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .copy select {
-    width: auto;
-    max-width: 150px;
-  }
-
-  .confirm {
-    width: 100%;
-    display: grid;
-    gap: 10px;
-    padding: 12px;
-    border-radius: var(--radius-sm);
-    background: var(--surface-sunken);
-    color: var(--ink);
-  }
-
-  .confirm p {
+    gap: 4px 8px;
     margin: 0;
-  }
-
-  .confirm-actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 8px;
-  }
-
-  .risky {
-    display: flex;
-    gap: 4px;
+    color: var(--ink);
   }
 
   .add {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 6px 12px;
+    gap: 8px;
   }
 
-  .add p,
-  .add-note {
-    margin: 0;
-    font-size: 13px;
-    color: var(--ink-muted);
+  /* On the dialog's own white, a plain .chunky face would read as text. */
+  .filled {
+    background: var(--surface-sunken);
   }
 </style>

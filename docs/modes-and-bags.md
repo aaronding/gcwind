@@ -102,9 +102,11 @@ Where the switch sits (the header, or the end of the bag row) is settled in step
 - A bag holds one club and level for each club type.
 - Names are one line of up to 24 characters. Emptying a name restores the default.
 - The bag manager (opened from the bag's name) renames bags and accounts, adds bags,
-  adds and deletes accounts, and for each bag offers **Edit clubs**, **Copy to…** (clubs
-  and levels; the target keeps its name), **Reset** (back to the starter clubs) and
-  **Remove**. Copy, Reset, Remove and Delete account ask first.
+  adds and deletes accounts, and for each bag offers **Edit** (a pencil, which opens
+  the bag editor on top) and **Remove** (a bin). Remove acts at once and offers **Undo** until the manager is
+  closed or something else changes; Delete account asks first. Under the bags, **Add a
+  bag**, **Export** and **Import** (see [backup.md](backup.md)). Copy to and Reset were
+  dropped in review (October 2026): Add a bag already starts from the clubs in use.
 
 ## What the calculator gets
 
