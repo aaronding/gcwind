@@ -173,9 +173,11 @@
     row-gap: 6px;
     padding: 10px 12px 14px;
     border-radius: var(--radius-lg);
-    background: linear-gradient(165deg, var(--green-500), var(--green-700));
+    /* A pale green rather than a solid one: it marks the card the wind goes
+       into without outweighing the gold result. */
+    background: var(--green-100);
     box-shadow:
-      0 5px 0 var(--green-900),
+      0 5px 0 var(--green-300),
       var(--shadow-card);
   }
 
@@ -186,7 +188,7 @@
     font-weight: 700;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: rgb(255 255 255 / 80%);
+    color: var(--accent-ink);
   }
 
   .stepper {
@@ -202,13 +204,13 @@
     height: 44px;
     border: none;
     border-radius: 999px;
-    background: rgb(255 255 255 / 20%);
+    background: var(--green-500);
     color: var(--on-dark);
     font-size: 26px;
     font-weight: 700;
     line-height: 1;
     cursor: pointer;
-    box-shadow: 0 3px 0 rgb(0 0 0 / 20%);
+    box-shadow: 0 3px 0 var(--green-700);
     transition:
       transform 90ms ease,
       box-shadow 90ms ease,
@@ -216,17 +218,17 @@
   }
 
   .step:hover {
-    background: rgb(255 255 255 / 30%);
+    background: var(--green-600);
   }
 
   .step:active {
     transform: translateY(3px);
-    box-shadow: 0 0 0 rgb(0 0 0 / 20%);
+    box-shadow: 0 0 0 var(--green-700);
   }
 
   .step:focus-visible,
   .key:focus-visible {
-    outline: 3px solid var(--gold-400);
+    outline: 3px solid var(--green-700);
     outline-offset: 2px;
   }
 
@@ -235,10 +237,10 @@
   #wind {
     grid-area: value;
     padding: 4px 0;
-    border: 1.5px solid rgb(255 255 255 / 28%);
+    border: 1.5px solid var(--edge);
     border-radius: var(--radius-sm);
-    background: rgb(0 0 0 / 18%);
-    box-shadow: inset 0 2px 4px rgb(0 0 0 / 22%);
+    background: var(--surface);
+    box-shadow: inset 0 2px 3px rgb(0 0 0 / 8%);
     cursor: text;
     transition:
       background-color 120ms ease,
@@ -246,8 +248,7 @@
   }
 
   #wind:hover {
-    border-color: rgb(255 255 255 / 50%);
-    background: rgb(0 0 0 / 24%);
+    border-color: var(--green-500);
   }
 
   input {
@@ -255,7 +256,7 @@
     min-width: 0;
     border: none;
     background: transparent;
-    color: var(--on-dark);
+    color: var(--ink);
     font-family: var(--font-display);
     font-size: clamp(38px, 11vw, 48px);
     font-weight: 800;
@@ -275,13 +276,13 @@
 
   #wind:focus {
     outline: none;
-    border-color: var(--gold-400);
+    border-color: var(--green-500);
     box-shadow:
-      inset 0 2px 4px rgb(0 0 0 / 22%),
-      0 0 0 2px var(--gold-400);
+      inset 0 2px 3px rgb(0 0 0 / 8%),
+      0 0 0 2px var(--green-500);
   }
 
-  /* White on the green card, filled up to the thumb so the wind reads as an
+  /* Green on the pale card, filled up to the thumb so the wind reads as an
      amount at a glance. */
   .slider {
     grid-area: slider;
@@ -298,21 +299,21 @@
     border-radius: 999px;
     background: linear-gradient(
       to right,
-      rgb(255 255 255 / 85%) var(--fill),
-      rgb(255 255 255 / 22%) var(--fill)
+      var(--green-500) var(--fill),
+      var(--green-300) var(--fill)
     );
   }
 
   .slider::-moz-range-track {
     height: 8px;
     border-radius: 999px;
-    background: rgb(255 255 255 / 22%);
+    background: var(--green-300);
   }
 
   .slider::-moz-range-progress {
     height: 8px;
     border-radius: 999px;
-    background: rgb(255 255 255 / 85%);
+    background: var(--green-500);
   }
 
   .slider::-webkit-slider-thumb {
@@ -322,8 +323,10 @@
     margin-top: -9px;
     border: none;
     border-radius: 50%;
-    background: var(--on-dark);
-    box-shadow: 0 3px 0 rgb(0 0 0 / 20%);
+    background: var(--surface);
+    box-shadow:
+      0 0 0 2px var(--green-500),
+      0 3px 0 var(--green-700);
   }
 
   .slider::-moz-range-thumb {
@@ -331,20 +334,24 @@
     height: 26px;
     border: none;
     border-radius: 50%;
-    background: var(--on-dark);
-    box-shadow: 0 3px 0 rgb(0 0 0 / 20%);
+    background: var(--surface);
+    box-shadow:
+      0 0 0 2px var(--green-500),
+      0 3px 0 var(--green-700);
   }
 
   .slider:focus-visible {
-    outline: 3px solid var(--gold-400);
+    outline: 3px solid var(--green-700);
     outline-offset: 4px;
     border-radius: 999px;
   }
 
   /* While keypad digits are still going into the number, it is shown in gold,
-     so it is clear the next digit adds to it rather than starting afresh. */
+     so it is clear the next digit adds to it rather than starting afresh. On
+     the white well of the light theme that is a deeper amber, which keeps 3:1
+     at this size. */
   .entering #wind {
-    color: var(--gold-400);
+    color: light-dark(#a86a00, var(--gold-400));
   }
 
   .keypad {
@@ -359,7 +366,7 @@
   .key {
     border: none;
     border-radius: var(--radius-sm);
-    background: rgb(255 255 255 / 20%);
+    background: var(--green-500);
     color: var(--on-dark);
     font-family: var(--font-display);
     font-size: 20px;
@@ -367,7 +374,7 @@
     line-height: 1;
     font-variant-numeric: tabular-nums;
     cursor: pointer;
-    box-shadow: 0 3px 0 rgb(0 0 0 / 20%);
+    box-shadow: 0 3px 0 var(--green-700);
     touch-action: manipulation;
     transition:
       transform 90ms ease,
@@ -376,21 +383,26 @@
   }
 
   .key:hover {
-    background: rgb(255 255 255 / 30%);
+    background: var(--green-600);
   }
 
   .key:active {
     transform: translateY(3px);
-    box-shadow: 0 0 0 rgb(0 0 0 / 20%);
+    box-shadow: 0 0 0 var(--green-700);
   }
 
   .zero {
     grid-column: span 2;
   }
 
-  .clear {
-    background: rgb(0 0 0 / 18%);
+  .clear,
+  .clear:hover {
+    background: var(--green-700);
     font-size: 16px;
+  }
+
+  .clear {
+    box-shadow: 0 3px 0 var(--green-900);
   }
 
   @media (prefers-reduced-motion: reduce) {

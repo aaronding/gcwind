@@ -93,18 +93,21 @@ button {
 }
 
 /* A club's level as a small number on the corner of its picture, the way the
- * game shows it, in the club's rarity colour. The picture is the positioned
- * parent; each component places the badge on its corner. --badge-ring is the
- * colour around it, normally the card the picture sits on.
+ * game shows it: the number and a thin outline in the club's rarity colour,
+ * on the card's own background. The picture is the positioned parent; each
+ * component places the badge on its corner. --badge-ring is the card the
+ * picture sits on, which fills the badge and rings it off the picture.
  */
 .level-badge {
   position: absolute;
   min-width: 18px;
   padding: 0 4px;
   border-radius: 999px;
-  background: var(--badge, var(--rarity-common-strong));
-  color: var(--on-dark);
-  box-shadow: 0 0 0 2px var(--badge-ring, var(--surface));
+  background: var(--badge-ring, var(--surface));
+  color: var(--badge, var(--rarity-common-strong));
+  box-shadow:
+    inset 0 0 0 1.5px var(--badge, var(--rarity-common-strong)),
+    0 0 0 2px var(--badge-ring, var(--surface));
   font-family: var(--font-display);
   font-size: 11px;
   font-weight: 800;
@@ -115,15 +118,15 @@ button {
 }
 
 .level-badge[data-rarity='Common'] {
-  --badge: var(--rarity-common-strong);
+  --badge: light-dark(var(--rarity-common-strong), var(--rarity-common));
 }
 
 .level-badge[data-rarity='Rare'] {
-  --badge: var(--rarity-rare-strong);
+  --badge: light-dark(var(--rarity-rare-strong), var(--rarity-rare));
 }
 
 .level-badge[data-rarity='Epic'] {
-  --badge: var(--rarity-epic-strong);
+  --badge: light-dark(var(--rarity-epic-strong), var(--rarity-epic));
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -163,8 +163,6 @@
     padding: 3px;
     background: var(--surface-sunken);
     border-radius: var(--radius);
-    /* So Flex's end of the row paints above this background. */
-    isolation: isolate;
   }
 
   .bags.can-add {
@@ -194,35 +192,31 @@
     font-size: 15px;
   }
 
-  /* Flex and + are not bags, so each has an end of the row to itself: a
-     slightly different fill out to the row's edge, square where the bags
-     begin and end. The green of a selected Flex sits on top of it. The word
-     and the + are a shade darker than the numbers, which keeps 4.5:1 on the
-     fill. */
-  .flex,
-  .add {
+  /* A faint line between neighbours sets each button apart without boxing it
+     in. The lines either side of the selected button go, since its green
+     already does that. */
+  .bag {
     position: relative;
   }
 
-  .flex::before,
-  .add::before {
+  .bag + .bag::after {
     content: '';
     position: absolute;
-    z-index: -1;
-    inset: -3px;
-    background: color-mix(in srgb, var(--surface-sunken), var(--ink) 7%);
+    left: -2px;
+    top: 12px;
+    bottom: 12px;
+    width: 1px;
+    background: color-mix(in srgb, var(--surface-sunken), var(--ink) 16%);
+    pointer-events: none;
   }
 
-  .flex::before {
-    right: 0;
-    border-radius: var(--radius) 0 0 var(--radius);
+  .bag.selected::after,
+  .bag.selected + .bag::after {
+    opacity: 0;
   }
 
-  .add::before {
-    left: 0;
-    border-radius: 0 var(--radius) var(--radius) 0;
-  }
-
+  /* Flex and + are not bags, so the word and the + are a shade darker than
+     the numbers. */
   .flex:not(.selected),
   .add {
     color: color-mix(in srgb, var(--ink-muted), var(--ink) 20%);
