@@ -176,9 +176,7 @@
     /* A pale green rather than a solid one: it marks the card the wind goes
        into without outweighing the gold result. */
     background: var(--green-100);
-    box-shadow:
-      0 5px 0 var(--green-300),
-      var(--shadow-card);
+    box-shadow: var(--shadow-card);
   }
 
   .label {
