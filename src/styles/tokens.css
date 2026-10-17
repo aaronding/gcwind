@@ -81,7 +81,11 @@
 
   /* The depth that makes a button feel like a game button. */
   --bevel: 4px;
-  --shadow-card: light-dark(0 2px 10px rgb(18 51 27 / 8%), 0 2px 10px rgb(0 0 0 / 35%));
+  /* light-dark() takes colours only, so it wraps the colour and not the whole
+     shadow. A shadow inside it is invalid in the dev server, which serves the
+     CSS as written, though the production build rewrites it into something
+     that works and hides the problem. */
+  --shadow-card: 0 2px 10px light-dark(rgb(18 51 27 / 8%), rgb(0 0 0 / 35%));
 
   --tap: 44px;
 }
