@@ -70,7 +70,7 @@
     align-content: center;
     gap: 2px;
     padding: 5px 4px;
-    border: 2px solid var(--rarity, var(--edge));
+    border: 2px solid var(--edge);
     background: var(--card-bg);
     color: var(--ink);
   }
