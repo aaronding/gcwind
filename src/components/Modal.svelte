@@ -1,24 +1,31 @@
 <script>
   // A native <dialog>: focus trapping, Escape and the backdrop come from the
   // platform rather than from script.
-  let { dialog = $bindable(), testid, title, wide = false, children } = $props();
+  //
+  // onclose runs however the dialog closes. The close event comes a task after
+  // the dialog is hidden, so close() calls it at once too: otherwise content
+  // shown only while open stays on the page for a moment behind a hidden
+  // dialog. Escape leaves it to the event.
+  let { dialog = $bindable(), testid, title, wide = false, onclose, children } = $props();
+
+  export function close() {
+    // Closing first lets a field that had focus send its change event.
+    dialog.close();
+    onclose?.();
+  }
 </script>
 
 <dialog
   bind:this={dialog}
   data-testid={testid}
   class:wide
-  onclick={(e) => e.target === dialog && dialog.close()}
+  onclick={(e) => e.target === dialog && close()}
+  onclose={() => onclose?.()}
 >
   <div class="body">
     <header>
       <h2>{title}</h2>
-      <button
-        class="close"
-        data-testid={`${testid}-close`}
-        aria-label="Close"
-        onclick={() => dialog.close()}
-      >
+      <button class="close" data-testid={`${testid}-close`} aria-label="Close" onclick={close}>
         ×
       </button>
     </header>
