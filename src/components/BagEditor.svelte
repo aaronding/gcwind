@@ -11,6 +11,7 @@
   import { NAME_MAX_LENGTH, defaultBagName } from '../lib/bags.js';
 
   let dialog = $state();
+  let modal = $state();
   /** Rendered only while open, so its pickers never duplicate the page's test ids. */
   let isOpen = $state(false);
   let index = $state(0);
@@ -34,16 +35,15 @@
     // field was emptied while the bag already had it.
     e.currentTarget.value = bag.name;
   }
-
-  $effect(() => {
-    if (!dialog) return;
-    const closed = () => (isOpen = false);
-    dialog.addEventListener('close', closed);
-    return () => dialog.removeEventListener('close', closed);
-  });
 </script>
 
-<Modal bind:dialog testid="bag-editor" title={`Edit ${defaultBagName(index)}`}>
+<Modal
+  bind:this={modal}
+  bind:dialog
+  testid="bag-editor"
+  title={`Edit ${defaultBagName(index)}`}
+  onclose={() => (isOpen = false)}
+>
   {#if isOpen}
     <div class="editor">
       <label class="field">
@@ -88,7 +88,7 @@
         <button
           class="chunky compact primary"
           data-testid="bag-editor-done"
-          onclick={() => dialog.close()}
+          onclick={() => modal.close()}
         >
           Done
         </button>
