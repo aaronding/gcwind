@@ -92,11 +92,18 @@
     transition: stroke-dasharray 260ms cubic-bezier(0.22, 1, 0.36, 1);
   }
 
+  /* The number alone sits at the dial's centre; the caption hangs below it
+     rather than sharing the centring, which would lift the number. */
   .face {
     position: relative;
     display: grid;
     justify-items: center;
-    gap: 2px;
+  }
+
+  .caption {
+    position: absolute;
+    top: 100%;
+    margin-top: 2px;
   }
 
   .number {
