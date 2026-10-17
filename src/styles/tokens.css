@@ -33,13 +33,23 @@
   --gold-400: #ffd166;
   --gold-500: #f5b623;
   --gold-600: #d1920f;
+  /* The result card, warmed with a little of the gold it holds. Less in the
+     dark theme, where more turns it olive. */
+  --result-surface: light-dark(
+    color-mix(in srgb, var(--surface), var(--gold-400) 14%),
+    color-mix(in srgb, var(--surface), var(--gold-400) 7%)
+  );
+  --result-sunken: light-dark(
+    color-mix(in srgb, var(--surface), var(--gold-400) 26%),
+    color-mix(in srgb, var(--surface), var(--gold-400) 14%)
+  );
 
   /* Rarity, straight from the club data. */
   --rarity-common: light-dark(#9aa5b1, #8d99a6);
   --rarity-rare: light-dark(#3b82f6, #60a5fa);
   --rarity-epic: light-dark(#a855f7, #c084fc);
-  /* Deeper shades of the same three, for the level badges: white numbers on
-     them keep 4.5:1 in both themes, which the frame colours above do not. */
+  /* Deeper shades of the same three, for the level badges' numbers in the
+     light theme: they keep 4.5:1 on white, which the frame colours do not. */
   --rarity-common-strong: #64707d;
   --rarity-rare-strong: #2563eb;
   --rarity-epic-strong: #9333ea;

@@ -94,7 +94,7 @@
     align-items: center;
     gap: 16px 14px;
     padding: 16px;
-    background: var(--surface);
+    background: var(--result-surface);
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-card);
   }
@@ -117,7 +117,7 @@
     align-content: center;
     gap: 2px;
     padding: 9px 6px;
-    background: var(--surface-sunken);
+    background: var(--result-sunken);
     border-radius: var(--radius-sm);
   }
 
@@ -181,8 +181,9 @@
     object-fit: contain;
   }
 
-  /* The same badge as the bag's club cards. */
+  /* The same badge as the bag's club cards, on this card's gold. */
   .level-badge {
+    --badge-ring: var(--result-surface);
     right: -8px;
     bottom: -4px;
   }
@@ -221,7 +222,7 @@
     font-size: 13px;
     line-height: 1.4;
     color: var(--ink-muted);
-    background: var(--surface-sunken);
+    background: var(--result-sunken);
     border-radius: var(--radius-sm);
   }
 
