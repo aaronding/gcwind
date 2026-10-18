@@ -109,15 +109,17 @@ test('ball power has a shortcut for every even value, and the menu holds the odd
   await control.getByTestId('preset-menu').click();
   await control.getByTestId('preset-option-7').click();
   await expect(page.getByTestId('detail-powerball')).toHaveText('7');
-  await expect(control.getByTestId('preset-menu')).toHaveText('7');
+  await expect(control.getByTestId('preset-current')).toHaveText('7');
 });
 
-test('a dropdown value relabels the menu button and clears the shortcut', async ({ page }) => {
+test('a dropdown value shows on the label and clears the shortcut', async ({ page }) => {
   // This is the path that broke under strict mode when updateStates() was
   // scoped inside a block, so it is worth asserting precisely.
   const control = page.getByTestId('elevation-control');
   await control.getByTestId('preset-30').click();
-  await expect(control.getByTestId('preset-menu')).toHaveText('-');
+  await expect(control.getByTestId('preset-current')).toHaveCount(0);
+  // The menu opens from the label.
+  await expect(control.getByTestId('preset-menu')).toContainText('Elevation');
 
   // Changed with the Svelte rebuild: the dropdown opens on click now. The old
   // version opened on hover, which did nothing on touch and fought its own
@@ -125,7 +127,7 @@ test('a dropdown value relabels the menu button and clears the shortcut', async 
   await control.getByTestId('preset-menu').click();
   await control.getByTestId('preset-option-45').click();
   await expect(page.getByTestId('detail-elevation')).toHaveText('45%');
-  await expect(control.getByTestId('preset-menu')).toHaveText('45%');
+  await expect(control.getByTestId('preset-current')).toHaveText('45%');
 });
 
 test('the elevation steppers move it by 5% and stop at the ends', async ({ page }) => {

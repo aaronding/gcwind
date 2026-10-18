@@ -225,7 +225,7 @@ for (const width of [320, 375, 414, 440]) {
     await elevation.getByTestId('preset-option--30').click();
 
     for (const id of ['ballpower-control', 'elevation-control']) {
-      const row = page.getByTestId(id).locator('xpath=..');
+      const row = page.getByTestId(id);
       const { height, clipped } = await row.evaluate((el) => ({
         height: el.getBoundingClientRect().height,
         clipped: [...el.querySelectorAll('button')]

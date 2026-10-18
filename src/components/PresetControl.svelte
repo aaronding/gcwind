@@ -4,6 +4,9 @@
   // if/else block and called it from the enclosing scope, which only worked
   // because classic scripts are sloppy mode.
   //
+  // The menu opens from the label, which carries the arrow and, when the value
+  // is not one of the shortcuts, the value itself.
+  //
   // With `onnudge`, a − and a + button on the label line move the value by
   // `step`, the way the wind stepper does, and the presets take the line below.
   //
@@ -34,62 +37,39 @@
 </script>
 
 {#snippet shown(v)}
-  {format(v)}{#if unit && v !== 0}<span class="unit">{unit}</span>{/if}
+  <span
+    >{format(v)}{#if unit && v !== 0}<span class="unit">{unit}</span>{/if}</span
+  >
 {/snippet}
 
-<div class="row" class:stacked={!!onnudge || shortcuts.length > 4} class:nudging={!!onnudge}>
-  <span class="label" id={`preset-${label}`}>
+{#snippet name()}
+  <span id={`preset-${label}`}>
     <span class="full" class:swapped={!!shortLabel}>{label}</span>
     {#if shortLabel}<span class="short" aria-hidden="true">{shortLabel}</span>{/if}
   </span>
+{/snippet}
 
-  {#if onnudge}
-    <div class="nudges">
-      <button
-        class="preset chunky nudge"
-        data-testid="preset-decrease"
-        aria-label={`Decrease ${label.toLowerCase()} by ${step}`}
-        disabled={value <= values[0]}
-        onclick={() => onnudge(-step)}
-      >
-        −
-      </button>
-      <button
-        class="preset chunky nudge"
-        data-testid="preset-increase"
-        aria-label={`Increase ${label.toLowerCase()} by ${step}`}
-        disabled={value >= values.at(-1)}
-        onclick={() => onnudge(step)}
-      >
-        +
-      </button>
-    </div>
-  {/if}
-
-  <div class="control" data-testid={`${label.toLowerCase().replace(/\s+/g, '')}-control`}>
-    {#each shortcuts as shortcut (shortcut)}
-      <button
-        class="preset chunky"
-        class:selected={value === shortcut}
-        data-testid={`preset-${shortcut}`}
-        aria-pressed={value === shortcut}
-        onclick={() => pick(shortcut)}
-      >
-        {@render shown(shortcut)}
-      </button>
-    {/each}
-
+<div
+  class="row"
+  class:stacked={!!onnudge || shortcuts.length > 4}
+  class:nudging={!!onnudge}
+  data-testid={`${label.toLowerCase().replace(/\s+/g, '')}-control`}
+>
+  <div class="label-cell">
     {#if extras.length}
       <div class="menu-wrap">
         <button
-          class="preset chunky menu-trigger"
+          class="label label-trigger chunky"
           class:selected={inMenu}
           data-testid="preset-menu"
           aria-haspopup="listbox"
           aria-expanded={open}
           onclick={() => (open = !open)}
         >
-          {#if inMenu}{@render shown(value)}{:else}-{/if}
+          {@render name()}
+          {#if inMenu}<span class="current" data-testid="preset-current"
+              >{@render shown(value)}</span
+            >{/if}
           <svg viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" /></svg>
         </button>
 
@@ -120,7 +100,46 @@
           </div>
         {/if}
       </div>
+    {:else}
+      <span class="label">{@render name()}</span>
     {/if}
+  </div>
+
+  {#if onnudge}
+    <div class="nudges">
+      <button
+        class="preset chunky nudge"
+        data-testid="preset-decrease"
+        aria-label={`Decrease ${label.toLowerCase()} by ${step}`}
+        disabled={value <= values[0]}
+        onclick={() => onnudge(-step)}
+      >
+        −
+      </button>
+      <button
+        class="preset chunky nudge"
+        data-testid="preset-increase"
+        aria-label={`Increase ${label.toLowerCase()} by ${step}`}
+        disabled={value >= values.at(-1)}
+        onclick={() => onnudge(step)}
+      >
+        +
+      </button>
+    </div>
+  {/if}
+
+  <div class="control">
+    {#each shortcuts as shortcut (shortcut)}
+      <button
+        class="preset chunky"
+        class:selected={value === shortcut}
+        data-testid={`preset-${shortcut}`}
+        aria-pressed={value === shortcut}
+        onclick={() => pick(shortcut)}
+      >
+        {@render shown(shortcut)}
+      </button>
+    {/each}
   </div>
 </div>
 
@@ -156,10 +175,6 @@
       flex: 1 1 0;
       min-width: 0;
     }
-
-    .menu-wrap {
-      flex: 0 0 auto;
-    }
   }
 
   /* Only phones swap to the short label and drop the unit; see the last media
@@ -173,6 +188,38 @@
     font-weight: 700;
     color: var(--ink-muted);
     font-size: 15px;
+  }
+
+  .label-cell {
+    min-width: 0;
+  }
+
+  /* The label as the button that opens the menu: the arrow after the name says
+     so, and a value from the menu shows after it, on green like a chosen
+     preset. */
+  .label-trigger {
+    min-height: 40px;
+    padding: 0 10px;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    white-space: nowrap;
+  }
+
+  .label-trigger svg {
+    width: 9px;
+    height: 6px;
+    flex: none;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+  }
+
+  .label-trigger.selected {
+    background: var(--green-500);
+    color: var(--on-dark);
+    box-shadow: 0 var(--bevel) 0 var(--green-700);
   }
 
   .control {
@@ -208,7 +255,7 @@
     gap: 6px 12px;
   }
 
-  .stacked .label {
+  .stacked .label-cell {
     grid-area: label;
   }
 
@@ -223,15 +270,11 @@
     justify-content: stretch;
   }
 
-  /* Tight side padding, so six presets and the menu fit a 320px phone. */
+  /* Tight side padding, so six presets fit a 320px phone. */
   .stacked .control .preset {
     flex: 1 1 0;
     min-width: 0;
     padding: 0 4px;
-  }
-
-  .stacked .menu-wrap {
-    flex: 0 0 auto;
   }
 
   /* The − and + steppers: green like the wind's, and no wider than a thumb needs. */
@@ -257,21 +300,13 @@
 
   .menu-wrap {
     position: relative;
-  }
-
-  .menu-trigger svg {
-    width: 9px;
-    height: 6px;
-    fill: none;
-    stroke: currentColor;
-    stroke-width: 1.8;
-    stroke-linecap: round;
+    display: inline-block;
   }
 
   .menu {
     position: absolute;
     top: calc(100% + 8px);
-    right: 0;
+    left: 0;
     z-index: 20;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -304,22 +339,28 @@
     color: var(--on-dark);
   }
 
-  /* On a phone each control is a single line, to save height: a short label,
-     then the presets, with the steppers (when there are any) at the two ends.
-     The buttons are narrow, so the type is smaller and the padding tight. The
-     full label stays in the accessibility tree. */
+  /* On a phone each control is a single line, to save height: the short label
+     as the menu button, then the presets, with the steppers (when there are
+     any) at the two ends. The buttons are narrow, so the type is smaller and
+     the padding tight. The full label stays in the accessibility tree. */
   @media (max-width: 440px) {
     .row.stacked {
-      grid-template-columns: 40px minmax(0, 1fr);
+      grid-template-columns: auto minmax(0, 1fr);
       grid-template-areas: 'label control';
       align-items: center;
       gap: 0 6px;
     }
 
     .row.stacked.nudging {
-      grid-template-columns: 40px 30px minmax(0, 1fr) 30px;
+      grid-template-columns: auto 30px minmax(0, 1fr) 30px;
       grid-template-areas: 'label dec control inc';
       gap: 0 4px;
+    }
+
+    /* The same width for both labels, so the presets start together. */
+    .label-trigger {
+      min-width: 58px;
+      padding: 0 8px;
     }
 
     .full.swapped,
