@@ -3,9 +3,11 @@
     app,
     persist,
     ELEVATION_SHORTCUTS,
+    ELEVATION_WIDE_SHORTCUTS,
     ELEVATION_STEP,
     ELEVATION_VALUES,
     POWER_BALL_SHORTCUTS,
+    POWER_BALL_WIDE_SHORTCUTS,
     POWER_BALL_VALUES
   } from './lib/state.svelte.js';
   import logo from './assets/logo.svg';
@@ -123,6 +125,7 @@
         shortLabel="Ball"
         value={app.powerBall}
         shortcuts={POWER_BALL_SHORTCUTS}
+        wideShortcuts={POWER_BALL_WIDE_SHORTCUTS}
         values={POWER_BALL_VALUES}
         onchange={(v) => (app.powerBall = v)}
       />
@@ -132,6 +135,7 @@
         shortLabel="Elev."
         value={app.elevation}
         shortcuts={ELEVATION_SHORTCUTS}
+        wideShortcuts={ELEVATION_WIDE_SHORTCUTS}
         values={ELEVATION_VALUES}
         unit="%"
         onchange={(v) => (app.elevation = v)}

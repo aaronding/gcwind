@@ -97,19 +97,52 @@ test('elevation and ball power shortcuts recalculate', async ({ page }) => {
   await expect(page.getByTestId('detail-powerball')).toHaveText('10');
 });
 
-test('ball power has a shortcut for every even value, and the menu holds the odd ones', async ({
+test('a desktop lists every ball power, and elevation in steps of 5% up to 30%', async ({
   page
 }) => {
+  const ball = page.getByTestId('ballpower-control');
+  for (const value of Array.from({ length: 11 }, (_, i) => i)) {
+    await ball.getByTestId(`preset-${value}`).click();
+    await expect(page.getByTestId('detail-powerball')).toHaveText(String(value));
+  }
+  // Nothing is left for a menu, so the label is only a label.
+  await expect(ball.getByTestId('preset-menu')).toHaveCount(0);
+
+  const elevation = page.getByTestId('elevation-control');
+  for (const value of [0, 5, 10, 15, 20, 25, 30]) {
+    await elevation.getByTestId(`preset-${value}`).click();
+    await expect(page.getByTestId('detail-elevation')).toHaveText(`${value}%`);
+  }
+
+  // The rest of the range stays in the menu: what is a button is not repeated.
+  await elevation.getByTestId('preset-menu').click();
+  await expect(elevation.getByTestId('preset-option-35')).toBeVisible();
+  await expect(elevation.getByTestId('preset-option--5')).toBeVisible();
+  await expect(elevation.getByTestId('preset-option-15')).toHaveCount(0);
+});
+
+test('a phone has a shortcut for every even ball power, and the menu holds the odd ones', async ({
+  page
+}) => {
+  await page.setViewportSize({ width: 375, height: 800 });
   const control = page.getByTestId('ballpower-control');
   for (const value of [0, 2, 4, 6, 8, 10]) {
     await control.getByTestId(`preset-${value}`).click();
     await expect(page.getByTestId('detail-powerball')).toHaveText(String(value));
   }
+  await expect(control.getByTestId('preset-7')).toHaveCount(0);
 
   await control.getByTestId('preset-menu').click();
   await control.getByTestId('preset-option-7').click();
   await expect(page.getByTestId('detail-powerball')).toHaveText('7');
   await expect(control.getByTestId('preset-current')).toHaveText('7');
+
+  // Elevation keeps four shortcuts, and 5%, 15% and 25% join the menu.
+  const elevation = page.getByTestId('elevation-control');
+  await expect(elevation.getByTestId('preset-5')).toHaveCount(0);
+  await elevation.getByTestId('preset-menu').click();
+  await expect(elevation.getByTestId('preset-option-5')).toBeVisible();
+  await expect(elevation.getByTestId('preset-option-25')).toBeVisible();
 });
 
 test('a dropdown value shows on the label and clears the shortcut', async ({ page }) => {

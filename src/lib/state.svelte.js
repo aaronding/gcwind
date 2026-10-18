@@ -26,7 +26,11 @@ export { CLUB_TYPES, maxLevelFor };
 
 export const calculator = new WindCalculator(clubData);
 
+// A phone has room for four elevation buttons and six ball powers; a desktop
+// lists every step of 5% up to 30%, and every ball power. The rest of each range
+// is in the menu.
 export const ELEVATION_SHORTCUTS = [0, 10, 20, 30];
+export const ELEVATION_WIDE_SHORTCUTS = [0, 5, 10, 15, 20, 25, 30];
 // Down to -30% for steep downhill shots. The "rough iron rule" players quote is
 // not one of them: the calculator already applies it (see categoryAdjustment).
 export const ELEVATION_VALUES = Array.from({ length: 17 }, (_, i) => -30 + i * 5);
@@ -36,6 +40,7 @@ export const ELEVATION_STEP = 5;
 export const WEDGE_ELEVATION = 20;
 export const POWER_BALL_SHORTCUTS = [0, 2, 4, 6, 8, 10];
 export const POWER_BALL_VALUES = Array.from({ length: 11 }, (_, i) => i);
+export const POWER_BALL_WIDE_SHORTCUTS = POWER_BALL_VALUES;
 
 export const WIND_MIN = 0.1;
 export const WIND_MAX = 25;

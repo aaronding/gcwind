@@ -1,8 +1,14 @@
 <script>
+  import { MediaQuery } from 'svelte/reactivity';
+
   // Replaces createPresetButtonsWithMenu(): shortcuts inline, everything else
   // behind a menu. The old version declared its update function inside an
   // if/else block and called it from the enclosing scope, which only worked
   // because classic scripts are sloppy mode.
+  //
+  // `shortcuts` are the buttons on a phone. Where the row has room for them
+  // (not a phone, and wide enough), `wideShortcuts` are shown instead, which
+  // leaves fewer values for the menu, or none, and then the label is only a label.
   //
   // The menu opens from the label, which carries the arrow and, when the value
   // is not one of the shortcuts, the value itself.
@@ -16,7 +22,8 @@
   let {
     label,
     value,
-    shortcuts,
+    shortcuts: phoneShortcuts,
+    wideShortcuts = phoneShortcuts,
     values,
     format = (v) => String(v),
     onchange,
@@ -26,7 +33,19 @@
     onnudge
   } = $props();
 
+  // The narrowest a button can be and still hold its number, with the gap, and
+  // the room the unit takes where it shows.
+  const WIDE_BUTTON = 34;
+  const WIDE_UNIT = 11;
+  const phone = new MediaQuery('max-width: 440px');
+
   let open = $state(false);
+  let rowWidth = $state(0);
+  const shortcuts = $derived(
+    !phone.current && rowWidth >= wideShortcuts.length * (WIDE_BUTTON + (unit ? WIDE_UNIT : 0))
+      ? wideShortcuts
+      : phoneShortcuts
+  );
   const extras = $derived(values.filter((v) => !shortcuts.includes(v)));
   const inMenu = $derived(!shortcuts.includes(value));
 
@@ -53,6 +72,7 @@
   class="row"
   class:stacked={!!onnudge || shortcuts.length > 4}
   class:nudging={!!onnudge}
+  bind:clientWidth={rowWidth}
   data-testid={`${label.toLowerCase().replace(/\s+/g, '')}-control`}
 >
   <div class="label-cell">

@@ -246,6 +246,36 @@ for (const width of [320, 375, 414, 440]) {
   });
 }
 
+test('fits every preset button, unclipped and wide enough to read, at every width', async ({
+  page
+}) => {
+  for (const width of [441, 560, 681, 768, 1024, 1280]) {
+    await page.setViewportSize({ width, height: 800 });
+    await page.goto('/');
+
+    for (const id of ['ballpower-control', 'elevation-control']) {
+      const buttons = await page
+        .getByTestId(id)
+        .locator('.control button')
+        .evaluateAll((all) =>
+          all.map((b) => ({
+            text: b.textContent.trim(),
+            width: b.getBoundingClientRect().width,
+            clipped: b.scrollWidth > b.clientWidth
+          }))
+        );
+      expect(buttons.length, `${id} has buttons at ${width}px`).toBeGreaterThanOrEqual(4);
+      for (const { text, width: w, clipped } of buttons) {
+        expect(clipped, `${id} "${text}" is clipped at ${width}px`).toBe(false);
+        expect(w, `${id} "${text}" width at ${width}px`).toBeGreaterThanOrEqual(26);
+      }
+    }
+
+    const { scroll, client } = await horizontalScroll(page);
+    expect(scroll, `page scrolls horizontally at ${width}px`).toBeLessThanOrEqual(client);
+  }
+});
+
 test('runs the cards edge to edge on a phone, up to 440px, and keeps margins above it', async ({
   page
 }) => {
