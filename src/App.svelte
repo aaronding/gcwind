@@ -442,4 +442,19 @@
       grid-template-columns: 1fr;
     }
   }
+
+  /* On a phone the cards run edge to edge, so the controls get the width the
+     page margins took, and the corners that would show against the screen edge
+     are square. What is not a card keeps its own side padding. */
+  @media (max-width: 440px) {
+    .page {
+      --radius-lg: 0px;
+      padding: 12px 0 48px;
+      gap: 10px;
+    }
+
+    .site-footer {
+      padding: 14px 16px 0;
+    }
+  }
 </style>

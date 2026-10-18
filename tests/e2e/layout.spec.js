@@ -4,7 +4,7 @@ import { test, expect } from '@playwright/test';
 // work perfectly while the page scrolls sideways on a phone. 320px is the
 // narrowest screen worth supporting; 560px is where the club tabs stop
 // wrapping and the club cards go to one row.
-const WIDTHS = [320, 375, 414, 560, 768, 1024];
+const WIDTHS = [320, 375, 414, 440, 560, 768, 1024];
 
 const horizontalScroll = (page) =>
   page.evaluate(() => ({
@@ -213,7 +213,7 @@ test('keeps the wind stepper usable on a phone', async ({ page }) => {
   }
 });
 
-for (const width of [320, 375, 414]) {
+for (const width of [320, 375, 414, 440]) {
   test(`keeps ball power and elevation to one line each at ${width}px`, async ({ page }) => {
     await page.setViewportSize({ width, height: 800 });
     await page.goto('/');
@@ -245,6 +245,35 @@ for (const width of [320, 375, 414]) {
     expect(scroll).toBeLessThanOrEqual(client);
   });
 }
+
+test('runs the cards edge to edge on a phone, up to 440px, and keeps margins above it', async ({
+  page
+}) => {
+  const cards = ['.settings', '.controls .wind'];
+  for (const [width, edge] of [
+    [320, 0],
+    [440, 0],
+    [441, 16],
+    [1024, 16]
+  ]) {
+    await page.setViewportSize({ width, height: 800 });
+    await page.goto('/');
+    for (const selector of cards) {
+      const box = await page.locator(selector).first().boundingBox();
+      if (width > 440) {
+        expect(box.x, `${selector} left margin at ${width}px`).toBeGreaterThanOrEqual(edge);
+      } else {
+        expect(box.x, `${selector} left edge at ${width}px`).toBe(0);
+        expect(box.width, `${selector} width at ${width}px`).toBe(width);
+      }
+    }
+  }
+
+  // The bag row is not a card, so it keeps a margin on a phone.
+  await page.setViewportSize({ width: 440, height: 800 });
+  const name = await page.getByTestId('bags-manage').boundingBox();
+  expect(name.x, 'bag name is off the screen edge').toBeGreaterThanOrEqual(8);
+});
 
 test('names one canonical address, so the two URLs do not compete', async ({ page }) => {
   // The app answers at both gcwind.webthinking.io and webthinking.io/gcwind.

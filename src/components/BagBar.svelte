@@ -91,6 +91,14 @@
     min-width: 0;
   }
 
+  /* Not a card, so on a phone, where the cards run to the screen edge, it
+     keeps a margin of its own. */
+  @media (max-width: 440px) {
+    .bagbar {
+      padding: 0 12px;
+    }
+  }
+
   .name {
     flex: 0 1 auto;
     min-width: 0;

@@ -141,7 +141,7 @@
   /* Below this the label and five buttons cannot share a line without
      overflowing, so the label moves above and the buttons spread the width,
      which also makes them easier to hit. */
-  @media (max-width: 430px) {
+  @media (max-width: 440px) {
     .row {
       display: grid;
       grid-template-columns: minmax(0, 1fr);
@@ -308,7 +308,7 @@
      then the presets, with the steppers (when there are any) at the two ends.
      The buttons are narrow, so the type is smaller and the padding tight. The
      full label stays in the accessibility tree. */
-  @media (max-width: 430px) {
+  @media (max-width: 440px) {
     .row.stacked {
       grid-template-columns: 40px minmax(0, 1fr);
       grid-template-areas: 'label control';
