@@ -14,6 +14,8 @@ tells you how many rings to aim off.
 - All seven club categories, with per-club stats at every level
 - Rings at four distances: current, max, mid and min
 - Adjusts for power ball, elevation and shot distance
+- Elevation steps up and down by 5% with − and +, and starts at 20% when you pick a wedge
+  (the Endbringer rule)
 - Clubs tinted by rarity, so tier is readable at a glance
 - Remembers your bags and picks between visits, in this browser only
 - Light, dark, or follow the system, remembered between visits

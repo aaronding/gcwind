@@ -3,7 +3,19 @@
   // behind a menu. The old version declared its update function inside an
   // if/else block and called it from the enclosing scope, which only worked
   // because classic scripts are sloppy mode.
-  let { label, value, shortcuts, values, format = (v) => String(v), onchange } = $props();
+  //
+  // With `onnudge`, a − and a + button on the label line move the value by
+  // `step`, the way the wind stepper does, and the presets take the line below.
+  let {
+    label,
+    value,
+    shortcuts,
+    values,
+    format = (v) => String(v),
+    onchange,
+    step,
+    onnudge
+  } = $props();
 
   let open = $state(false);
   const extras = $derived(values.filter((v) => !shortcuts.includes(v)));
@@ -15,8 +27,31 @@
   }
 </script>
 
-<div class="row">
+<div class="row" class:nudging={!!onnudge}>
   <span class="label" id={`preset-${label}`}>{label}</span>
+
+  {#if onnudge}
+    <div class="nudges">
+      <button
+        class="preset chunky nudge"
+        data-testid="preset-decrease"
+        aria-label={`Decrease ${label.toLowerCase()} by ${step}`}
+        disabled={value <= values[0]}
+        onclick={() => onnudge(-step)}
+      >
+        −
+      </button>
+      <button
+        class="preset chunky nudge"
+        data-testid="preset-increase"
+        aria-label={`Increase ${label.toLowerCase()} by ${step}`}
+        disabled={value >= values.at(-1)}
+        onclick={() => onnudge(step)}
+      >
+        +
+      </button>
+    </div>
+  {/if}
 
   <div class="control" data-testid={`${label.toLowerCase().replace(/\s+/g, '')}-control`}>
     {#each shortcuts as shortcut (shortcut)}
@@ -139,6 +174,57 @@
     align-items: center;
     justify-content: center;
     gap: 4px;
+  }
+
+  /* With steppers the label and the steppers share the first line and the
+     presets spread across the second, at every width: the steppers do not fit
+     beside the presets, even on a desktop's narrow settings card. */
+  .row.nudging {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      'label nudges'
+      'control control';
+    gap: 6px 12px;
+  }
+
+  .nudging .label {
+    grid-area: label;
+  }
+
+  .nudges {
+    grid-area: nudges;
+    display: flex;
+    gap: 6px;
+  }
+
+  .nudging .control {
+    grid-area: control;
+    justify-content: stretch;
+  }
+
+  .nudging .control .preset {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+
+  .nudging .menu-wrap {
+    flex: 0 0 auto;
+  }
+
+  /* The − and + steppers: green like the wind's, and no wider than a thumb needs. */
+  .nudge {
+    flex: none;
+    min-width: 52px;
+    padding: 0;
+    font-size: 22px;
+    color: var(--accent-ink);
+    background: var(--green-100);
+  }
+
+  .nudge:disabled {
+    opacity: 0.4;
+    cursor: default;
   }
 
   .preset.selected {

@@ -30,6 +30,10 @@ export const ELEVATION_SHORTCUTS = [0, 10, 20, 30];
 // Down to -30% for steep downhill shots. The "rough iron rule" players quote is
 // not one of them: the calculator already applies it (see categoryAdjustment).
 export const ELEVATION_VALUES = Array.from({ length: 17 }, (_, i) => -30 + i * 5);
+export const ELEVATION_STEP = 5;
+// Wedges are played from 20% elevation so often (the Endbringer rule above all)
+// that picking one starts the elevation there.
+export const WEDGE_ELEVATION = 20;
 export const POWER_BALL_SHORTCUTS = [2, 6, 10];
 export const POWER_BALL_VALUES = Array.from({ length: 11 }, (_, i) => i);
 
@@ -161,6 +165,17 @@ export class AppState {
     }
   }
 
+  /**
+   * Puts a club type in hand. Switching to wedges sets the elevation to 20%,
+   * which the player can still change; picking the type that is already in hand
+   * leaves the elevation alone.
+   */
+  selectClubType(type) {
+    if (type === this.clubType) return;
+    this.clubType = type;
+    if (type === 'wedges') this.elevation = WEDGE_ELEVATION;
+  }
+
   selectClub(name) {
     this.selections = withClub(this.selections, this.clubType, name);
   }
@@ -253,6 +268,12 @@ export class AppState {
   nudgeWind(delta) {
     const next = Math.round(((this.windSpeed || 0) + delta) * 10) / 10;
     this.windSpeed = Math.min(Math.max(next, WIND_MIN), WIND_MAX);
+  }
+
+  /** Steps the elevation by `delta` percent, stopping at the ends of the range. */
+  nudgeElevation(delta) {
+    const [min, max] = [ELEVATION_VALUES[0], ELEVATION_VALUES.at(-1)];
+    this.elevation = Math.min(Math.max(this.elevation + delta, min), max);
   }
 
   /** Mirrors the old input rule: a value above the maximum is a missed decimal. */

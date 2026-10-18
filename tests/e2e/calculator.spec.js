@@ -113,6 +113,50 @@ test('a dropdown value relabels the menu button and clears the shortcut', async 
   await expect(control.getByTestId('preset-menu')).toHaveText('45%');
 });
 
+test('the elevation steppers move it by 5% and stop at the ends', async ({ page }) => {
+  const control = page.getByTestId('elevation-control');
+  const elevation = page.getByTestId('detail-elevation');
+  // The steppers sit on the label line, not inside the presets' own control.
+  const decrease = page.getByTestId('preset-decrease');
+  const increase = page.getByTestId('preset-increase');
+  await control.getByTestId('preset-30').click();
+
+  await decrease.click();
+  await expect(elevation).toHaveText('25%');
+  await increase.click();
+  await increase.click();
+  await expect(elevation).toHaveText('35%');
+
+  await control.getByTestId('preset-menu').click();
+  await control.getByTestId('preset-option-50').click();
+  await expect(increase).toBeDisabled();
+  await expect(decrease).toBeEnabled();
+
+  await control.getByTestId('preset-menu').click();
+  await control.getByTestId('preset-option--30').click();
+  await expect(decrease).toBeDisabled();
+  await expect(increase).toBeEnabled();
+});
+
+test('picking wedges sets the elevation to 20%, in Flex and on a bag', async ({ page }) => {
+  const elevation = page.getByTestId('detail-elevation');
+  await page.getByTestId('elevation-control').getByTestId('preset-30').click();
+
+  await page.getByTestId('club-tabs').getByRole('tab', { name: 'Wedge' }).click();
+  await expect(elevation).toHaveText('20%');
+
+  // Changed afterwards, it stays put until wedges are picked again.
+  await page.getByTestId('elevation-control').getByTestId('preset-10').click();
+  await page.getByTestId('club-tabs').getByRole('tab', { name: 'Wedge' }).click();
+  await expect(elevation).toHaveText('10%');
+
+  await page.getByTestId('bag-1').click();
+  await page.getByTestId('bag-club-woods').click();
+  await expect(elevation).toHaveText('10%');
+  await page.getByTestId('bag-club-wedges').click();
+  await expect(elevation).toHaveText('20%');
+});
+
 test('elevation reaches -30% and survives a reload', async ({ page }) => {
   const control = page.getByTestId('elevation-control');
   await control.getByTestId('preset-menu').click();

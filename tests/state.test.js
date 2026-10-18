@@ -214,6 +214,51 @@ describe('adding and removing bags', () => {
   });
 });
 
+describe('elevation', () => {
+  it('starts at 20% when wedges come into hand, and can be changed after', () => {
+    state.selectClubType('wedges');
+    expect(state.clubType).toBe('wedges');
+    expect(state.elevation).toBe(20);
+
+    state.elevation = 5;
+    state.selectClubType('wedges');
+    expect(state.elevation).toBe(5);
+  });
+
+  it('leaves the elevation alone for other club types', () => {
+    state.elevation = 30;
+    for (const type of ['woods', 'sandwedges', 'roughirons']) {
+      state.selectClubType(type);
+      expect(state.elevation, type).toBe(30);
+    }
+  });
+
+  it('is not reset by restoring a saved shot on wedges', () => {
+    state.restore({ clubType: 'wedges', elevation: -10 });
+    expect(state.clubType).toBe('wedges');
+    expect(state.elevation).toBe(-10);
+  });
+
+  it('steps by the amount given and stops at the ends of the range', () => {
+    state.elevation = 20;
+    state.nudgeElevation(5);
+    expect(state.elevation).toBe(25);
+    state.nudgeElevation(-5);
+    state.nudgeElevation(-5);
+    expect(state.elevation).toBe(15);
+
+    state.elevation = 48;
+    state.nudgeElevation(5);
+    expect(state.elevation).toBe(50);
+    state.nudgeElevation(5);
+    expect(state.elevation).toBe(50);
+
+    state.elevation = -30;
+    state.nudgeElevation(-5);
+    expect(state.elevation).toBe(-30);
+  });
+});
+
 describe('restore', () => {
   it('migrates v1: the picks become the only bag and Flex, and the settings stay', () => {
     const v1 = {

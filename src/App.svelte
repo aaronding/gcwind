@@ -3,6 +3,7 @@
     app,
     persist,
     ELEVATION_SHORTCUTS,
+    ELEVATION_STEP,
     ELEVATION_VALUES,
     POWER_BALL_SHORTCUTS,
     POWER_BALL_VALUES
@@ -79,7 +80,7 @@
     />
 
     {#if app.mode === 'flex'}
-      <ClubTabs bind:value={app.clubType} />
+      <ClubTabs bind:value={() => app.clubType, (type) => app.selectClubType(type)} />
 
       <section class="panel">
         <ClubPicker
@@ -100,7 +101,7 @@
         <BagClubs
           selections={app.bag.selections}
           selected={app.clubType}
-          onselect={(type) => (app.clubType = type)}
+          onselect={(type) => app.selectClubType(type)}
           onedit={() => editor.open()}
         />
       </section>
@@ -132,6 +133,8 @@
         values={ELEVATION_VALUES}
         format={(v) => (v === 0 ? '0' : `${v}%`)}
         onchange={(v) => (app.elevation = v)}
+        step={ELEVATION_STEP}
+        onnudge={(d) => app.nudgeElevation(d)}
       />
     </div>
   </section>
