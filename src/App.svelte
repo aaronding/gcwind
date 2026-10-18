@@ -120,6 +120,7 @@
       <DistanceSlider value={app.distance} onchange={(v) => (app.distance = v)} />
       <PresetControl
         label="Ball Power"
+        shortLabel="Ball"
         value={app.powerBall}
         shortcuts={POWER_BALL_SHORTCUTS}
         values={POWER_BALL_VALUES}
@@ -128,10 +129,11 @@
 
       <PresetControl
         label="Elevation"
+        shortLabel="Elev."
         value={app.elevation}
         shortcuts={ELEVATION_SHORTCUTS}
         values={ELEVATION_VALUES}
-        format={(v) => (v === 0 ? '0' : `${v}%`)}
+        unit="%"
         onchange={(v) => (app.elevation = v)}
         step={ELEVATION_STEP}
         onnudge={(d) => app.nudgeElevation(d)}

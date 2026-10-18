@@ -6,6 +6,10 @@
   //
   // With `onnudge`, a − and a + button on the label line move the value by
   // `step`, the way the wind stepper does, and the presets take the line below.
+  //
+  // On a phone every row is a single line, so the label gives way to
+  // `shortLabel`, the steppers sit at the two ends of the presets, and `unit`
+  // (shown after every value but 0) is dropped from the buttons.
   let {
     label,
     value,
@@ -13,6 +17,8 @@
     values,
     format = (v) => String(v),
     onchange,
+    unit,
+    shortLabel,
     step,
     onnudge
   } = $props();
@@ -27,8 +33,15 @@
   }
 </script>
 
-<div class="row" class:stacked={!!onnudge || shortcuts.length > 4}>
-  <span class="label" id={`preset-${label}`}>{label}</span>
+{#snippet shown(v)}
+  {format(v)}{#if unit && v !== 0}<span class="unit">{unit}</span>{/if}
+{/snippet}
+
+<div class="row" class:stacked={!!onnudge || shortcuts.length > 4} class:nudging={!!onnudge}>
+  <span class="label" id={`preset-${label}`}>
+    <span class="full" class:swapped={!!shortLabel}>{label}</span>
+    {#if shortLabel}<span class="short" aria-hidden="true">{shortLabel}</span>{/if}
+  </span>
 
   {#if onnudge}
     <div class="nudges">
@@ -62,7 +75,7 @@
         aria-pressed={value === shortcut}
         onclick={() => pick(shortcut)}
       >
-        {format(shortcut)}
+        {@render shown(shortcut)}
       </button>
     {/each}
 
@@ -76,7 +89,7 @@
           aria-expanded={open}
           onclick={() => (open = !open)}
         >
-          {inMenu ? format(value) : '-'}
+          {#if inMenu}{@render shown(value)}{:else}-{/if}
           <svg viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" /></svg>
         </button>
 
@@ -101,7 +114,7 @@
                 data-testid={`preset-option-${option}`}
                 onclick={() => pick(option)}
               >
-                {format(option)}
+                {@render shown(option)}
               </button>
             {/each}
           </div>
@@ -147,6 +160,12 @@
     .menu-wrap {
       flex: 0 0 auto;
     }
+  }
+
+  /* Only phones swap to the short label and drop the unit; see the last media
+     query. */
+  .short {
+    display: none;
   }
 
   .label {
@@ -283,5 +302,65 @@
   .option.selected {
     background: var(--green-500);
     color: var(--on-dark);
+  }
+
+  /* On a phone each control is a single line, to save height: a short label,
+     then the presets, with the steppers (when there are any) at the two ends.
+     The buttons are narrow, so the type is smaller and the padding tight. The
+     full label stays in the accessibility tree. */
+  @media (max-width: 430px) {
+    .row.stacked {
+      grid-template-columns: 40px minmax(0, 1fr);
+      grid-template-areas: 'label control';
+      align-items: center;
+      gap: 0 6px;
+    }
+
+    .row.stacked.nudging {
+      grid-template-columns: 40px 30px minmax(0, 1fr) 30px;
+      grid-template-areas: 'label dec control inc';
+      gap: 0 4px;
+    }
+
+    .full.swapped,
+    .unit {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
+
+    .short {
+      display: inline;
+    }
+
+    .nudges {
+      display: contents;
+    }
+
+    .nudge {
+      width: 100%;
+      min-width: 0;
+      font-size: 20px;
+    }
+
+    .nudge:first-child {
+      grid-area: dec;
+    }
+
+    .nudge:last-child {
+      grid-area: inc;
+    }
+
+    .stacked .control {
+      gap: 3px;
+    }
+
+    .stacked .control .preset {
+      padding: 0 1px;
+      font-size: 14px;
+    }
   }
 </style>

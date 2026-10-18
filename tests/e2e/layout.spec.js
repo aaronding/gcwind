@@ -213,6 +213,39 @@ test('keeps the wind stepper usable on a phone', async ({ page }) => {
   }
 });
 
+for (const width of [320, 375, 414]) {
+  test(`keeps ball power and elevation to one line each at ${width}px`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 800 });
+    await page.goto('/');
+
+    // The widest the elevation row gets: a value from the menu, with a stepper
+    // disabled at the end of the range.
+    const elevation = page.getByTestId('elevation-control');
+    await elevation.getByTestId('preset-menu').click();
+    await elevation.getByTestId('preset-option--30').click();
+
+    for (const id of ['ballpower-control', 'elevation-control']) {
+      const row = page.getByTestId(id).locator('xpath=..');
+      const { height, clipped } = await row.evaluate((el) => ({
+        height: el.getBoundingClientRect().height,
+        clipped: [...el.querySelectorAll('button')]
+          .filter((b) => b.scrollWidth > b.clientWidth)
+          .map((b) => b.textContent.trim())
+      }));
+      expect(height, `${id} is one line`).toBeLessThanOrEqual(44);
+      expect(clipped, `${id} buttons are not clipped`).toEqual([]);
+    }
+
+    // The short labels are all that shows, but the full ones are still read out.
+    await expect(page.getByText('Ball', { exact: true })).toBeVisible();
+    await expect(page.getByText('Elev.', { exact: true })).toBeVisible();
+    await expect(page.getByText('Ball Power', { exact: true }).first()).toBeAttached();
+
+    const { scroll, client } = await horizontalScroll(page);
+    expect(scroll).toBeLessThanOrEqual(client);
+  });
+}
+
 test('names one canonical address, so the two URLs do not compete', async ({ page }) => {
   // The app answers at both gcwind.webthinking.io and webthinking.io/gcwind.
   // Without a canonical they are duplicate content and search engines split
