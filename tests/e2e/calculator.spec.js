@@ -86,15 +86,30 @@ test('a remembered level is clamped when the new club has fewer', async ({ page 
   await expect(page.getByTestId('detail-level')).toHaveText('8');
 });
 
-test('elevation and power ball shortcuts recalculate', async ({ page }) => {
+test('elevation and ball power shortcuts recalculate', async ({ page }) => {
   const before = await rings(page).current.textContent();
 
   await page.getByTestId('elevation-control').getByTestId('preset-30').click();
   await expect(page.getByTestId('detail-elevation')).toHaveText('30%');
   await expect(rings(page).current).not.toHaveText(before);
 
-  await page.getByTestId('powerball-control').getByTestId('preset-10').click();
+  await page.getByTestId('ballpower-control').getByTestId('preset-10').click();
   await expect(page.getByTestId('detail-powerball')).toHaveText('10');
+});
+
+test('ball power has a shortcut for every even value, and the menu holds the odd ones', async ({
+  page
+}) => {
+  const control = page.getByTestId('ballpower-control');
+  for (const value of [0, 2, 4, 6, 8, 10]) {
+    await control.getByTestId(`preset-${value}`).click();
+    await expect(page.getByTestId('detail-powerball')).toHaveText(String(value));
+  }
+
+  await control.getByTestId('preset-menu').click();
+  await control.getByTestId('preset-option-7').click();
+  await expect(page.getByTestId('detail-powerball')).toHaveText('7');
+  await expect(control.getByTestId('preset-menu')).toHaveText('7');
 });
 
 test('a dropdown value relabels the menu button and clears the shortcut', async ({ page }) => {

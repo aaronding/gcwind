@@ -27,7 +27,7 @@
   }
 </script>
 
-<div class="row" class:nudging={!!onnudge}>
+<div class="row" class:stacked={!!onnudge || shortcuts.length > 4}>
   <span class="label" id={`preset-${label}`}>{label}</span>
 
   {#if onnudge}
@@ -176,10 +176,11 @@
     gap: 4px;
   }
 
-  /* With steppers the label and the steppers share the first line and the
-     presets spread across the second, at every width: the steppers do not fit
-     beside the presets, even on a desktop's narrow settings card. */
-  .row.nudging {
+  /* With steppers, or more presets than fit beside the label, the label (and
+     the steppers) take the first line and the presets spread across the
+     second, at every width: even a desktop's narrow settings card is too
+     narrow for them side by side. */
+  .row.stacked {
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
     grid-template-areas:
@@ -188,7 +189,7 @@
     gap: 6px 12px;
   }
 
-  .nudging .label {
+  .stacked .label {
     grid-area: label;
   }
 
@@ -198,17 +199,19 @@
     gap: 6px;
   }
 
-  .nudging .control {
+  .stacked .control {
     grid-area: control;
     justify-content: stretch;
   }
 
-  .nudging .control .preset {
+  /* Tight side padding, so six presets and the menu fit a 320px phone. */
+  .stacked .control .preset {
     flex: 1 1 0;
     min-width: 0;
+    padding: 0 4px;
   }
 
-  .nudging .menu-wrap {
+  .stacked .menu-wrap {
     flex: 0 0 auto;
   }
 

@@ -34,7 +34,7 @@ export const ELEVATION_STEP = 5;
 // Wedges are played from 20% elevation so often (the Endbringer rule above all)
 // that picking one starts the elevation there.
 export const WEDGE_ELEVATION = 20;
-export const POWER_BALL_SHORTCUTS = [2, 6, 10];
+export const POWER_BALL_SHORTCUTS = [0, 2, 4, 6, 8, 10];
 export const POWER_BALL_VALUES = Array.from({ length: 11 }, (_, i) => i);
 
 export const WIND_MIN = 0.1;
