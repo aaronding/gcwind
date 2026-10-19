@@ -1,8 +1,12 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { AppState, keyWindDigit } from '../src/lib/state.svelte.js';
 import { defaultSelections } from '../src/lib/clubs.js';
+import { starterBags } from '../src/lib/bags.js';
 
+/** The first club of each type at its top level: what unusable data falls back to. */
 const starter = defaultSelections();
+/** The two bags a new player starts with. */
+const [bag1, bag2] = starterBags();
 
 /** A round trip through JSON, as storage does it. */
 const stored = (state) => JSON.parse(JSON.stringify(state.toJSON()));
@@ -20,25 +24,25 @@ beforeEach(() => {
 });
 
 describe('a first visit', () => {
-  it('opens on the only bag of one account, with starter clubs', () => {
+  it('opens on the first of two starter bags in one account', () => {
     expect(state.mode).toBe('bag');
     expect(state.accounts).toHaveLength(1);
     expect(state.account.name).toBe('Account 1');
     expect(state.account.activeBag).toBe(0);
-    expect(state.account.bags).toEqual([{ name: 'Bag 1', selections: starter }]);
+    expect(state.account.bags).toEqual([bag1, bag2]);
   });
 
-  it('gives the same rings as before bags: the first driver at its top level', () => {
-    expect(state.club.name).toBe('The Rocket');
-    expect(state.level).toBe(10);
-    expect(state.rings.current).toBe(8.3);
+  it('plays The Apocalypse at level 8 from Bag 1', () => {
+    expect(state.club.name).toBe('The Apocalypse');
+    expect(state.level).toBe(8);
+    expect(state.rings.current).toBe(9.4);
   });
 });
 
 describe('Flex', () => {
   it('plays from the bag, or from the Flex picks', () => {
-    state.setBagClub(0, 'drivers', 'The Apocalypse');
-    expect(state.club.name).toBe('The Apocalypse');
+    state.setBagClub(0, 'drivers', 'Big Topper');
+    expect(state.club.name).toBe('Big Topper');
 
     state.useFlex();
     expect(state.mode).toBe('flex');
@@ -51,11 +55,11 @@ describe('Flex', () => {
     state.selectLevel(5);
 
     expect(state.flex.drivers).toEqual({ club: 'Big Topper', level: 5 });
-    expect(state.account.bags[0].selections).toEqual(starter);
+    expect(state.account.bags[0]).toEqual(bag1);
 
     state.switchBag(0);
     expect(state.mode).toBe('bag');
-    expect(state.club.name).toBe('The Rocket');
+    expect(state.club.name).toBe('The Apocalypse');
   });
 
   it('shares the club type in hand and the shot settings with the bags', () => {
@@ -67,20 +71,63 @@ describe('Flex', () => {
   });
 });
 
+describe('choosing a club type', () => {
+  it('sets the elevation to 20% for the wedge, which the player can still change', () => {
+    expect(state.elevation).toBe(10);
+    state.selectType('wedges');
+    expect(state.clubType).toBe('wedges');
+    expect(state.elevation).toBe(20);
+
+    state.elevation = 30;
+    expect(state.elevation).toBe(30);
+  });
+
+  it('leaves the elevation alone for other types, and when leaving the wedge', () => {
+    state.elevation = 5;
+    state.selectType('longirons');
+    expect(state.elevation).toBe(5);
+
+    state.selectType('wedges');
+    state.selectType('drivers');
+    expect(state.clubType).toBe('drivers');
+    expect(state.elevation).toBe(20);
+  });
+
+  it('does not reset a changed wedge elevation when the wedge is chosen again', () => {
+    state.selectType('wedges');
+    state.elevation = 35;
+    state.selectType('wedges');
+    expect(state.elevation).toBe(35);
+  });
+
+  it('ignores a club type that does not exist', () => {
+    state.selectType('putters');
+    expect(state.clubType).toBe('drivers');
+  });
+
+  it('does not change the elevation a saved wedge shot comes back with', () => {
+    const saved = new AppState();
+    saved.selectType('wedges');
+    saved.elevation = 15;
+    state.restore(stored(saved));
+    expect(state.clubType).toBe('wedges');
+    expect(state.elevation).toBe(15);
+  });
+});
+
 describe('bags', () => {
   it('switching bags swaps every club and the rings follow', () => {
-    withBags(state, 2);
-    state.setBagClub(1, 'drivers', 'The Apocalypse');
+    state.setBagClub(1, 'drivers', 'Big Topper');
     state.setBagLevel(1, 'drivers', 3);
     const before = state.rings.current;
 
     state.switchBag(1);
-    expect(state.club.name).toBe('The Apocalypse');
+    expect(state.club.name).toBe('Big Topper');
     expect(state.level).toBe(3);
     expect(state.rings.current).not.toBe(before);
 
     state.switchBag(0);
-    expect(state.club.name).toBe('The Rocket');
+    expect(state.club.name).toBe('The Apocalypse');
     expect(state.rings.current).toBe(before);
   });
 
@@ -88,7 +135,7 @@ describe('bags', () => {
     withBags(state, 4);
     state.setBagClub(3, 'woods', 'The Viper');
     expect(state.account.bags[3].selections.woods.club).toBe('The Viper');
-    expect(state.bag.selections.woods).toEqual(starter.woods);
+    expect(state.bag.selections.woods).toEqual(bag1.selections.woods);
   });
 
   it('ignores a bag number that does not exist', () => {
@@ -108,16 +155,16 @@ describe('bags', () => {
 
 describe('adding and removing bags', () => {
   it('adds a bag holding a copy of the clubs in use, and plays from it', () => {
-    state.setBagClub(0, 'drivers', 'The Apocalypse');
+    state.setBagClub(0, 'drivers', 'Big Topper');
     state.addBag();
 
-    const [first, second] = state.account.bags;
-    expect(second.name).toBe('Bag 2');
-    expect(second.selections).toEqual(first.selections);
-    expect(state.account.activeBag).toBe(1);
+    const [first, , third] = state.account.bags;
+    expect(third.name).toBe('Bag 3');
+    expect(third.selections).toEqual(first.selections);
+    expect(state.account.activeBag).toBe(2);
 
     // A copy, not the same clubs: changing one leaves the other.
-    state.setBagLevel(1, 'drivers', 2);
+    state.setBagLevel(2, 'drivers', 2);
     expect(first.selections.drivers.level).toBe(8);
   });
 
@@ -127,7 +174,7 @@ describe('adding and removing bags', () => {
     state.addBag();
 
     expect(state.mode).toBe('bag');
-    expect(state.account.bags[1].selections.drivers.club).toBe('Big Topper');
+    expect(state.account.bags[2].selections.drivers.club).toBe('Big Topper');
     expect(state.club.name).toBe('Big Topper');
   });
 

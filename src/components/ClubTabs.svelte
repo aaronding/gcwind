@@ -1,7 +1,8 @@
 <script>
   import { CLUB_TYPES } from '../lib/state.svelte.js';
 
-  let { value = $bindable() } = $props();
+  /** `onselect(key)` asks for another club type; the app decides what that changes. */
+  let { value, onselect } = $props();
 </script>
 
 <div class="tabs" role="tablist" aria-label="Club type" data-testid="club-tabs">
@@ -11,7 +12,7 @@
       class:selected={value === type.key}
       role="tab"
       aria-selected={value === type.key}
-      onclick={() => (value = type.key)}
+      onclick={() => onselect(type.key)}
     >
       {type.label}
     </button>

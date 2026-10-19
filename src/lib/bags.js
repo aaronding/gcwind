@@ -29,9 +29,30 @@ export function newBag(index, selections = defaultSelections()) {
   return { name: defaultBagName(index), selections };
 }
 
-/** A new account starts with one bag; the player adds the rest as they need them. */
+const pick = (club, level) => ({ club, level });
+
+/**
+ * What a new player starts with: two bags that differ only in the driver and
+ * the wood, so a player edits them into their own rather than building from
+ * the first club of each type.
+ */
+export function starterBags() {
+  const shared = {
+    longirons: pick('The B52', 8),
+    shortirons: pick('The Thorn', 9),
+    wedges: pick('The Endbringer', 8),
+    roughirons: pick('Nirvana', 9),
+    sandwedges: pick('Spitfire', 8)
+  };
+  return [
+    { drivers: pick('The Apocalypse', 8), woods: pick('The Sniper', 10), ...shared },
+    { drivers: pick("Thor's Hammer", 8), woods: pick('The Cataclysm', 8), ...shared }
+  ].map((selections, i) => newBag(i, cleanSelections(selections)));
+}
+
+/** A new account starts with the two starter bags; the player adds the rest as needed. */
 export function newAccount(name) {
-  return { name, activeBag: 0, bags: [newBag(0)] };
+  return { name, activeBag: 0, bags: starterBags() };
 }
 
 /** One line of printable text, trimmed and capped; the fallback when nothing is left. */

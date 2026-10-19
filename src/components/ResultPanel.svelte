@@ -58,7 +58,7 @@
 
     <dl>
       <div>
-        <dt>Power Ball</dt>
+        <dt>Ball Power</dt>
         <dd data-testid="detail-powerball">{powerBall}</dd>
       </div>
       <div>

@@ -60,8 +60,10 @@ Changes apply as they are made; Done closes the dialog.
 A first visit opens on Bag 1. After that gcwind opens on the bag, or Flex, last used, so
 a player in the middle of a checkpoint event is not sent back to a bag on every visit.
 
-Wind, power ball, elevation, distance and the club type in hand are shared by the bags and
-Flex: they describe the shot being played, not where the club came from.
+Wind, ball power, elevation, distance and the club type in hand are shared by the bags and
+Flex: they describe the shot being played, not where the club came from. Choosing the wedge
+sets the elevation to 20% (October 2026); the player can change it for the shot, and other
+types leave it as it is.
 
 ### Tournament (designed now, built in step 4)
 
@@ -90,9 +92,12 @@ Where the switch sits (the header, or the end of the bag row) is settled in step
 
 ## Bags and accounts
 
-- **One to five bags** per account, as in the game. A new player starts with one. **+** in
-  the bag row, or **Add a bag** in the bag manager, adds the next one, which starts as a
-  copy of the clubs in use, so a second bag only needs what differs.
+- **One to five bags** per account, as in the game. A new player starts with two (revised
+  October 2026): Bag 1 holds The Apocalypse 8, The Sniper 10, The B52 8, The Thorn 9, The
+  Endbringer 8, Nirvana 9 and Spitfire 8, and Bag 2 the same with Thor's Hammer 8 and The
+  Cataclysm 8 as driver and wood. **+** in the bag row, or **Add a bag** in the bag manager,
+  adds the next one, which starts as a copy of the clubs in use, so a new bag only needs
+  what differs.
 - Bags are numbered in order and named "Bag 1" and so on until renamed. Removing a bag
   moves the ones after it up a number, and a default name moves with its number. The last
   bag cannot be removed. Removing the bag in use switches to the one before it.
@@ -241,8 +246,9 @@ Settled when the design was approved, and revised in review (October 2026):
    level (0 to 10) that the UI never sets; it can join the ball setup later.
 4. **No mode switch** (revised in review; it was Tour · Checkpoint · Tournament). Flex sits
    in the bag row before Bag 1, and Tournament becomes a switch in step 4.
-5. **Bags in use:** one to five, and a new player starts with one (revised in review; it
-   was always five). A new bag starts as a copy of the clubs in use.
+5. **Bags in use:** one to five, and a new player starts with two (revised again in
+   October 2026; it was always five, then one). A new bag starts as a copy of the clubs in
+   use.
 6. **Opening:** on the bag, or Flex, last used; Bag 1 on a first visit.
 7. **Migration:** v1's picks become Bag 1 and the Flex picks (revised in review; it was
    all five bags and the Checkpoint picks).

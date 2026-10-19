@@ -31,19 +31,27 @@ async function pick(page, type, club, level) {
   await editor.getByTestId(`level-list-${type}`).getByTestId(`level-${level}`).click();
 }
 
-test('opens on Bag 1 with the starter clubs, and Flex and + beside it', async ({ page }) => {
+test('opens on Bag 1 of two starter bags, with Flex and + beside them', async ({ page }) => {
   await open(page);
 
-  await expect(bagButtons(page)).toHaveCount(1);
+  await expect(bagButtons(page)).toHaveCount(2);
   await expect(page.getByTestId('bag-1')).toHaveAttribute('aria-pressed', 'true');
   await expect(page.getByTestId('bag-flex')).toHaveAttribute('aria-pressed', 'false');
   await expect(page.getByTestId('bag-add')).toHaveAccessibleName('Add a bag');
   await expect(page.getByTestId('bag-name')).toHaveText('Bag 1');
 
-  // The club in hand is the driver, so the rings match the old opening screen.
-  await expect(card(page, 'drivers')).toHaveAccessibleName('Driver: The Rocket, level 10');
+  // The club in hand is Bag 1's driver.
+  await expect(card(page, 'drivers')).toHaveAccessibleName('Driver: The Apocalypse, level 8');
   await expect(card(page, 'drivers')).toHaveAttribute('aria-pressed', 'true');
-  await expect(page.getByTestId('result-current')).toHaveText('8.3');
+  await expect(page.getByTestId('result-current')).toHaveText('9.4');
+
+  // Bag 2 differs in the driver and the wood.
+  await page.getByTestId('bag-2').click();
+  await expect(card(page, 'drivers')).toHaveAccessibleName("Driver: Thor's Hammer, level 8");
+  await expect(card(page, 'woods')).toHaveAccessibleName('Wood: The Cataclysm, level 8');
+  await expect(card(page, 'longirons')).toHaveAccessibleName('Long iron: The B52, level 8');
+  await page.getByTestId('bag-1').click();
+  await expect(card(page, 'woods')).toHaveAccessibleName('Wood: The Sniper, level 10');
 
   // No club list or levels on a bag.
   await expect(page.getByTestId('club-list-drivers')).toHaveCount(0);
@@ -58,9 +66,27 @@ test('tapping a club card puts that club in hand', async ({ page }) => {
   await expect(card(page, 'woods')).toHaveAttribute('aria-pressed', 'true');
   await expect(card(page, 'drivers')).toHaveAttribute('aria-pressed', 'false');
   // The level is a number on the picture, in the club's rarity colour.
-  await expect(card(page, 'woods')).toContainText('8');
-  await expect(page.getByTestId('detail-level')).toHaveText('8');
+  await expect(card(page, 'woods')).toContainText('10');
+  await expect(page.getByTestId('detail-level')).toHaveText('10');
   await expect(page.getByTestId('result-current')).not.toHaveText(before);
+});
+
+test('choosing the wedge sets the elevation to 20%, which can still be changed', async ({
+  page
+}) => {
+  await open(page);
+  await expect(page.getByTestId('detail-elevation')).toHaveText('10%');
+
+  await card(page, 'wedges').click();
+  await expect(page.getByTestId('detail-elevation')).toHaveText('20%');
+  await page.getByTestId('elevation-control').getByTestId('preset-30').click();
+  await expect(page.getByTestId('detail-elevation')).toHaveText('30%');
+
+  // In Flex, through the club type tabs as well.
+  await card(page, 'drivers').click();
+  await page.getByTestId('bag-flex').click();
+  await page.getByRole('tab', { name: 'Wedge' }).click();
+  await expect(page.getByTestId('detail-elevation')).toHaveText('20%');
 });
 
 test('+ adds a bag that starts as a copy, and each bag keeps its own clubs across a reload', async ({
@@ -80,11 +106,11 @@ test('+ adds a bag that starts as a copy, and each bag keeps its own clubs acros
   await expect(page.getByTestId('detail-level')).toHaveText('3');
   const bag1Rings = await page.getByTestId('result-current').textContent();
 
-  // Bag 2 starts with Bag 1's clubs and is the one in use; give it a different driver.
+  // Bag 3 starts with Bag 1's clubs and is the one in use; give it a different driver.
   await page.getByTestId('bag-add').click();
-  await expect(bagButtons(page)).toHaveCount(2);
-  await expect(page.getByTestId('bag-2')).toHaveAttribute('aria-pressed', 'true');
-  await expect(page.getByTestId('bag-name')).toHaveText('Bag 2');
+  await expect(bagButtons(page)).toHaveCount(3);
+  await expect(page.getByTestId('bag-3')).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.getByTestId('bag-name')).toHaveText('Bag 3');
   await expect(card(page, 'drivers')).toHaveAccessibleName('Driver: The Apocalypse, level 3');
   await page.getByTestId('bag-edit').click();
   await pick(page, 'drivers', 'The Extra Mile', 5);
@@ -94,9 +120,9 @@ test('+ adds a bag that starts as a copy, and each bag keeps its own clubs acros
 
   await page.reload();
 
-  // Still on Bag 2, with its own clubs.
-  await expect(bagButtons(page)).toHaveCount(2);
-  await expect(page.getByTestId('bag-2')).toHaveAttribute('aria-pressed', 'true');
+  // Still on Bag 3, with its own clubs.
+  await expect(bagButtons(page)).toHaveCount(3);
+  await expect(page.getByTestId('bag-3')).toHaveAttribute('aria-pressed', 'true');
   await expect(card(page, 'drivers')).toHaveAccessibleName('Driver: The Extra Mile, level 5');
   await expect(page.getByTestId('detail-level')).toHaveText('5');
 
@@ -109,7 +135,7 @@ test('+ adds a bag that starts as a copy, and each bag keeps its own clubs acros
 
 test('+ goes once there are five bags', async ({ page }) => {
   await open(page);
-  for (let i = 2; i <= 5; i++) {
+  for (let i = 3; i <= 5; i++) {
     await page.getByTestId('bag-add').click();
     await expect(page.getByTestId(`bag-${i}`)).toHaveAttribute('aria-pressed', 'true');
   }
@@ -136,7 +162,7 @@ test('Flex picks any club and level, keeps its own picks, and is remembered', as
 
   // The bag is untouched.
   await page.getByTestId('bag-1').click();
-  await expect(card(page, 'drivers')).toHaveAccessibleName('Driver: The Rocket, level 10');
+  await expect(card(page, 'drivers')).toHaveAccessibleName('Driver: The Apocalypse, level 8');
 });
 
 test('the bag manager adds, renames, edits and removes bags, and a removal can be undone', async ({
@@ -147,12 +173,16 @@ test('the bag manager adds, renames, edits and removes bags, and a removal can b
   const manager = page.getByTestId('bags-dialog');
   await expect(manager).toBeVisible();
 
-  // Each bag has Edit, and Remove once there is more than one.
+  // Each bag has Edit, and Remove while there is more than one.
   await expect(manager.getByTestId('bag-edit-1')).toBeVisible();
+  await expect(manager.getByTestId('bag-remove-1')).toBeVisible();
+  await manager.getByTestId('bag-remove-2').click();
   await expect(manager.getByTestId('bag-remove-1')).toHaveCount(0);
+  await manager.getByTestId('bag-undo-remove').click();
+  await expect(bagButtons(page)).toHaveCount(2);
 
-  // Add three more; the new bag's name is ready to type over.
-  for (let i = 2; i <= 4; i++) {
+  // Add two more; the new bag's name is ready to type over.
+  for (let i = 3; i <= 4; i++) {
     await manager.getByTestId('bag-add-manager').click();
     await expect(manager.getByTestId(`bag-name-${i}`)).toBeFocused();
   }
@@ -201,7 +231,7 @@ test('the bag manager adds, renames, edits and removes bags, and a removal can b
 
 test('the bag manager has no note at five bags, and Add a bag goes', async ({ page }) => {
   await open(page);
-  for (let i = 0; i < 4; i++) await page.getByTestId('bag-add').click();
+  for (let i = 0; i < 3; i++) await page.getByTestId('bag-add').click();
   await page.getByTestId('bags-manage').click();
   const manager = page.getByTestId('bags-dialog');
   await expect(manager.getByTestId('bag-add-manager')).toHaveCount(0);
@@ -273,7 +303,8 @@ test('damaged storage falls back to defaults without breaking the page', async (
   await open(page);
 
   await expect(page.getByTestId('bag-1')).toHaveAttribute('aria-pressed', 'true');
-  await expect(page.getByTestId('result-current')).toHaveText('8.3');
+  await expect(bagButtons(page)).toHaveCount(2);
+  await expect(page.getByTestId('result-current')).toHaveText('9.4');
 });
 
 test('edited storage is checked before it is used', async ({ page }) => {
@@ -320,7 +351,7 @@ test('Flex, bags and club cards work from the keyboard', async ({ page }) => {
 
   await page.getByTestId('bag-add').focus();
   await page.keyboard.press('Enter');
-  await expect(page.getByTestId('bag-2')).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.getByTestId('bag-3')).toHaveAttribute('aria-pressed', 'true');
 
   await page.getByTestId('bag-flex').focus();
   await page.keyboard.press('Enter');
