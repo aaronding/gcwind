@@ -30,6 +30,8 @@ export const ELEVATION_SHORTCUTS = [0, 10, 20, 30];
 // Down to -30% for steep downhill shots. The "rough iron rule" players quote is
 // not one of them: the calculator already applies it (see categoryAdjustment).
 export const ELEVATION_VALUES = Array.from({ length: 17 }, (_, i) => -30 + i * 5);
+/** The elevation choosing the wedge sets; the player can change it for the shot. */
+export const WEDGE_ELEVATION = 20;
 export const POWER_BALL_SHORTCUTS = [2, 6, 10];
 export const POWER_BALL_VALUES = Array.from({ length: 11 }, (_, i) => i);
 
@@ -178,6 +180,16 @@ export class AppState {
   setBagLevel(index, type, level) {
     const bag = this.account.bags[index];
     if (bag) bag.selections = withLevel(bag.selections, type, level);
+  }
+
+  /**
+   * Puts another club type in hand. Choosing the wedge sets the elevation to
+   * WEDGE_ELEVATION, which the player can still change for the shot.
+   */
+  selectType(type) {
+    if (type === this.clubType || !CLUB_TYPES.some((t) => t.key === type)) return;
+    this.clubType = type;
+    if (type === 'wedges') this.elevation = WEDGE_ELEVATION;
   }
 
   useFlex() {

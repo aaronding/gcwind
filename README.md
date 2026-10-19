@@ -1,7 +1,7 @@
 # ⛳ gcwind
 
 A wind ring calculator for Golf Clash. Choose your bag and the club in hand (or any club
-and level), enter the wind speed, adjust for power ball, elevation and shot distance, and it
+and level), enter the wind speed, adjust for ball power, elevation and shot distance, and it
 tells you how many rings to aim off.
 
 **Live:** <https://gcwind.webthinking.io>
@@ -13,7 +13,7 @@ tells you how many rings to aim off.
 - **Flex**, beside the bags: any club at any level, for checkpoints
 - All seven club categories, with per-club stats at every level
 - Rings at four distances: current, max, mid and min
-- Adjusts for power ball, elevation and shot distance
+- Adjusts for ball power, elevation and shot distance
 - Clubs tinted by rarity, so tier is readable at a glance
 - Remembers your bags and picks between visits, in this browser only
 - Light, dark, or follow the system, remembered between visits

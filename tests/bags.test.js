@@ -8,6 +8,7 @@ import {
   cleanName,
   migrateSelections,
   newAccount,
+  starterBags,
   readBags
 } from '../src/lib/bags.js';
 import {
@@ -54,12 +55,32 @@ describe('starter clubs', () => {
 });
 
 describe('a new account', () => {
-  it('starts with one bag of starter clubs; the player adds the rest', () => {
-    expect(newAccount('Main')).toEqual({
-      name: 'Main',
-      activeBag: 0,
-      bags: [{ name: 'Bag 1', selections: starter }]
-    });
+  it('starts with two starter bags, on the first', () => {
+    const bags = starterBags();
+    expect(newAccount('Main')).toEqual({ name: 'Main', activeBag: 0, bags });
+  });
+
+  it('holds the clubs and levels the owner chose, each a real club within its levels', () => {
+    const named = (bag) =>
+      Object.values(bag.selections).map(({ club, level }) => `${club} ${level}`);
+    const shared = ['The B52 8', 'The Thorn 9', 'The Endbringer 8', 'Nirvana 9', 'Spitfire 8'];
+    const [first, second] = starterBags();
+
+    expect(first.name).toBe('Bag 1');
+    expect(named(first)).toEqual(['The Apocalypse 8', 'The Sniper 10', ...shared]);
+    expect(second.name).toBe('Bag 2');
+    expect(named(second)).toEqual(["Thor's Hammer 8", 'The Cataclysm 8', ...shared]);
+
+    // Unchanged by cleaning, so no name is misspelt and no level too high.
+    for (const bag of [first, second]) {
+      expect(cleanSelections(bag.selections)).toEqual(bag.selections);
+    }
+  });
+
+  it('gives every new account its own copies', () => {
+    const a = newAccount('A');
+    a.bags[0].selections.drivers.level = 1;
+    expect(newAccount('B').bags[0].selections.drivers.level).toBe(8);
   });
 });
 

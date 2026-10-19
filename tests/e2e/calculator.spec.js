@@ -93,7 +93,7 @@ test('elevation and power ball shortcuts recalculate', async ({ page }) => {
   await expect(page.getByTestId('detail-elevation')).toHaveText('30%');
   await expect(rings(page).current).not.toHaveText(before);
 
-  await page.getByTestId('powerball-control').getByTestId('preset-10').click();
+  await page.getByTestId('ballpower-control').getByTestId('preset-10').click();
   await expect(page.getByTestId('detail-powerball')).toHaveText('10');
 });
 

@@ -78,11 +78,11 @@ test('exports a file that another browser imports, after a summary, and can undo
   expect(saved).toMatchObject({ app: 'gcwind', version: 2 });
   expect(saved.data.accounts[0].bags.map((b) => b.name)).toEqual(['Tour 10', 'Approach', 'Windy']);
 
-  // A fresh browser, with one starter bag.
+  // A fresh browser, with the two starter bags.
   const other = await browser.newContext();
   const fresh = await other.newPage();
   await open(fresh);
-  await expect(bagButtons(fresh)).toHaveCount(1);
+  await expect(bagButtons(fresh)).toHaveCount(2);
 
   await openBackup(fresh);
   await fresh.getByTestId('backup-file').setInputFiles(file);
@@ -91,7 +91,7 @@ test('exports a file that another browser imports, after a summary, and can undo
   await expect(fresh.locator('dialog[open]')).toHaveCount(1);
   await expect(fresh.getByTestId('backup-source')).toContainText('3 bags');
   await expect(fresh.getByTestId(/^backup-bag-\d$/)).toHaveCount(3);
-  await expect(fresh.getByTestId('backup-replaces')).toContainText('“Bag 1”');
+  await expect(fresh.getByTestId('backup-replaces')).toContainText('“Bag 1”, “Bag 2”');
 
   await fresh.getByTestId('backup-replace').click();
   await expect(fresh.getByTestId('backup-status')).toContainText('Imported 3 bags');
@@ -111,7 +111,7 @@ test('exports a file that another browser imports, after a summary, and can undo
   await expect(fresh.getByTestId('backup-status')).toHaveText('Your previous data is back.');
   await expect(fresh.getByTestId('backup-undo')).toHaveCount(0);
   await fresh.getByTestId('bags-dialog-close').click();
-  await expect(bagButtons(fresh)).toHaveCount(1);
+  await expect(bagButtons(fresh)).toHaveCount(2);
   await expect(fresh.getByTestId('bag-name')).toHaveText('Bag 1');
 
   await other.close();
@@ -129,7 +129,7 @@ test('cancelling an import changes nothing', async ({ page }) => {
   await expect(page.getByTestId('backup-confirm')).toHaveCount(0);
   await expect(page.getByTestId('backup-undo')).toHaveCount(0);
   await page.getByTestId('bags-dialog-close').click();
-  await expect(bagButtons(page)).toHaveCount(1);
+  await expect(bagButtons(page)).toHaveCount(2);
 });
 
 for (const [what, text, message] of [
@@ -191,6 +191,7 @@ test('a press that starts on the top edge of Replace still replaces', async ({ p
 
   // The face drops by its bevel while pressed, so the release lands above
   // where it now is.
+  await page.getByTestId('backup-replace').scrollIntoViewIfNeeded();
   const box = await page.getByTestId('backup-replace').boundingBox();
   await page.mouse.move(box.x + box.width / 2, box.y + 1);
   await page.mouse.down();

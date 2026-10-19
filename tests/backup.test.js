@@ -189,7 +189,7 @@ describe('undo', () => {
     const before = stored(app);
 
     replaceSaved(stored(new AppState()));
-    expect(app.account.bags).toHaveLength(1);
+    expect(app.account.bags).toHaveLength(2);
     expect(undo.available).toBe(true);
 
     undoReplace();

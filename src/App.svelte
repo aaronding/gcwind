@@ -79,7 +79,7 @@
     />
 
     {#if app.mode === 'flex'}
-      <ClubTabs bind:value={app.clubType} />
+      <ClubTabs value={app.clubType} onselect={(type) => app.selectType(type)} />
 
       <section class="panel">
         <ClubPicker
@@ -100,7 +100,7 @@
         <BagClubs
           selections={app.bag.selections}
           selected={app.clubType}
-          onselect={(type) => (app.clubType = type)}
+          onselect={(type) => app.selectType(type)}
           onedit={() => editor.open()}
         />
       </section>
@@ -118,7 +118,7 @@
     <div class="settings panel">
       <DistanceSlider value={app.distance} onchange={(v) => (app.distance = v)} />
       <PresetControl
-        label="Power Ball"
+        label="Ball Power"
         value={app.powerBall}
         shortcuts={POWER_BALL_SHORTCUTS}
         values={POWER_BALL_VALUES}
@@ -182,7 +182,7 @@
 <Modal bind:dialog={about} testid="about-dialog" title="About this tool">
   <p>
     A wind ring calculator for Golf Clash. Pick your club and level, enter the wind speed, adjust
-    for power ball, elevation and shot distance, and it tells you how many rings to aim off.
+    for ball power, elevation and shot distance, and it tells you how many rings to aim off.
   </p>
   <p>
     One of a few small browser tools at
