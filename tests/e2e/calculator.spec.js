@@ -95,6 +95,11 @@ test('elevation and power ball shortcuts recalculate', async ({ page }) => {
 
   await page.getByTestId('ballpower-control').getByTestId('preset-10').click();
   await expect(page.getByTestId('detail-powerball')).toHaveText('10');
+
+  // 8 is a shortcut too, not only in the menu.
+  await page.getByTestId('ballpower-control').getByTestId('preset-8').click();
+  await expect(page.getByTestId('detail-powerball')).toHaveText('8');
+  await expect(page.getByTestId('ballpower-control').getByTestId('preset-menu')).toHaveText('-');
 });
 
 test('a dropdown value relabels the menu button and clears the shortcut', async ({ page }) => {
@@ -123,20 +128,15 @@ test('elevation reaches -30% and survives a reload', async ({ page }) => {
   await expect(page.getByTestId('detail-elevation')).toHaveText('-30%');
 });
 
-test('rough irons and sand wedges say their adjustment is already applied', async ({ page }) => {
-  const note = page.getByTestId('category-note');
-  await expect(note).toHaveCount(0);
-
-  await page.getByRole('tab', { name: 'Rough' }).click();
-  await expect(note).toContainText('Rough iron adjustment already applied (31%');
-  await expect(note).toContainText('rough iron rule');
-
-  await page.getByRole('tab', { name: 'Sand' }).click();
-  await expect(note).toContainText('Sand wedge adjustment already applied (13%');
-  await expect(note).not.toContainText('rough iron rule');
-
-  await page.getByRole('tab', { name: 'Wedge' }).click();
-  await expect(note).toHaveCount(0);
+test('rough irons and sand wedges show no adjustment note', async ({ page }) => {
+  // The calculator still applies their adjustment; the note explaining it
+  // was removed on request.
+  for (const tab of ['Rough', 'Sand']) {
+    await page.getByRole('tab', { name: tab }).click();
+    await expect(page.getByTestId('result-current')).not.toHaveText('-');
+    await expect(page.getByTestId('category-note')).toHaveCount(0);
+    await expect(page.getByText('adjustment already applied')).toHaveCount(0);
+  }
 });
 
 test('wind speed accepts typing, stepping and clearing', async ({ page }) => {
@@ -229,50 +229,11 @@ test('the wind keypad starts a new number after a pause', async ({ page }) => {
   await expect(wind).toHaveValue('0.7');
 });
 
-test('the wind slider and the number move together', async ({ page }) => {
-  const wind = page.getByTestId('wind-input');
-  const slider = page.getByTestId('wind-slider');
-
-  await expect(slider).toHaveValue('10');
-
-  await slider.evaluate((el) => {
-    el.value = 18.4;
-    el.dispatchEvent(new Event('input', { bubbles: true }));
-  });
-  await expect(wind).toHaveValue('18.4');
-  await expect(rings(page).current).not.toHaveText('8.3');
-
-  await wind.fill('6.5');
-  await expect(slider).toHaveValue('6.5');
-
-  // Arrow keys step by a tenth, like the steppers.
-  await slider.focus();
-  await page.keyboard.press('ArrowRight');
-  await expect(wind).toHaveValue('6.6');
-
-  // Cleared wind parks the thumb at the left end; moving it brings a result back.
-  await page.getByTestId('wind-clear').click();
-  await expect(slider).toHaveValue('0.1');
-  await expect(rings(page).current).toHaveText('-');
-
-  await slider.evaluate((el) => {
-    el.value = 12;
-    el.dispatchEvent(new Event('input', { bubbles: true }));
-  });
-  await expect(wind).toHaveValue('12.0');
-  await expect(rings(page).current).not.toHaveText('-');
-});
-
-test('clicking along the wind slider sets the wind', async ({ page }) => {
-  const slider = page.getByTestId('wind-slider');
-  const box = await slider.boundingBox();
-
-  // About four fifths of the way along a 0.1-25 track is roughly 20.
-  await slider.click({ position: { x: box.width * 0.8, y: box.height / 2 } });
-
-  const wind = Number(await page.getByTestId('wind-input').inputValue());
-  expect(wind).toBeGreaterThan(18);
-  expect(wind).toBeLessThan(22);
+test('the wind has no slider; the keypad and the steppers set it', async ({ page }) => {
+  // Removed deliberately: typing or stepping to the wind is quicker and surer
+  // than dragging to it, and the card is shorter without it.
+  await expect(page.getByTestId('wind-slider')).toHaveCount(0);
+  await expect(page.getByRole('slider', { name: 'Wind speed' })).toHaveCount(0);
 });
 
 // The slider is a native <input type="range"> since Shoelace was removed, so
@@ -339,7 +300,7 @@ test('the about dialog carries the disclaimer', async ({ page }) => {
 
 test('the resource links point where they should', async ({ page }) => {
   const links = page.locator('.link-row a');
-  await expect(links).toHaveCount(3);
+  await expect(links).toHaveCount(2);
   await expect(page.getByRole('link', { name: /Golf Clash Tommy/ })).toHaveAttribute(
     'href',
     'https://golfclashtommy.com'
@@ -348,8 +309,9 @@ test('the resource links point where they should', async ({ page }) => {
     'href',
     'https://www.reddit.com/r/GolfClash/'
   );
-  // Removed on request; make sure it does not creep back.
+  // Removed on request; make sure they do not creep back.
   await expect(page.getByRole('link', { name: /Notebook/ })).toHaveCount(0);
+  await expect(page.getByRole('link', { name: /YouTube/ })).toHaveCount(0);
 });
 
 test('links back to webthinking.io without posing as a game resource', async ({ page }) => {
@@ -360,7 +322,7 @@ test('links back to webthinking.io without posing as a game resource', async ({ 
   // It belongs in the footer, not among the Golf Clash resources, where a
   // player looking for game help would be misled by it.
   await expect(page.locator('.link-row [data-testid="webthinking-link"]')).toHaveCount(0);
-  await expect(page.locator('.link-row a')).toHaveCount(3);
+  await expect(page.locator('.link-row a')).toHaveCount(2);
 });
 
 test('the feedback dialog opens and closes', async ({ page }) => {

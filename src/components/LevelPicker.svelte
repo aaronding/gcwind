@@ -35,6 +35,18 @@
     color: var(--ink-muted);
   }
 
+  /* All ten on one row on a large phone. */
+  @media (max-width: 680px) {
+    .levels {
+      grid-template-columns: repeat(auto-fill, minmax(30px, 1fr));
+      gap: 4px;
+    }
+
+    .levels .level {
+      min-height: 38px;
+    }
+  }
+
   .level.selected {
     background: var(--green-500);
     color: var(--on-dark);

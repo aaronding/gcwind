@@ -2,19 +2,13 @@
   // A bag's clubs, one card per type, each showing the club with its level on
   // the picture, the way the game shows it. On a bag this is how the player
   // says which club the game put in their hand; in the bag editor it picks the
-  // type to change.
+  // type to change. `row` keeps the seven in one row wherever they fit.
   import { CLUB_TYPES, clubFor } from '../lib/clubs.js';
 
-  let { selections, selected, onselect, onedit, label = 'Club in hand' } = $props();
+  let { selections, selected, onselect, row = false, label = 'Club in hand' } = $props();
 </script>
 
-<div
-  class="cards"
-  class:with-edit={!!onedit}
-  role="group"
-  aria-label={label}
-  data-testid="bag-clubs"
->
+<div class="cards" class:row role="group" aria-label={label} data-testid="bag-clubs">
   {#each CLUB_TYPES as type (type.key)}
     {@const pick = selections[type.key]}
     {@const club = clubFor(type.key, pick.club)}
@@ -37,22 +31,12 @@
       <span class="type">{type.label}</span>
     </button>
   {/each}
-
-  {#if onedit}
-    <button class="card edit" data-testid="bag-edit" onclick={onedit}>
-      <svg viewBox="0 0 16 16" aria-hidden="true">
-        <path d="M10.5 2.5l3 3L6 13H3v-3z" />
-        <path d="M9 4l3 3" />
-      </svg>
-      <span class="type">Edit bag</span>
-    </button>
-  {/if}
 </div>
 
 <style>
-  /* Four across on a phone, so seven clubs and Edit fill two rows exactly;
-     one row of eight once there is room. Kept short on a phone, so the rings
-     come into view sooner. */
+  /* Four across, as the bag editor shows them. The bag in use keeps all
+     seven in one row from 360px, with smaller pictures on a phone, which
+     saves a row of height for the rings below. */
   .cards {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -75,9 +59,63 @@
     color: var(--ink);
   }
 
-  @media (min-width: 560px) {
-    .cards.with-edit {
+  /* Narrower than that, four over three, the three centred under the four:
+     each card spans two half-columns and the fifth starts one in. */
+  @media (max-width: 359px) {
+    .cards.row {
       grid-template-columns: repeat(8, minmax(0, 1fr));
+    }
+
+    .row .card {
+      grid-column: span 2;
+    }
+
+    .row .card:nth-child(5) {
+      grid-column: 2 / span 2;
+    }
+  }
+
+  @media (min-width: 360px) and (max-width: 559px) {
+    .cards.row {
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+      gap: 4px;
+    }
+
+    .row .card {
+      --pic: 32px;
+      gap: 3px;
+      padding: 4px 1px;
+    }
+
+    .row .type {
+      font-size: 11px;
+      letter-spacing: -0.01em;
+    }
+
+    /* Smaller, in proportion to the smaller picture, and clear of the label
+       under it, which its ring would otherwise cut. */
+    .row .level-badge {
+      right: -6px;
+      bottom: 0;
+      min-width: 14px;
+      padding: 0 3px;
+      font-size: 9px;
+      line-height: 13px;
+      box-shadow:
+        inset 0 0 0 1px var(--badge, var(--rarity-common-strong)),
+        0 0 0 1.5px var(--badge-ring, var(--surface));
+    }
+  }
+
+  @media (min-width: 400px) and (max-width: 559px) {
+    .row .type {
+      font-size: 12px;
+    }
+  }
+
+  @media (min-width: 560px) {
+    .cards.row {
+      grid-template-columns: repeat(7, minmax(0, 1fr));
     }
 
     .card {
@@ -142,39 +180,5 @@
     .type {
       font-size: 13px;
     }
-  }
-
-  .edit {
-    border: 2px dashed var(--edge);
-    border-radius: var(--radius);
-    background: transparent;
-    color: var(--accent-ink);
-    cursor: pointer;
-  }
-
-  /* Two short lines rather than "Edit …" when a 320px phone squeezes it. */
-  .edit .type {
-    white-space: normal;
-    text-align: center;
-  }
-
-  .edit:hover {
-    border-color: var(--green-500);
-    background: var(--green-100);
-  }
-
-  .edit:focus-visible {
-    outline: 3px solid var(--green-500);
-    outline-offset: 2px;
-  }
-
-  svg {
-    width: 20px;
-    height: 20px;
-    fill: none;
-    stroke: currentColor;
-    stroke-width: 1.5;
-    stroke-linecap: round;
-    stroke-linejoin: round;
   }
 </style>

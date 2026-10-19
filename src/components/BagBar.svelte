@@ -1,18 +1,18 @@
 <script>
   // Where the club in hand comes from, one tap away: Flex, which is any club at
-  // any level, or one of the account's bags. + adds a bag, up to five. The name
-  // of the bag in use opens the bag manager.
-  import { MAX_BAGS, bagLabel } from '../lib/bags.js';
+  // any level, or one of the account's bags. The name of the bag in use opens
+  // the bag manager, which is where bags are added and edited: that is rare,
+  // so it takes no room in the row.
+  import { bagLabel } from '../lib/bags.js';
 
-  let { account, flex, onbag, onflex, onadd, onmanage } = $props();
+  let { account, flex, onbag, onflex, onmanage } = $props();
 
   const bag = $derived(account.bags[account.activeBag] ?? account.bags[0]);
   const name = $derived(flex ? 'Any club' : bag.name);
-  const canAdd = $derived(account.bags.length < MAX_BAGS);
-  /** Flex and the bags share the row equally; + is narrower. */
+  /** Flex and the bags share the row equally. */
   const count = $derived(account.bags.length + 1);
   /** With six buttons, the narrowest phones need the room the name takes. */
-  const crowded = $derived(count + (canAdd ? 1 : 0) >= 6);
+  const crowded = $derived(count >= 6);
 </script>
 
 <div class="bagbar" class:crowded data-testid="bag-bar">
@@ -31,13 +31,7 @@
     </svg>
   </button>
 
-  <div
-    class="bags"
-    class:can-add={canAdd}
-    style:--count={count}
-    role="group"
-    aria-label="Clubs in use"
-  >
+  <div class="bags" style:--count={count} role="group" aria-label="Clubs in use">
     <button
       class="bag flex"
       class:selected={flex}
@@ -63,19 +57,6 @@
         {i + 1}
       </button>
     {/each}
-    {#if canAdd}
-      <button
-        class="bag add"
-        aria-label="Add a bag"
-        title="Add a bag"
-        data-testid="bag-add"
-        onclick={onadd}
-      >
-        <svg viewBox="0 0 16 16" aria-hidden="true">
-          <path d="M8 3.5v9M3.5 8h9" />
-        </svg>
-      </button>
-    {/if}
   </div>
 </div>
 
@@ -165,11 +146,6 @@
     border-radius: var(--radius);
   }
 
-  .bags.can-add {
-    min-width: calc(var(--count) * 37px + 42px);
-    grid-template-columns: repeat(var(--count), minmax(0, 1fr)) 36px;
-  }
-
   .bag {
     min-width: 0;
     height: var(--tap);
@@ -215,10 +191,8 @@
     opacity: 0;
   }
 
-  /* Flex and + are not bags, so the word and the + are a shade darker than
-     the numbers. */
-  .flex:not(.selected),
-  .add {
+  /* Flex is not a bag, so the word is a shade darker than the numbers. */
+  .flex:not(.selected) {
     color: color-mix(in srgb, var(--ink-muted), var(--ink) 20%);
   }
 
@@ -235,20 +209,5 @@
   .bag:focus-visible {
     outline: 3px solid var(--green-500);
     outline-offset: 1px;
-  }
-
-  /* Adding a bag is rare, so + is narrower than the buttons that switch. */
-  .add {
-    display: grid;
-    place-items: center;
-  }
-
-  .add svg {
-    width: 16px;
-    height: 16px;
-    fill: none;
-    stroke: currentColor;
-    stroke-width: 2;
-    stroke-linecap: round;
   }
 </style>

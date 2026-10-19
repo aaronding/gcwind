@@ -1,18 +1,7 @@
 <script>
   import ResultDial from './ResultDial.svelte';
 
-  let {
-    rings,
-    club,
-    level,
-    powerBall,
-    elevation,
-    distanceLabel,
-    clubType,
-    categoryAdjustment = 0
-  } = $props();
-
-  const categoryNames = { roughirons: 'Rough iron', sandwedges: 'Sand wedge' };
+  let { rings, club, level, powerBall, elevation, distanceLabel } = $props();
 
   const show = (v) => (rings ? v : '-');
 </script>
@@ -71,14 +60,6 @@
       </div>
     </dl>
   </div>
-
-  {#if categoryAdjustment > 0}
-    <p class="note" data-testid="category-note">
-      {categoryNames[clubType] ?? 'Club type'} adjustment already applied ({categoryAdjustment}%
-      fewer rings{clubType === 'roughirons' ? ', the "rough iron rule"' : ''}). Enter the elevation
-      the game shows.
-    </p>
-  {/if}
 </section>
 
 <style>
@@ -159,6 +140,35 @@
     }
   }
 
+  /* In a wide, short window (see App.svelte) the card is a column beside the
+     controls, laid out as on a phone: Max, Mid and Min beside the dial, and
+     the club and its settings side by side under both. */
+  @media (min-width: 1024px) and (max-height: 899px) {
+    /* Stretched to the controls' height, the dial's row takes the room. */
+    .result {
+      grid-template-columns: auto minmax(0, 1fr);
+      grid-template-rows: 1fr auto;
+      grid-template-areas:
+        'dial spread'
+        'details details';
+      gap: 16px;
+      padding: 20px;
+    }
+
+    /* The club's side a little wider, so a name like The Hammerhead fits
+       beside its picture in the narrowest column. */
+    .details {
+      grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+      gap: 12px 16px;
+      padding-top: 16px;
+      border-top: 1px solid var(--result-sunken);
+    }
+
+    .details .club {
+      gap: 12px;
+    }
+  }
+
   .club {
     display: flex;
     align-items: center;
@@ -211,19 +221,6 @@
 
   dt {
     color: var(--ink-muted);
-  }
-
-  /* Placed in a row of its own only when it is shown, so its gap never
-     leaves a blank strip at the bottom of the card. */
-  .note {
-    grid-column: 1 / -1;
-    margin: 0;
-    padding: 9px 12px;
-    font-size: 13px;
-    line-height: 1.4;
-    color: var(--ink-muted);
-    background: var(--result-sunken);
-    border-radius: var(--radius-sm);
   }
 
   dd {

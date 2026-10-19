@@ -90,23 +90,42 @@
     justify-content: space-between;
   }
 
-  /* Below this the label and five buttons cannot share a line without
-     overflowing, so the label moves above and the buttons spread the width,
-     which also makes them easier to hit. */
-  @media (max-width: 430px) {
+  /* Measured on the settings card, not the window: the card is narrowest
+     beside the wind on a small tablet, where a window query let five buttons
+     overflow it. Below this the label and five buttons at their full width
+     cannot share a line, so the buttons share what the label leaves, which
+     also makes them easier to hit. Only the narrowest cards move the label
+     above them. */
+  @container (max-width: 351px) {
     .row {
       display: grid;
-      grid-template-columns: minmax(0, 1fr);
-      gap: 6px;
+      grid-template-columns: 84px minmax(0, 1fr);
+      gap: 8px;
     }
 
     .control {
       justify-content: stretch;
+      gap: 5px;
     }
 
-    .preset {
+    /* Under .control to outrank the 46px minimum set below. */
+    .control .preset {
       flex: 1 1 0;
       min-width: 0;
+      padding: 0 4px;
+    }
+
+    .menu-wrap {
+      flex: 1 1 0;
+      min-width: 0;
+      display: grid;
+    }
+  }
+
+  @container (max-width: 299px) {
+    .row {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 6px;
     }
 
     .menu-wrap {
