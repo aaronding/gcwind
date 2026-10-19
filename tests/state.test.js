@@ -72,25 +72,17 @@ describe('Flex', () => {
 });
 
 describe('choosing a club type', () => {
-  it('sets the elevation to 20% for the wedge, which the player can still change', () => {
-    expect(state.elevation).toBe(10);
-    state.selectType('wedges');
-    expect(state.clubType).toBe('wedges');
-    expect(state.elevation).toBe(20);
-
-    state.elevation = 30;
-    expect(state.elevation).toBe(30);
-  });
-
-  it('leaves the elevation alone for other types, and when leaving the wedge', () => {
+  it('leaves the elevation as it is, the wedge included', () => {
     state.elevation = 5;
     state.selectType('longirons');
     expect(state.elevation).toBe(5);
 
     state.selectType('wedges');
+    expect(state.clubType).toBe('wedges');
+    expect(state.elevation).toBe(5);
+
     state.selectType('drivers');
-    expect(state.clubType).toBe('drivers');
-    expect(state.elevation).toBe(20);
+    expect(state.elevation).toBe(5);
   });
 
   it('does not reset a changed wedge elevation when the wedge is chosen again', () => {

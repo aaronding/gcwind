@@ -14,12 +14,13 @@ screen fits only one of them:
 - **Tournament**: everything is set up before the tournament; during it the player only
   picks the hole and enters the wind. Designed here, built later.
 
-gcwind covers the first two with one row above the clubs: **Flex** (any club at any level),
-then the player's **bags**, one to five as in the game, and **+** to add one. There is no
-mode switch. Tournament, when it is built, is a switch that adds a row of holes on top of
-whichever bag is in use. Players can also keep up to three **accounts**. Everything stays
-in this browser's `localStorage`; there is no login and no server storage. A backup code to
-protect bags and move them between devices comes last.
+gcwind covers the first two with one row above the clubs: **Flex** (any club at any
+level), then the player's **bags**, one to five as in the game. Bags are added and edited
+in the bag manager, behind the bag's name. There is no mode switch. Tournament, when it is
+built, is a switch that adds a row of holes on top of whichever bag is in use. Players can
+also keep up to three **accounts**. Everything stays in this browser's `localStorage`;
+there is no login and no server storage. A backup code to protect bags and move them
+between devices comes last.
 
 ## How players use it
 
@@ -33,19 +34,21 @@ protect bags and move them between devices comes last.
 
 Top to bottom:
 
-1. **Bag row**: the name of the bag in use (tap it to manage bags), then **Flex**, the
-   bags as buttons 1 to 5, and **+** while there are fewer than five. The buttons stretch
-   across the rest of the row, so they are easy to hit on a phone, and stop at 420px on
-   wide screens. One tap switches. With six buttons on the narrowest phones, the name
-   gives way to its icon. Flex comes first so it stays put as bags are added and removed.
-   Flex and + are not bags, so each has an end of the row to itself, on a slightly
-   different fill.
+1. **Bag row**: the name of the bag in use (tap it to manage bags), then **Flex** and the
+   bags as buttons 1 to 5. The buttons stretch across the rest of the row, so they are
+   easy to hit on a phone, and stop at 420px on wide screens. One tap switches. With six
+   buttons on the narrowest phones, the name gives way to its icon. Flex comes first so it
+   stays put as bags are added and removed, and its word is a shade darker than the
+   numbers, since it is not a bag. Adding a bag is rare, so it lives in the bag manager
+   (revised October 2026; the row used to end in **+**).
    When there is more than one account, an account menu sits above the row (step 3).
 2. On a bag, **the bag's clubs**: one card per club type with the club's art, its level
    as a number on the picture in the club's rarity colour (as the game shows it), and its
    type. Tapping a card makes it the club in hand; the player never picks from a list or
-   a level here. The last cell is **Edit bag**. On a phone that is a 4 × 2 grid, kept
-   short so more of the page fits; on wider screens one row.
+   a level here. The seven sit in one row from 360px wide, with smaller pictures on a
+   phone, so more of the page fits; narrower than that, four over three. Editing a bag is
+   rare, so it is in the bag manager rather than beside the cards (revised October 2026;
+   the row used to end in an **Edit bag** card).
 
    In **Flex**, the club type tabs, the club list and the levels instead: the screen the
    app had before bags. Flex picks are not a bag. They are kept separately, one club and
@@ -53,17 +56,17 @@ Top to bottom:
 
 3. Wind, distance, power ball, elevation and the rings, as before.
 
-**Edit bag** opens a dialog for the bag in use: its name, then the same seven cards as a
-type selector, and under them that type's club list and levels (the pickers Flex uses).
-Changes apply as they are made; Done closes the dialog.
+**Edit** beside a bag in the bag manager opens a dialog for that bag: its name, then the
+same seven cards as a type selector, and under them that type's club list and levels (the
+pickers Flex uses). Changes apply as they are made; Done closes the dialog and goes back to
+the manager.
 
 A first visit opens on Bag 1. After that gcwind opens on the bag, or Flex, last used, so
 a player in the middle of a checkpoint event is not sent back to a bag on every visit.
 
 Wind, ball power, elevation, distance and the club type in hand are shared by the bags and
-Flex: they describe the shot being played, not where the club came from. Choosing the wedge
-sets the elevation to 20% (October 2026); the player can change it for the shot, and other
-types leave it as it is.
+Flex: they describe the shot being played, not where the club came from. Choosing a club type
+leaves them as they are (the wedge set the elevation to 20% for a while in October 2026).
 
 ### Tournament (designed now, built in step 4)
 
@@ -95,9 +98,8 @@ Where the switch sits (the header, or the end of the bag row) is settled in step
 - **One to five bags** per account, as in the game. A new player starts with two (revised
   October 2026): Bag 1 holds The Apocalypse 8, The Sniper 10, The B52 8, The Thorn 9, The
   Endbringer 8, Nirvana 9 and Spitfire 8, and Bag 2 the same with Thor's Hammer 8 and The
-  Cataclysm 8 as driver and wood. **+** in the bag row, or **Add a bag** in the bag manager,
-  adds the next one, which starts as a copy of the clubs in use, so a new bag only needs
-  what differs.
+  Cataclysm 8 as driver and wood. **Add a bag** in the bag manager adds the next one,
+  which starts as a copy of the clubs in use, so a new bag only needs what differs.
 - Bags are numbered in order and named "Bag 1" and so on until renamed. Removing a bag
   moves the ones after it up a number, and a default name moves with its number. The last
   bag cannot be removed. Removing the bag in use switches to the one before it.
@@ -205,9 +207,9 @@ On the first load with `gcwind:v1` and no `gcwind:v2`:
 - Every control is a native button, select or input, so keyboard and screen readers work
   without custom handling. Dialogs are native `<dialog>` (focus trap, Escape).
 - Bag buttons are labelled with the name, for example "Bag 2: Approach"; Flex is "Flex:
-  any club, any level" and + is "Add a bag". Club cards read "Driver: The Rocket, level
-  7". Flex and the bag buttons expose their state with `aria-pressed`. When the bag's name
-  gives way to its icon, the button keeps its accessible name ("Bag 2, manage bags").
+  any club, any level". Club cards read "Driver: The Rocket, level 7". Flex and the bag
+  buttons expose their state with `aria-pressed`. When the bag's name gives way to its
+  icon, the button keeps its accessible name ("Bag 2, manage bags").
 - Level numbers are white on deeper shades of the rarity colours, at 5:1 or more.
 - Text fields use 16px type so iOS does not zoom. Tap targets are 40px or more; with
   Flex and five bags on a 320px phone, the bag row's buttons are 44px tall and at least

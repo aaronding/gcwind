@@ -17,7 +17,10 @@ tells you how many rings to aim off.
 - Clubs tinted by rarity, so tier is readable at a glance
 - Remembers your bags and picks between visits, in this browser only
 - Light, dark, or follow the system, remembered between visits
-- Built for one-handed use on a phone
+- Built for one-handed use on a phone: on a large one, the bag, the wind, the settings and
+  the rings fit on one screen
+- On a landscape tablet or a laptop, the rings sit in a column beside the controls; a
+  window tall enough for all of it keeps them under the controls
 
 How bags, Flex and accounts work, and what is planned next, is in
 [docs/modes-and-bags.md](docs/modes-and-bags.md).

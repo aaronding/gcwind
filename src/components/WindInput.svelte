@@ -10,11 +10,6 @@
 
   const display = $derived(Number.isFinite(value) ? value.toFixed(1) : '');
 
-  // A cleared wind parks the thumb at the left end rather than letting the
-  // browser default it to the middle of the track.
-  const position = $derived(Number.isFinite(value) ? value : WIND_MIN);
-  const fill = $derived(`${((position - WIND_MIN) / (WIND_MAX - WIND_MIN)) * 100}%`);
-
   let field;
   // True while someone types into the field, so it keeps what they typed
   // instead of reformatting it under the cursor: rewritten as 1.0 after the
@@ -64,11 +59,6 @@
     oninput(input.value);
     // Past the maximum is a missed decimal (137 for 13.7), so show the fix now.
     if (Number(input.value) > WIND_MAX) input.value = display;
-  }
-
-  function slide(e) {
-    endEntry();
-    oninput(e.currentTarget.value);
   }
 
   function select(e) {
@@ -121,24 +111,9 @@
     </button>
   </div>
 
-  <!-- Drag for the rough number, then the steppers for the last tenth. It goes
-       through the same handler as typing, so clamping and saving match. -->
-  <input
-    class="slider"
-    type="range"
-    min={WIND_MIN}
-    max={WIND_MAX}
-    step="0.1"
-    value={position}
-    aria-label="Wind speed"
-    data-testid="wind-slider"
-    style:--fill={fill}
-    oninput={slide}
-  />
-
   <!-- Typing the wind is quicker and surer against the shot clock than
        dragging to it. No decimal key: see keyWindDigit. -->
-  <div class="keypad" role="group" aria-label="Wind speed keypad">
+  <div class="keypad" role="group" aria-label="Wind speed keypad" data-testid="wind-keypad">
     {#each [7, 8, 9, 4, 5, 6, 1, 2, 3] as digit (digit)}
       <button class="key" data-testid="wind-key-{digit}" onclick={() => key(digit)}>
         {digit}
@@ -158,16 +133,19 @@
 
 <style>
   /* The most-used control in the app, so it is laid out for a thumb: the
-     keypad runs down the right-hand side, and the value, the steppers and the
-     slider stack beside it to the keypad's height. Steppers flanking the value
-     no longer fit beside the keypad on a phone, so they sit under it. */
+     keypad runs down the right-hand side, and the label, the value and the
+     steppers sit beside it, centred on its height by the two flexible rows.
+     Steppers flanking the value no longer fit beside the keypad on a phone,
+     so they sit under it. */
   .wind {
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-rows: 1fr auto auto 1fr;
     grid-template-areas:
+      '. keypad'
       'label keypad'
       'stepper keypad'
-      'slider keypad';
+      '. keypad';
     align-content: center;
     column-gap: 12px;
     row-gap: 6px;
@@ -280,70 +258,6 @@
       0 0 0 2px var(--green-500);
   }
 
-  /* Green on the pale card, filled up to the thumb so the wind reads as an
-     amount at a glance. */
-  .slider {
-    grid-area: slider;
-    appearance: none;
-    width: 100%;
-    height: 30px;
-    margin: 2px 0 0;
-    background: transparent;
-    cursor: pointer;
-  }
-
-  .slider::-webkit-slider-runnable-track {
-    height: 8px;
-    border-radius: 999px;
-    background: linear-gradient(
-      to right,
-      var(--green-500) var(--fill),
-      var(--green-300) var(--fill)
-    );
-  }
-
-  .slider::-moz-range-track {
-    height: 8px;
-    border-radius: 999px;
-    background: var(--green-300);
-  }
-
-  .slider::-moz-range-progress {
-    height: 8px;
-    border-radius: 999px;
-    background: var(--green-500);
-  }
-
-  .slider::-webkit-slider-thumb {
-    appearance: none;
-    width: 26px;
-    height: 26px;
-    margin-top: -9px;
-    border: none;
-    border-radius: 50%;
-    background: var(--surface);
-    box-shadow:
-      0 0 0 2px var(--green-500),
-      0 3px 0 var(--green-700);
-  }
-
-  .slider::-moz-range-thumb {
-    width: 26px;
-    height: 26px;
-    border: none;
-    border-radius: 50%;
-    background: var(--surface);
-    box-shadow:
-      0 0 0 2px var(--green-500),
-      0 3px 0 var(--green-700);
-  }
-
-  .slider:focus-visible {
-    outline: 3px solid var(--green-700);
-    outline-offset: 4px;
-    border-radius: 999px;
-  }
-
   /* While keypad digits are still going into the number, it is shown in gold,
      so it is clear the next digit adds to it rather than starting afresh. On
      the white well of the light theme that is a deeper amber, which keeps 3:1
@@ -393,14 +307,45 @@
     grid-column: span 2;
   }
 
+  /* A darker key, so it is not mistaken for a digit; its letter is the
+     digits' size, so it is as easy to find. */
   .clear,
   .clear:hover {
     background: var(--green-700);
-    font-size: 16px;
   }
 
   .clear {
     box-shadow: 0 3px 0 var(--green-900);
+  }
+
+  /* On a phone the keypad turns on its side, four keys across and three down
+     like a keyboard's number pad: C at the top of the last column and a tall
+     0 under it. That is one row of keys less, which sets the height of the
+     card, and the number and the steppers still fit beside it. */
+  @media (min-width: 360px) and (max-width: 680px) {
+    .wind {
+      padding: 10px 12px 12px;
+      row-gap: 4px;
+    }
+
+    .keypad {
+      grid-template-columns: repeat(4, 44px);
+      gap: 6px 5px;
+    }
+
+    .clear {
+      grid-column: 4;
+      grid-row: 1;
+    }
+
+    .zero {
+      grid-column: 4;
+      grid-row: 2 / span 2;
+    }
+
+    input {
+      font-size: clamp(34px, 9.5vw, 40px);
+    }
   }
 
   @media (prefers-reduced-motion: reduce) {

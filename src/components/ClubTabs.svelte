@@ -39,6 +39,21 @@
     }
   }
 
+  /* A large phone fits all seven on one row at 13px, which leaves Flex short
+     enough for the rings to stay on screen. */
+  @media (min-width: 400px) and (max-width: 559px) {
+    .tabs {
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+      gap: 3px;
+      padding: 3px;
+    }
+
+    .tabs .tab {
+      padding: 8px 0;
+      font-size: 13px;
+    }
+  }
+
   .tab {
     min-width: 0;
     padding: 11px 6px;

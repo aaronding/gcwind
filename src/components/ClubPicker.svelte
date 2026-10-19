@@ -69,4 +69,22 @@
     height: 48px;
     object-fit: contain;
   }
+
+  /* Smaller on a phone, where the height goes to the rings. */
+  @media (max-width: 680px) {
+    .clubs {
+      padding: 2px 2px 6px;
+    }
+
+    .clubs .club {
+      width: 52px;
+      height: 52px;
+      padding: 4px;
+    }
+
+    .club img {
+      width: 40px;
+      height: 40px;
+    }
+  }
 </style>

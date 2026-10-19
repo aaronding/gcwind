@@ -74,7 +74,6 @@
       flex={app.mode === 'flex'}
       onflex={() => app.useFlex()}
       onbag={(i) => app.switchBag(i)}
-      onadd={() => app.addBag()}
       onmanage={() => manager.open()}
     />
 
@@ -96,12 +95,12 @@
         />
       </section>
     {:else}
-      <section class="panel">
+      <section class="panel bag-panel">
         <BagClubs
+          row
           selections={app.bag.selections}
           selected={app.clubType}
           onselect={(type) => app.selectType(type)}
-          onedit={() => editor.open()}
         />
       </section>
     {/if}
@@ -136,25 +135,23 @@
     </div>
   </section>
 
-  <ResultPanel
-    rings={app.rings}
-    club={app.club}
-    level={app.level}
-    powerBall={app.powerBall}
-    elevation={app.elevation}
-    {distanceLabel}
-    clubType={app.clubType}
-    categoryAdjustment={app.categoryAdjustment}
-  />
+  <div class="answer">
+    <ResultPanel
+      rings={app.rings}
+      club={app.club}
+      level={app.level}
+      powerBall={app.powerBall}
+      elevation={app.elevation}
+      {distanceLabel}
+    />
+  </div>
 
-  <section class="links panel">
+  <section class="links">
     <h2>Useful Resources</h2>
     <div class="link-row">
       <a href="https://golfclashtommy.com" target="_blank" rel="noopener noreferrer">
-        ⛳ Golf Clash Tommy
-      </a>
-      <a href="https://www.youtube.com/@GolfClashTommy" target="_blank" rel="noopener noreferrer">
-        ▶️ Tommy on YouTube
+        <img src="images/links/golfclashtommy.webp" alt="" width="20" height="20" />
+        Golf Clash Tommy
       </a>
       <a href="https://www.reddit.com/r/GolfClash/" target="_blank" rel="noopener noreferrer">
         💬 r/GolfClash
@@ -363,34 +360,62 @@
   }
 
   .settings {
+    container-type: inline-size;
     align-content: center;
     gap: 14px;
   }
 
+  /* Places to read more, not part of the calculator, so plain links on the
+     page rather than a card of tiles: findable, but quieter than anything
+     the player taps during a shot. */
+  .links {
+    display: grid;
+    gap: 2px;
+    padding: 0 2px;
+  }
+
   .links h2 {
-    font-size: 15px;
-    color: var(--ink-muted);
+    font-family: var(--font-body);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
   }
 
   .link-row {
     display: flex;
     flex-wrap: wrap;
-    gap: 10px;
+    column-gap: 20px;
   }
 
   .link-row a {
-    flex: 1 1 180px;
-    padding: 12px 14px;
-    border-radius: var(--radius);
-    background: var(--surface-sunken);
-    color: var(--ink);
-    text-decoration: none;
-    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 0;
+    color: var(--ink-muted);
     font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+  }
+
+  /* A site's own logo, kept here rather than fetched from it, so the page
+     still loads nothing from a third party. */
+  .link-row img {
+    flex: none;
+    width: 20px;
+    height: 20px;
   }
 
   .link-row a:hover {
-    background: var(--green-100);
+    color: var(--ink);
+  }
+
+  .link-row a:focus-visible {
+    outline: 3px solid var(--green-500);
+    outline-offset: 2px;
+    border-radius: var(--radius-sm);
   }
 
   .site-footer {
@@ -412,8 +437,7 @@
     padding: 6px 10px;
     font-size: 13px;
     color: var(--ink-faint);
-    text-decoration: underline;
-    text-underline-offset: 3px;
+    text-decoration: none;
     cursor: pointer;
     border-radius: var(--radius-sm);
   }
@@ -435,6 +459,122 @@
   @media (max-width: 680px) {
     .controls {
       grid-template-columns: 1fr;
+    }
+  }
+
+  /* A large phone shows the bag, the wind and the settings without
+     scrolling, with the rings straight after: about 780px of a 412 x 891 or
+     440 x 956 screen is left once the browser's own bars are drawn. The
+     header gives up its tagline (still read out, and still in the page for
+     search) and every gap tightens a little. */
+  @media (max-width: 680px) {
+    .bar {
+      padding: 8px 16px;
+      row-gap: 0;
+    }
+
+    .wordmark {
+      font-size: 26px;
+    }
+
+    .tagline {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
+
+    .page {
+      padding-top: 10px;
+      gap: 10px;
+    }
+
+    .in-use {
+      gap: 8px;
+    }
+
+    .in-use .panel {
+      padding: 8px;
+      gap: 8px;
+    }
+
+    /* The club cards are cards already, so on a phone they sit straight on
+       the page, like the bag row, and take its full width. */
+    .bag-panel {
+      background: none;
+      box-shadow: none;
+    }
+
+    .in-use .bag-panel {
+      padding: 0 0 4px;
+    }
+
+    .settings {
+      padding: 12px;
+      gap: 10px;
+    }
+
+    .controls {
+      gap: 10px;
+    }
+  }
+
+  /* A wide, short window, a landscape tablet or a laptop, would put the
+     rings below the bottom of the screen, so it puts the answer beside the
+     question instead: the bag, the wind and the settings on the left, as in
+     portrait, and the rings in a column of their own on the right, level
+     with them. The links are not part of the calculator, so they go under
+     both. A wide screen keeps the layout at a tablet's width, centred,
+     rather than stretching it. A window 900px tall or more shows the whole
+     portrait layout, rings included, so it keeps that. */
+  @media (min-width: 1024px) and (max-height: 899px) {
+    .bar,
+    .page {
+      max-width: 1240px;
+    }
+
+    /* The column grows with the screen, so the settings beside the wind
+       keep their room on a 1024px tablet. */
+    .page {
+      grid-template-columns: minmax(0, 1fr) clamp(360px, 34vw, 440px);
+      grid-template-areas:
+        'in-use answer'
+        'controls answer'
+        'links links'
+        'footer footer';
+      /* The rings card is taller than the bag row; the second row takes the
+         difference, so the bag and the wind stay together at the top. */
+      grid-template-rows: auto 1fr auto auto;
+      align-items: start;
+      column-gap: 20px;
+    }
+
+    .in-use {
+      grid-area: in-use;
+    }
+
+    /* The two columns end on the same line: the rings card stretches to the
+       bottom of the controls, and the controls to the bottom of the rings
+       card whenever it is the taller. */
+    .controls {
+      grid-area: controls;
+      align-self: stretch;
+    }
+
+    .answer {
+      grid-area: answer;
+      align-self: stretch;
+      display: grid;
+    }
+
+    .links {
+      grid-area: links;
+    }
+
+    .site-footer {
+      grid-area: footer;
     }
   }
 </style>
