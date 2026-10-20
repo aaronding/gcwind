@@ -215,6 +215,29 @@ test('the wind keypad fills in from the right', async ({ page }) => {
   await expect(wind).toHaveValue('0.3');
 });
 
+test('after clearing the wind, typing goes into the field', async ({ page }) => {
+  const wind = page.getByTestId('wind-input');
+
+  await page.getByTestId('wind-clear').click();
+  await expect(wind).toHaveValue('');
+  await expect(wind).toBeFocused();
+
+  await page.keyboard.type('12.5');
+  await expect(wind).toHaveValue('12.5');
+  await expect(rings(page).current).not.toHaveText('-');
+});
+
+test.describe('on a touch screen', () => {
+  test.use({ hasTouch: true, isMobile: true });
+
+  // Focusing the field would raise the on-screen keyboard over the keypad.
+  test('clearing the wind leaves the field unfocused', async ({ page }) => {
+    await page.getByTestId('wind-clear').tap();
+    await expect(page.getByTestId('wind-input')).toHaveValue('');
+    await expect(page.getByTestId('wind-input')).not.toBeFocused();
+  });
+});
+
 test('the wind keypad starts a new number after a pause', async ({ page }) => {
   await page.clock.install();
   await page.goto('/');
@@ -261,6 +284,35 @@ test('distance labels read Max, Mid and Min at the ends and middle', async ({ pa
     el.dispatchEvent(new Event('input', { bubbles: true }));
   });
   await expect(label).toHaveText('37%');
+});
+
+test('a distance other than Max is highlighted on the card and the slider', async ({ page }) => {
+  const slider = page.getByTestId('distance-slider');
+  const label = page.getByTestId('detail-distance');
+  const set = (value) =>
+    slider.evaluate((el, v) => {
+      el.value = v;
+      el.dispatchEvent(new Event('input', { bubbles: true }));
+    }, value);
+  const fill = () => label.evaluate((el) => getComputedStyle(el).backgroundColor);
+
+  // The handle's own colour is not readable from script, so the slider says
+  // whether it is flagged and the stylesheet does the rest.
+  await expect(label).toHaveAttribute('data-adjusted', 'false');
+  await expect(slider).toHaveAttribute('data-adjusted', 'false');
+  const plain = await fill();
+
+  for (const value of [50, 0, 37]) {
+    await set(value);
+    await expect(label).toHaveAttribute('data-adjusted', 'true');
+    await expect(slider).toHaveAttribute('data-adjusted', 'true');
+    expect(await fill(), `at ${value}`).not.toBe(plain);
+  }
+
+  await set(100);
+  await expect(label).toHaveAttribute('data-adjusted', 'false');
+  await expect(slider).toHaveAttribute('data-adjusted', 'false');
+  expect(await fill()).toBe(plain);
 });
 
 test('the three feathering club types read zero at minimum distance', async ({ page }) => {

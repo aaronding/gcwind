@@ -143,6 +143,7 @@
       powerBall={app.powerBall}
       elevation={app.elevation}
       {distanceLabel}
+      distanceAdjusted={app.distance !== 100}
     />
   </div>
 
