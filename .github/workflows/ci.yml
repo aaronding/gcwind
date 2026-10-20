@@ -73,6 +73,26 @@ jobs:
           path: playwright-report/
           retention-days: 7
 
+  # The one check the ruleset on main requires. It passes only when the jobs
+  # above do, so they can be renamed, split or added to without editing the
+  # ruleset. Without `always()` it would be skipped, not failed, when one of
+  # them fails, and a skipped required check counts as passed.
+  ci:
+    name: CI
+    needs: [check, e2e]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Require the checks above
+        env:
+          CHECK: ${{ needs.check.result }}
+          E2E: ${{ needs.e2e.result }}
+        run: |
+          if [ "$CHECK" != success ] || [ "$E2E" != success ]; then
+            echo "::error::Lint, format and validate: $CHECK. End-to-end tests: $E2E."
+            exit 1
+          fi
+
   deploy-pages:
     name: Deploy to GitHub Pages (staging)
     # Only publish what has already passed the checks above.
