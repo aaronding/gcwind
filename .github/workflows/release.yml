@@ -7,7 +7,12 @@
 # deploy succeeds: a run that fails earlier leaves nothing behind, and the next
 # run releases the same version.
 #
-# Needs the repository secrets CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID.
+# Needs the repository secrets CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID,
+# and RELEASE_TOKEN: a fine-grained personal access token for this repository
+# alone, with Contents read and write. main requires the CI checks, which a
+# commit cannot have passed before it exists, so the push of the version commit
+# is made as the token's owner, who is on the ruleset's bypass list. The
+# workflow's own token cannot be put on that list.
 
 name: Release
 run-name: Release (${{ inputs.bump }})
@@ -62,6 +67,8 @@ jobs:
         with:
           fetch-depth: 0
           fetch-tags: true
+          # Kept for the push at the end, which is made with it.
+          token: ${{ secrets.RELEASE_TOKEN }}
       - uses: pnpm/action-setup@v6
       - uses: actions/setup-node@v7
         with:
