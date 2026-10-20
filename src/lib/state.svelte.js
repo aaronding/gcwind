@@ -391,6 +391,24 @@ export function undoReplace() {
   }
 }
 
+/** How long the storage events must stop before another tab's save is taken. */
+const ADOPT_DELAY = 150;
+
+/**
+ * Takes the bags another tab saved, from the store as it is now, and says
+ * whether that changed anything.
+ */
+export function adoptStoredBags() {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    return saved ? app.adoptBags(JSON.parse(saved)) : false;
+  } catch {
+    // Storage refusing the read, or a damaged write from the other tab: keep
+    // what this tab has.
+    return false;
+  }
+}
+
 /** Persist across visits. Storage can throw or be empty, so never assume it. */
 export function persist() {
   // The current store, else the one from before bags. A corrupt current store
@@ -413,20 +431,36 @@ export function persist() {
   }
 
   // Another tab saved: take its bags, so an older tab never writes its own
-  // bags back over an import or an edit. Each tab keeps its own shot. The
-  // write this causes holds the same bags, so the other tab leaves it there.
+  // bags back over an import or an edit. Each tab keeps its own shot.
+  //
+  // A tab that was in the background or busy is handed every save it missed in
+  // one burst, and acting on them one by one replays every bag the other tab
+  // went through, a flash of each. So the bags are taken once the events stop,
+  // from the store as it is by then, which holds the latest. Reading it inside
+  // the handler would not do: a tab sees the store as of the event it is
+  // handling.
+  //
+  // Taking them writes nothing back. The store already holds them, and a write
+  // made after taking a stale one sends the other tab back to it, then forward
+  // again, the two answering each other through bags neither chose.
+  let adopted = false;
+  let adoptTimer;
   addEventListener('storage', (e) => {
     if (e.key === UNDO_KEY) undo.available = e.newValue !== null;
-    if (e.key !== STORAGE_KEY || !e.newValue) return;
-    try {
-      app.adoptBags(JSON.parse(e.newValue));
-    } catch {
-      // A damaged write from the other tab: keep what this tab has.
-    }
+    if (e.key !== STORAGE_KEY) return;
+    clearTimeout(adoptTimer);
+    adoptTimer = setTimeout(() => {
+      adopted = adoptStoredBags();
+    }, ADOPT_DELAY);
   });
 
   $effect(() => {
     const snapshot = JSON.stringify(app.toJSON());
+    // This run is another tab's bags arriving, which the store already holds.
+    if (adopted) {
+      adopted = false;
+      return;
+    }
     try {
       localStorage.setItem(STORAGE_KEY, snapshot);
     } catch {

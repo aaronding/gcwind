@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import {
   BACKUP_VERSION,
   MAX_BACKUP_BYTES,
@@ -6,7 +6,14 @@ import {
   backupFileName,
   readBackup
 } from '../src/lib/backup.js';
-import { AppState, app, replaceSaved, undo, undoReplace } from '../src/lib/state.svelte.js';
+import {
+  AppState,
+  adoptStoredBags,
+  app,
+  replaceSaved,
+  undo,
+  undoReplace
+} from '../src/lib/state.svelte.js';
 import { defaultSelections } from '../src/lib/clubs.js';
 
 const starter = defaultSelections();
@@ -175,6 +182,41 @@ describe('another tab saving', () => {
 
     other.windSpeed = 20;
     expect(state.adoptBags(stored(other))).toBe(false);
+  });
+
+  describe('taken from the store', () => {
+    let items;
+
+    beforeEach(() => {
+      items = new Map();
+      vi.stubGlobal('localStorage', { getItem: (key) => items.get(key) ?? null });
+      app.replaceWith(stored(new AppState()));
+    });
+
+    afterEach(() => vi.unstubAllGlobals());
+
+    it('takes the bags the store holds now, and finds nothing more to change after', () => {
+      items.set('gcwind:v2', JSON.stringify(stored(setUp(new AppState()))));
+
+      expect(adoptStoredBags()).toBe(true);
+      expect(app.account.bags).toHaveLength(4);
+
+      // Each event of a burst asks again, and only the first one changes anything.
+      expect(adoptStoredBags()).toBe(false);
+    });
+
+    it('keeps what this tab has when the store is empty, damaged or unreadable', () => {
+      expect(adoptStoredBags()).toBe(false);
+
+      items.set('gcwind:v2', '{not json');
+      expect(adoptStoredBags()).toBe(false);
+
+      localStorage.getItem = () => {
+        throw new Error('blocked');
+      };
+      expect(adoptStoredBags()).toBe(false);
+      expect(app.account.bags).toHaveLength(2);
+    });
   });
 });
 
