@@ -52,6 +52,51 @@ async function pick(page, type, club, level) {
   await editor.getByTestId(`level-list-${type}`).getByTestId(`level-${level}`).click();
 }
 
+test('a tab that missed several bag changes goes straight to the latest, and sends nothing back', async ({
+  page,
+  context
+}) => {
+  await open(page);
+  await addBag(page);
+  await addBag(page);
+  const other = await context.newPage();
+  await open(other);
+
+  // The name of the bag each tab shows, every time it changes.
+  const watch = (p) =>
+    p.evaluate(() => {
+      window.shown = [];
+      const name = document.querySelector('[data-testid="bag-name"]');
+      new MutationObserver(() => window.shown.push(name.textContent)).observe(name, {
+        childList: true,
+        characterData: true,
+        subtree: true
+      });
+    });
+  const shown = (p) => p.evaluate(() => window.shown);
+  await watch(page);
+  await watch(other);
+  await page.bringToFront();
+
+  // The other tab is busy, as a tab in the background is, so its storage events
+  // wait and arrive together.
+  const busy = other.evaluate(() => {
+    const end = Date.now() + 2500;
+    while (Date.now() < end);
+  });
+  await page.waitForTimeout(100);
+  for (const n of [2, 3, 4, 1, 3]) await page.getByTestId(`bag-${n}`).click();
+  await busy;
+
+  await expect(other.getByTestId('bag-name')).toHaveText('Bag 3');
+  // Time for anything that would wrongly answer.
+  await page.waitForTimeout(600);
+
+  // One change, not a replay of the four before it, and no bounce back.
+  expect(await shown(other)).toEqual(['Bag 3']);
+  expect(await shown(page)).toEqual(['Bag 2', 'Bag 3', 'Bag 4', 'Bag 1', 'Bag 3']);
+});
+
 test('opens on Bag 1 of two starter bags, with Flex beside them', async ({ page }) => {
   await open(page);
 
