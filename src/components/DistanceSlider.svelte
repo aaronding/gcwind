@@ -16,6 +16,7 @@
     max="100"
     step="1"
     {value}
+    data-adjusted={value !== 100}
     data-testid="distance-slider"
     oninput={(e) => onchange(Number(e.currentTarget.value))}
   />
@@ -85,6 +86,16 @@
     border-radius: 50%;
     background: var(--green-500);
     border: 3px solid var(--surface);
+  }
+
+  /* Off Max the handle turns gold, as the distance does on the result card. */
+  input[type='range'][data-adjusted='true']::-webkit-slider-thumb {
+    background: var(--gold-500);
+    box-shadow: 0 2px 0 var(--gold-600);
+  }
+
+  input[type='range'][data-adjusted='true']::-moz-range-thumb {
+    background: var(--gold-500);
   }
 
   input[type='range']:focus-visible {

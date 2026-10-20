@@ -43,6 +43,11 @@
   function clear() {
     endEntry();
     onclear();
+    // The key just pressed holds focus, so digits typed next would go nowhere.
+    // A fine pointer means a keyboard to type them on; on a phone the keypad is
+    // the way in, and focusing the field would raise the on-screen keyboard
+    // over it.
+    if (matchMedia('(pointer: fine)').matches) field.focus();
   }
 
   function nudge(delta) {

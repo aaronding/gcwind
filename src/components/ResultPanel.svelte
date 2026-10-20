@@ -1,7 +1,7 @@
 <script>
   import ResultDial from './ResultDial.svelte';
 
-  let { rings, club, level, powerBall, elevation, distanceLabel } = $props();
+  let { rings, club, level, powerBall, elevation, distanceLabel, distanceAdjusted } = $props();
 
   const show = (v) => (rings ? v : '-');
 </script>
@@ -56,7 +56,9 @@
       </div>
       <div>
         <dt>Distance</dt>
-        <dd data-testid="detail-distance">{distanceLabel}</dd>
+        <!-- Max is the usual shot; anything else is easy to miss on the
+             slider, so the card flags it. -->
+        <dd data-testid="detail-distance" data-adjusted={distanceAdjusted}>{distanceLabel}</dd>
       </div>
     </dl>
   </div>
@@ -227,5 +229,16 @@
     margin: 0;
     font-weight: 700;
     font-variant-numeric: tabular-nums;
+  }
+
+  /* A gold pill with dark text, which keeps its contrast in both themes. Its
+     padding hangs out past the edge, so the text stays in line with the
+     values above it. */
+  dd[data-adjusted='true'] {
+    margin-right: -9px;
+    padding: 0 9px;
+    border-radius: 999px;
+    background: var(--gold-400);
+    color: var(--green-900);
   }
 </style>
