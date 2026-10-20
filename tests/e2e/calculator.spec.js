@@ -64,6 +64,28 @@ test('level count follows club rarity', async ({ page }) => {
   await expect(levels()).toHaveCount(8);
 });
 
+test('the selected club shows its level on the card, as the bag cards do', async ({ page }) => {
+  const list = page.getByTestId('club-list-drivers');
+  const badge = list.getByTestId('club-level-badge');
+
+  // Only the selected club carries one.
+  await expect(badge).toHaveCount(1);
+  await expect(list.getByTestId('club-The Rocket').getByTestId('club-level-badge')).toHaveText(
+    '10'
+  );
+
+  await page.getByTestId('level-list-drivers').getByTestId('level-4').click();
+  await expect(badge).toHaveText('4');
+
+  // The badge moves with the selection, and follows the level clamped to Epic's 8.
+  await list.getByTestId('club-The Apocalypse').click();
+  await expect(badge).toHaveCount(1);
+  await expect(list.getByTestId('club-The Apocalypse').getByTestId('club-level-badge')).toHaveText(
+    '4'
+  );
+  await expect(list.getByTestId('club-The Rocket').getByTestId('club-level-badge')).toHaveCount(0);
+});
+
 test('each tab remembers its own club and level', async ({ page }) => {
   await page.getByTestId('club-list-drivers').getByTestId('club-The Apocalypse').click();
   await page.getByTestId('level-list-drivers').getByTestId('level-3').click();
@@ -155,6 +177,91 @@ test('wind speed accepts typing, stepping and clearing', async ({ page }) => {
   await page.getByTestId('wind-clear').click();
   await expect(wind).toHaveValue('');
   await expect(page.getByTestId('result-current')).toHaveText('-');
+});
+
+/** Presses the button, holds it past the long-press delay, and lets go. */
+async function hold(page, testid) {
+  await page.getByTestId(testid).hover();
+  await page.mouse.down();
+  await page.waitForTimeout(650);
+  await page.mouse.up();
+}
+
+test('a hint under + and − says that holding changes the wind by 1', async ({ page }) => {
+  const hint = page.getByText('Hold to +/- 1');
+  await expect(hint).toBeVisible();
+
+  const buttons = await page.getByTestId('wind-increase').boundingBox();
+  const text = await hint.boundingBox();
+  expect(text.y).toBeGreaterThanOrEqual(buttons.y + buttons.height);
+});
+
+test('holding + or − moves the wind a whole point, and a tap a tenth', async ({ page }) => {
+  const wind = page.getByTestId('wind-input');
+  await wind.fill('12.5');
+
+  await hold(page, 'wind-increase');
+  await expect(wind).toHaveValue('13.5');
+
+  await hold(page, 'wind-decrease');
+  await hold(page, 'wind-decrease');
+  await expect(wind).toHaveValue('11.5');
+
+  // The click that ends a hold is not a tap as well, and a tap after one is.
+  await page.getByTestId('wind-increase').click();
+  await expect(wind).toHaveValue('11.6');
+});
+
+test('holding + or − stops at the wind limits', async ({ page }) => {
+  const wind = page.getByTestId('wind-input');
+
+  await wind.fill('24.5');
+  await hold(page, 'wind-increase');
+  await expect(wind).toHaveValue('25.0');
+
+  await wind.fill('0.5');
+  await hold(page, 'wind-decrease');
+  await expect(wind).toHaveValue('0.1');
+});
+
+test('letting go off the button after a hold does not swallow the next key press', async ({
+  page
+}) => {
+  const wind = page.getByTestId('wind-input');
+  const increase = page.getByTestId('wind-increase');
+  await wind.fill('10');
+
+  // Hold long enough to move the wind, then slide off before letting go, so
+  // no click follows.
+  await increase.hover();
+  await page.mouse.down();
+  await page.waitForTimeout(650);
+  await page.mouse.move(0, 0);
+  await page.mouse.up();
+  await expect(wind).toHaveValue('11.0');
+
+  await increase.focus();
+  await page.keyboard.press('Enter');
+  await expect(wind).toHaveValue('11.1');
+});
+
+test('a hold that ends early moves the wind only a tenth', async ({ page }) => {
+  const wind = page.getByTestId('wind-input');
+  await wind.fill('10');
+
+  await page.getByTestId('wind-increase').hover();
+  await page.mouse.down();
+  await page.waitForTimeout(150);
+  await page.mouse.up();
+  await expect(wind).toHaveValue('10.1');
+
+  // Sliding off before the delay is up cancels the hold.
+  await page.getByTestId('wind-increase').hover();
+  await page.mouse.down();
+  await page.mouse.move(0, 0);
+  await page.waitForTimeout(650);
+  await page.mouse.up();
+  await expect(wind).toHaveValue('10.1');
 });
 
 test('a wind speed above 25 is divided by ten', async ({ page }) => {

@@ -55,6 +55,37 @@
     onnudge(delta);
   }
 
+  // A tap on + or − moves the wind a tenth, the step of the in-game wind. Held
+  // this long, it moves a whole point instead, for the bigger changes between
+  // shots without reaching for the keypad.
+  const LONG_PRESS = 450;
+  let holdTimer;
+  // Set once a hold has moved the wind, so the click that ends it does not move
+  // it a tenth more.
+  let held = false;
+
+  function pressStep(direction) {
+    held = false;
+    clearTimeout(holdTimer);
+    holdTimer = setTimeout(() => {
+      held = true;
+      nudge(direction);
+    }, LONG_PRESS);
+  }
+
+  function releaseStep() {
+    clearTimeout(holdTimer);
+  }
+
+  function step(e, direction) {
+    // A click from the keyboard has no press before it, so it is never a hold.
+    if (held && e.detail > 0) {
+      held = false;
+      return;
+    }
+    nudge(direction / 10);
+  }
+
   function type(e) {
     const input = e.currentTarget;
     // "12." on the way to "12.5" reads back as empty; wait for the next key.
@@ -85,7 +116,13 @@
       class="step"
       data-testid="wind-decrease"
       aria-label="Decrease wind speed"
-      onclick={() => nudge(-0.1)}
+      title="Tap for 0.1, hold for 1"
+      onpointerdown={() => pressStep(-1)}
+      onpointerup={releaseStep}
+      onpointerleave={releaseStep}
+      onpointercancel={releaseStep}
+      oncontextmenu={(e) => e.preventDefault()}
+      onclick={(e) => step(e, -1)}
     >
       −
     </button>
@@ -110,10 +147,19 @@
       class="step"
       data-testid="wind-increase"
       aria-label="Increase wind speed"
-      onclick={() => nudge(0.1)}
+      title="Tap for 0.1, hold for 1"
+      onpointerdown={() => pressStep(1)}
+      onpointerup={releaseStep}
+      onpointerleave={releaseStep}
+      onpointercancel={releaseStep}
+      oncontextmenu={(e) => e.preventDefault()}
+      onclick={(e) => step(e, 1)}
     >
       +
     </button>
+
+    <!-- The buttons' title says the same to assistive technology. -->
+    <p class="hint" aria-hidden="true">Hold to +/- 1</p>
   </div>
 
   <!-- Typing the wind is quicker and surer against the shot clock than
@@ -181,6 +227,15 @@
     gap: 8px;
   }
 
+  .hint {
+    grid-column: 1 / -1;
+    margin: -3px 0 0;
+    color: var(--ink-muted);
+    font-size: 12px;
+    line-height: 1.2;
+    text-align: center;
+  }
+
   .step {
     height: 44px;
     border: none;
@@ -192,6 +247,11 @@
     line-height: 1;
     cursor: pointer;
     box-shadow: 0 3px 0 var(--green-700);
+    touch-action: manipulation;
+    /* A hold must not select the sign or raise the touch callout. */
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
     transition:
       transform 90ms ease,
       box-shadow 90ms ease,

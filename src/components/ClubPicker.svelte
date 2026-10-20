@@ -1,23 +1,30 @@
 <script>
-  // Rarity is in the club data and was previously used only to cap the level.
-  // Showing it as a frame colour turns it into something a player can read at a
-  // glance, the way the game does.
-  let { clubs, clubType, selected, onselect } = $props();
+  // The cards are framed like the club cards of a bag: grey, and green for the
+  // one selected. Rarity shows only in the level badge. Given a `level`, the
+  // selected club carries it on its corner, as the cards of a bag do.
+  let { clubs, clubType, selected, level, onselect } = $props();
 </script>
 
 <div class="clubs" data-testid={`club-list-${clubType}`}>
   {#each clubs as club (club.name)}
+    {@const isSelected = club.name === selected}
     <button
       class="club chunky"
-      class:selected={club.name === selected}
-      data-rarity={club.type}
+      class:selected={isSelected}
       data-testid={`club-${club.name}`}
       title={`${club.name} · ${club.type} · Tour ${club.tour}`}
-      aria-pressed={club.name === selected}
+      aria-pressed={isSelected}
       onclick={() => onselect(club.name)}
     >
       <img src={`images/${club.image}`} alt={club.name} loading="lazy" width="48" height="48" />
-      <span class="visually-hidden">{club.name}, {club.type}</span>
+      {#if isSelected && level}
+        <span class="level-badge" data-rarity={club.type} data-testid="club-level-badge">
+          {level}
+        </span>
+      {/if}
+      <span class="visually-hidden">
+        {club.name}, {club.type}{isSelected && level ? `, level ${level}` : ''}
+      </span>
     </button>
   {/each}
 </div>
@@ -32,6 +39,8 @@
   }
 
   .club {
+    /* The level badge rings itself in the card's own background. */
+    --card-bg: var(--surface);
     flex: 0 0 auto;
     width: 64px;
     height: 64px;
@@ -39,24 +48,19 @@
     display: grid;
     place-items: center;
     padding: 6px;
-    /* The rarity tint sits in the frame, not the artwork. */
-    border: 2px solid var(--rarity, var(--edge));
-    background: var(--surface);
+    border: 2px solid var(--edge);
+    background: var(--card-bg);
   }
 
-  .club[data-rarity='Common'] {
-    --rarity: var(--rarity-common);
-  }
-
-  .club[data-rarity='Rare'] {
-    --rarity: var(--rarity-rare);
-  }
-
-  .club[data-rarity='Epic'] {
-    --rarity: var(--rarity-epic);
+  /* The badge sits on the picture's lower right corner. */
+  .club .level-badge {
+    --badge-ring: var(--card-bg);
+    right: 1px;
+    bottom: 1px;
   }
 
   .club.selected {
+    --card-bg: var(--green-100);
     border-color: var(--green-500);
     background: var(--green-100);
     box-shadow:

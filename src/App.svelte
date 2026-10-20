@@ -85,6 +85,7 @@
           clubs={app.clubs}
           clubType={app.clubType}
           selected={app.club?.name}
+          level={app.level}
           onselect={(name) => app.selectClub(name)}
         />
         <LevelPicker
