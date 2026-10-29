@@ -36,6 +36,18 @@ export default [
     }
   },
   {
+    // Built into sw.js, where the build fills in the __SW_*__ constants.
+    files: ['src/sw.js'],
+    languageOptions: {
+      globals: {
+        ...globals.serviceworker,
+        __SW_CACHE__: 'readonly',
+        __SW_SHELL__: 'readonly',
+        __SW_ART__: 'readonly'
+      }
+    }
+  },
+  {
     files: ['**/*.svelte'],
     languageOptions: {
       parser: svelteParser,

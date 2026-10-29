@@ -5,8 +5,9 @@
 # value there concatenates with the specific one and, since browsers honour the
 # first directive, silently wins. Only non-conflicting headers belong in /*.
 #
-# Lifetimes stay conservative while filenames are unhashed. Once the Svelte
-# build emits hashed assets, scripts and styles can become immutable.
+# The build names its scripts and styles by their content, so those never
+# change under a name. Everything else keeps its name when it changes, so its
+# lifetime stays conservative.
 
 /*
   X-Content-Type-Options: nosniff
@@ -18,11 +19,13 @@
 /index.html
   Cache-Control: public, max-age=300, must-revalidate
 
-/styles.css
-  Cache-Control: public, max-age=300, must-revalidate
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
 
-/scripts/*
-  Cache-Control: public, max-age=300, must-revalidate
+# The service worker: the browser checks it for a new release on every visit,
+# and no cache on the way should answer for it. src/sw.js has the rest.
+/sw.js
+  Cache-Control: no-cache
 
 # Club art effectively never changes, and a new club means a new filename.
 /images/clubs/*

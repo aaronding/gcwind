@@ -17,6 +17,8 @@ tells you how many rings to aim off.
 - Clubs tinted by rarity, so tier is readable at a glance
 - Remembers your bags and picks between visits, in this browser only
 - Light, dark, or follow the system, remembered between visits
+- Installs to the Home Screen on iPhone and Android, and works offline once it has been
+  opened
 - Built for one-handed use on a phone: on a large one, the bag, the wind, the settings and
   the rings fit on one screen
 - On a landscape tablet or a laptop, the rings sit in a column beside the controls; a
@@ -52,7 +54,8 @@ pnpm run db:migrate  # apply migrations/ to the D1 database
 ```
 
 The dev server does not run the Worker, so `/api/feedback` only answers under
-`pnpm run dev:worker` or once deployed.
+`pnpm run dev:worker` or once deployed. Nor does it register the service worker
+(`src/sw.js`), which only the build has: try offline use under `pnpm run preview`.
 
 `pnpm run test:e2e:prod` runs the same browser tests against the live site.
 

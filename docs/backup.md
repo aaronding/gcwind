@@ -20,8 +20,9 @@ Also in this step:
 
 - `navigator.storage.persist()`, and a one-time hint in Safari on iOS to add gcwind to the
   Home Screen;
-- the service worker that makes gcwind work offline, in its own pull request. The app
-  icon, the Home Screen icons and the web app manifest shipped in 1.4.0.
+- the service worker that makes gcwind work offline, in its own pull request, now built
+  (see [Installable app](#installable-app)). The app icon, the Home Screen icons and the
+  web app manifest shipped in 1.4.0.
 
 Settled in review:
 
@@ -345,23 +346,38 @@ when there is something worth keeping. Not again after a denial.
 - **`apple-touch-icon`** at 180 pixels. Without it, iOS uses a screenshot of the page as
   the Home Screen icon.
 
-Both shipped in 1.4.0, with the new logo and its icons. What is left is **the service
-worker**, in its own pull request: one that caches the wrong thing can keep players on an
-old release, which deserves its own review. Its plan:
+Both shipped in 1.4.0, with the new logo and its icons. **The service worker** followed in
+its own pull request, since one that caches the wrong thing can keep players on an old
+release. It is `src/sw.js`, built into `sw.js`, and works once gcwind has been opened
+online:
 
-- **Navigations**: network first, falling back to the cache when offline.
-- **Hashed build files** (`assets/*`): cache first.
-- **Club art**: stale-while-revalidate, filled as clubs are seen.
+- **Navigations**: network first, falling back to the cache when offline, or when the
+  network has not answered in 3 seconds, since a connection that looks up but carries
+  nothing can take a minute to fail. A page from the network is not kept: the cached page
+  is the one built with the cached files, so the two never come from different releases.
+- **Build files**: the page, `assets/*`, the icons and the manifest are downloaded when the
+  worker installs, and served from the cache.
+- **Club art**: all of it is downloaded when the worker installs, so every club shows
+  offline and not only those already seen. The plan was to fill it as clubs are seen,
+  which left Flex's club lists blank offline for the types not yet opened. It costs 300 KB
+  once, in a cache of its own that outlives releases, so a release downloads only new art.
+  Art already kept is refreshed in the background as its club is seen
+  (stale-while-revalidate).
 - **`/api/*` and `/sync/*`**: never cached. Sync needs the network; Export and Import do
   not.
-- **Versions**: the cache name includes `__APP_VERSION__`, and `activate` deletes the
-  others. A new worker waits for the tabs to close rather than reloading a player
-  mid-shot.
-- **Build**: a small Vite plugin writes `sw.js` with the list of emitted files.
-  `vite-plugin-pwa` is the alternative if this grows.
-- **Cloudflare**: `public/_headers` gains `Cache-Control: no-cache` for `/sw.js`, and can
-  make `/assets/*` immutable. It has no rule for `/assets/*` today, and
-  still lists `/styles.css` and `/scripts/*` from before the Svelte build.
+- **Versions**: the cache name has `__APP_VERSION__` and a hash of the build's files, since
+  builds of main between releases share a version. `activate` deletes the other gcwind
+  caches, and only those: at webthinking.io/gcwind the origin's caches are shared with
+  the rest of webthinking.io. A new worker waits for the tabs to close rather than
+  reloading a player mid-shot; opening gcwind online still gets the newest page.
+- **Build**: a small Vite plugin in `vite.config.js` writes `sw.js` with the list of built
+  files, once the build and `public/` are written. `vite-plugin-pwa` is the alternative if
+  this grows.
+- **Cloudflare**: `public/_headers` has `Cache-Control: no-cache` for `/sw.js` and makes
+  `/assets/*` immutable. The `/styles.css` and `/scripts/*` rules from before the Svelte
+  build are gone.
+- **Tests**: `tests/e2e/offline.spec.js` opens gcwind, goes offline, reloads and
+  calculates, and shows the art of a club type not opened before going offline.
 
 webthinking.io/gcwind is a different origin from gcwind.webthinking.io, so it has its own
 storage and would be its own installed app. Sync and Export move data between the two.
@@ -471,7 +487,7 @@ saves, so the merge must treat a bag without a change time as older than any wit
    request), then `persist()` and the iOS hint.
 3. **Sync**: `worker/sync.js`, the D1 migration, the `/sync/*` route, Get a link, the QR
    code and opening a link.
-4. **Offline**: the service worker and the `_headers` changes.
+4. **Offline**: the service worker and the `_headers` changes. Built.
 
 Steps 2 and 3 can be one pull request if the owner prefers; they are split so the server
 part, which changes the privacy promise, is reviewed on its own.
