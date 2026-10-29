@@ -173,7 +173,7 @@
       target="_blank"
       rel="noopener noreferrer"
     >
-      © 2006 webthinking.io
+      © 2026 webthinking.io
     </a>
   </footer>
 </div>
